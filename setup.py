@@ -124,7 +124,7 @@ setup(
 
     entry_points={
         'console_scripts': [
-            'pmatch = patientMatcher.cli.commands:base'
+            'pmatcher = patientMatcher.cli.commands:cli'
         ],
     },
 
