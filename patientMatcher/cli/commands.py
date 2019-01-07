@@ -13,7 +13,7 @@ cli = FlaskGroup(create_app=create_app)
 
 @cli.command()
 def test_connection():
-    """Retrieves the names of all collection in db"""
+    """Retrieves the names of all collections in db"""
     collections = app.db.collection_names()
     LOG.info('Collections in database: {}'.format(collections))
 
