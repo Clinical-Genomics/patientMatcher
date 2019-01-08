@@ -19,7 +19,7 @@ def load_demo(path_to_json_data, mongo_db):
             mongo_db(pymongo.database.Database)
 
         Returns:
-            n_inserted(int): number of interted patients
+            inserted_ids(list): the database ID of the inserted patients
     """
 
     patients_collection = mongo_db.patients
@@ -59,7 +59,7 @@ def backend_add_patient(patients_collection, patient):
             patient(dict) : a matchbox patient entity (org.broadinstitute.macarthurlab.matchbox.entities.Patient)
 
         Returns:
-            result.inserted_id(str) : the if of the inserted patient or None if patient couldn't be saved
+            result.inserted_id(str) : the ID of the inserted patient or None if patient couldn't be saved
     """
 
     LOG.info("Adding patient with ID {} to database".format(patient.get('_id')))
