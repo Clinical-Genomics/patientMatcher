@@ -52,11 +52,11 @@ def load_demo(path_to_json_data, mongo_db):
 
 def backend_add_patient(patients_collection, patient):
     """
-        Insert a patient into matchbox database
+        Insert a patient into patientMatcher database
 
         Args:
             patients_collection(pymongo.collection.Collection): a pymongo collection
-            patient(dict) : a matchbox patient entity (org.broadinstitute.macarthurlab.matchbox.entities.Patient)
+            patient(dict) : a MME patient entity
 
         Returns:
             result.inserted_id(str) : the ID of the inserted patient or None if patient couldn't be saved
