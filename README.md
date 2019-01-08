@@ -14,10 +14,11 @@ pip install -e .
 
 To run the app you either run the following command:
 ```bash
-pmatcher run
+pmatcher run --host=host_address --port=port_number
 ```
+(Leave blank host and port parameters to run the server with their default values -> host=127.0.0.1 and port=5000)
 
-or, if you want to run the app on a different port than the default (9020 instead of 5000), run:
+The recommended option is however to customise the parameters present in the configuration file (instance/config.py) and run the app using these parameters. To so so execute:
 ```bash
 python run.py
 ```

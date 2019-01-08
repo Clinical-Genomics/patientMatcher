@@ -17,5 +17,12 @@ def create_app():
     return app
 
 
+def run_app():
+    app = create_app()
+    host = app.config.get('HOST', '127.0.0.1')
+    port = app.config.get('PORT', '9020')
+    app.run(port=port, host=host)
+
+
 if __name__ == '__main__':
     create_app()

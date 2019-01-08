@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 # -*- coding: utf-8 -*-
-from patientMatcher import create_app
+from patientMatcher import run_app
 
-app = create_app()
-app.run(port=9020)
+app = run_app()
