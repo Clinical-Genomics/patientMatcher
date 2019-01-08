@@ -12,7 +12,7 @@ LOG = logging.getLogger(__name__)
 
 def load_demo(path_to_json_data, mongo_db):
     """Inserts demo patient data into database
-        Demo data consists of a set of 50 patients from this paper:Benchmarking patients from paper: http://onlinelibrary.wiley.com/doi/10.1002/humu.22850
+        Demo data consists of a set of 50 patients from this paper: http://onlinelibrary.wiley.com/doi/10.1002/humu.22850
 
         Args:
             path_to_demo_data(str): absolute path to json file containing the demo patients.
