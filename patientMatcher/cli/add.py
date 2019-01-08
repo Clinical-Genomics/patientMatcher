@@ -9,7 +9,7 @@ from patientMatcher.utils.load import load_demo
 
 @click.group()
 def add():
-    """Adding items to database using the CLI"""
+    """Add items to database using the CLI"""
     pass
 
 @add.command()

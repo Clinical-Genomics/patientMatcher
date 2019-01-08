@@ -5,6 +5,7 @@ import click
 from flask.cli import FlaskGroup
 from patientMatcher import create_app
 from .add import add
+from .remove import remove
 
 cli = FlaskGroup(create_app=create_app)
 
@@ -17,3 +18,4 @@ def test_connection():
 
 
 cli.add_command(add)
+cli.add_command(remove)
