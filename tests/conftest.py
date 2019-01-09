@@ -38,6 +38,76 @@ def json_patients():
     {
         "contact": {
           "href": "mme_user@mail.com",
+          "name": "Another user"
+        },
+        "features": [
+          {
+            "id": "HP:0010943",
+            "label": "Echogenic fetal bowel",
+            "observed": "yes"
+          }
+        ],
+        "genomicFeatures": [
+        {
+            "gene": {
+              "id": "LIMS2"
+            },
+            "type": {
+              "id": "SO:0001583",
+              "label": "MISSENSE"
+            },
+            "variant": {
+              "alternateBases": "C",
+              "assembly": "GRCh37",
+              "end": 128412081,
+              "referenceBases": "G",
+              "referenceName": "2",
+              "start": 128412080
+            },
+            "zygosity": 1
+        },
+        {
+            "gene": {
+              "id": "LIMS2"
+            },
+            "type": {
+              "id": "SO:0001583",
+              "label": "MISSENSE"
+            },
+            "variant": {
+              "alternateBases": "A",
+              "assembly": "GRCh37",
+              "end": 128412067,
+              "referenceBases": "G",
+              "referenceName": "2",
+              "start": 128412066
+            },
+            "zygosity": 1
+        },
+        {
+            "gene": {
+              "id": "KARS"
+            },
+            "type": {
+              "id": "SO:0001583",
+              "label": "MISSENSE"
+            },
+            "variant": {
+              "alternateBases": "A",
+              "assembly": "GRCh37",
+              "end": 75665092,
+              "referenceBases": "G",
+              "referenceName": "16",
+              "start": 75665091
+            },
+            "zygosity": 1
+        }],
+        "id": "patient_2",
+        "label": "Patient number 2"
+    },
+    {
+        "contact": {
+          "href": "mme_user@mail.com",
           "name": "A User"
         },
         "features": [
@@ -50,7 +120,7 @@ def json_patients():
         "genomicFeatures": [
           {
             "gene": {
-              "id": "LIMS2"
+              "id": ""
             },
             "type": {
               "id": "SO:0001583",
@@ -69,27 +139,5 @@ def json_patients():
         ],
         "id": "patient_1",
         "label": "Patient number 1"
-    },
-    {
-        "contact": {
-          "href": "mme_user@mail.com",
-          "name": "Another user"
-        },
-        "features": [
-          {
-            "id": "HP:0010943",
-            "label": "Echogenic fetal bowel",
-            "observed": "yes"
-          }
-        ],
-        "genomicFeatures": [
-          {
-            "gene": {
-              "id": "GUCY2C"
-              }
-            }
-        ],
-        "id": "patient_2",
-        "label": "Patient number 2"
     }]
     return fakey_patients
