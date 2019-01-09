@@ -18,9 +18,13 @@ def match(database, gt_features, max_score):
     n_gtfeatures = len(gt_features)
 
     if n_gtfeatures > 0:
-        LOG.info('Query patient has {0} genotype features. .'.format(n_gtfeatures))
-        LOG.info('Each GT feature will contribute with a weight of {0} to a total GT score (max GT score is {1})'.format( max_score/n_gtfeatures, max_score ))
 
+        max_feature_similarity = max_score/n_gtfeatures
+
+        LOG.info('Query patient has {0} genotype features. .'.format(n_gtfeatures))
+        LOG.info('Each GT feature will contribute with a weight of {0} to a total GT score (max GT score is {1})'.format( max_feature_similarity, max_score ))
+
+        # Look for database patients having variants in the same genes:
         genes = get_query_genes(gt_features)
 
         if genes:
@@ -35,21 +39,36 @@ def match(database, gt_features, max_score):
 
             # assign a genetic similarity score for each of these patients
             for patient in gene_matching_patients:
-                max_feature_similarity = max_score/n_gtfeatures
-                LOG.info('max_f_score=={}'.format(max_feature_similarity))
-                gt_similarity = evaluate_GT_similarity(gt_features, patient['genomicFeatures'], max_score/n_gtfeatures)
-
+                gt_similarity = evaluate_GT_similarity(gt_features, patient['genomicFeatures'], max_feature_similarity)
                 match = {
                     '_id' : patient['_id'],
                     'label' : patient.get('label'),
                     'patient_obj' : patient,
-                    'gt_score' : gt_similarity
+                    'gt_score' : gt_similarity,
+                    'type' : 'canonical' # patients share variants in same genes
                 }
                 matches.append(match)
 
-        else: # MME API doesn't support genomic features outside genes, but we will! :)
-            LOG.info("FEATURES OUTSIDE GENES!!!")
+        # Look also for variant matches outside genes:
+        non_canonical_vars = non_canonical_variants(gt_features)
+        query = {
+            "genomicFeatures.variant" : {"$in" : non_canonical_vars}
+        }
+        LOG.info(query)
+        outside_genes_matching_patients = list(database['patients'].find(query))
+        LOG.info("Found {0} patients with matches outside genes:".format(len(outside_genes_matching_patients)))
 
+        for patient in outside_genes_matching_patients:
+            gt_similarity = evaluate_GT_similarity(gt_features, patient['genomicFeatures'], max_feature_similarity)
+            match = {
+                '_id' : patient['_id'],
+                'label' : patient.get('label'),
+                'patient_obj' : patient,
+                'gt_score' : gt_similarity,
+                'type' : 'non_canonical' # patient with matching variants outside genes
+            }
+            matches.append(match)
+            LOG.info(match)
     else:
         LOG.info('Query patient has no genomic features. GT score is 0.')
 
@@ -67,10 +86,28 @@ def get_query_genes(gtfeatures):
     """
     genes = []
     for feature in gtfeatures:
-        if 'gene' in feature:
+        if 'gene' in feature and feature['gene']['id']: # collect non-null gene IDs
             genes.append(feature['gene']['id'])
     gene_set = list(set(genes))
     return gene_set
+
+
+def non_canonical_variants(gtfeatures):
+    """Extracts all variants that fall ouside genes from a list of genomic features
+
+    Args:
+        gtfeatures(list): a list of genomic features objects
+
+    Returns:
+        nc_variants(list): a list of non-canonical variants (variants outside genes)
+    """
+    nc_variants = []
+    for feature in gtfeatures:
+        if 'variant' in feature:
+            if not 'gene' in feature or feature['gene']['id'] == "":
+                nc_variants.append(feature['variant'])
+
+    return nc_variants
 
 
 def evaluate_GT_similarity(query_features, db_patient_features, max_feature_similarity):
@@ -115,5 +152,5 @@ def evaluate_GT_similarity(query_features, db_patient_features, max_feature_simi
         n_feature += 1
 
     features_sum = sum(matched_features)
-    LOG.info('Evaluating similarity among patients. Sum of features:{}'.format(features_sum))
+    LOG.info('Evaluated similarity among patients. Sum of GT features:{}'.format(features_sum))
     return features_sum

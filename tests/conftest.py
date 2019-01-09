@@ -38,41 +38,6 @@ def json_patients():
     {
         "contact": {
           "href": "mme_user@mail.com",
-          "name": "A User"
-        },
-        "features": [
-          {
-            "id": "HP:0001644",
-            "label": "Dilated cardiomyopathy",
-            "observed": "yes"
-          },
-        ],
-        "genomicFeatures": [
-          {
-            "gene": {
-              "id": "LIMS2"
-            },
-            "type": {
-              "id": "SO:0001583",
-              "label": "MISSENSE"
-            },
-            "variant": {
-              "alternateBases": "C",
-              "assembly": "GRCh37",
-              "end": 128412081,
-              "referenceBases": "G",
-              "referenceName": "2",
-              "start": 128412080
-            },
-            "zygosity": 1
-          },
-        ],
-        "id": "patient_1",
-        "label": "Patient number 1"
-    },
-    {
-        "contact": {
-          "href": "mme_user@mail.com",
           "name": "Another user"
         },
         "features": [
@@ -139,5 +104,40 @@ def json_patients():
         }],
         "id": "patient_2",
         "label": "Patient number 2"
+    },
+    {
+        "contact": {
+          "href": "mme_user@mail.com",
+          "name": "A User"
+        },
+        "features": [
+          {
+            "id": "HP:0001644",
+            "label": "Dilated cardiomyopathy",
+            "observed": "yes"
+          },
+        ],
+        "genomicFeatures": [
+          {
+            "gene": {
+              "id": ""
+            },
+            "type": {
+              "id": "SO:0001583",
+              "label": "MISSENSE"
+            },
+            "variant": {
+              "alternateBases": "C",
+              "assembly": "GRCh37",
+              "end": 128412081,
+              "referenceBases": "G",
+              "referenceName": "2",
+              "start": 128412080
+            },
+            "zygosity": 1
+          },
+        ],
+        "id": "patient_1",
+        "label": "Patient number 1"
     }]
     return fakey_patients

@@ -19,8 +19,8 @@ def test_genotype_matching(demo_data_path, database, json_patients):
     # make sure 2 json patient are correctly parsed
     assert len(test_mme_patients) == 2
 
-    # test matching of one of the patients against the demo patients in database
-    a_patient = test_mme_patients[1]
+    # test matching of a patient (with variants in genes) against the demo patients in database
+    a_patient = test_mme_patients[0]
     assert a_patient
 
     # assert patient has genomic features
@@ -40,3 +40,20 @@ def test_genotype_matching(demo_data_path, database, json_patients):
 
         # genotype score for each patient should be higher than 0
         assert patient['gt_score'] > 0
+
+
+    # test matching of a patient (with variant outside genes) against the demo patients in database
+    nonconforming_patient = test_mme_patients[1]
+
+    # assert that genomicFeature has an empty gene field
+    assert nonconforming_patient['genomicFeatures'][0]['gene']['id'] == ''
+
+    gt_features = nonconforming_patient['genomicFeatures']
+
+    # match features against database of demo patients:
+    matches = match(database, gt_features, 0.75)
+    assert len(matches) == 2
+
+    for patient in matches:
+        patient['type'] == 'non_canonical'
+        patient['gt_score'] == 0.75 # variant exact match
