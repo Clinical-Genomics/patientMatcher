@@ -22,7 +22,7 @@ def load_demo(path_to_json_data, mongo_db):
             inserted_ids(list): the database ID of the inserted patients
     """
 
-    patients_collection = mongo_db.patients
+    patients_collection = mongo_db['patients']
     patients = [] # a list of dictionaries
     inserted_ids = []
 
