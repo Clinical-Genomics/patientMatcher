@@ -29,3 +29,67 @@ def database(request, pymongo_client):
 def demo_data_path():
     root_dir = Path(__file__).resolve().parents[1]
     return os.path.join(root_dir, 'patientMatcher', 'resources', 'benchmark_patients.json')
+
+
+@pytest.fixture(scope='function')
+def json_patients():
+    """ returns a list containing two matchmaker-like patient objects """
+    fakey_patients = [
+    {
+        "contact": {
+          "href": "mme_user@mail.com",
+          "name": "A User"
+        },
+        "features": [
+          {
+            "id": "HP:0001644",
+            "label": "Dilated cardiomyopathy",
+            "observed": "yes"
+          },
+        ],
+        "genomicFeatures": [
+          {
+            "gene": {
+              "id": "LIMS2"
+            },
+            "type": {
+              "id": "SO:0001583",
+              "label": "MISSENSE"
+            },
+            "variant": {
+              "alternateBases": "C",
+              "assembly": "GRCh37",
+              "end": 128412081,
+              "referenceBases": "G",
+              "referenceName": "2",
+              "start": 128412080
+            },
+            "zygosity": 1
+          },
+        ],
+        "id": "patient_1",
+        "label": "Patient number 1"
+    },
+    {
+        "contact": {
+          "href": "mme_user@mail.com",
+          "name": "Another user"
+        },
+        "features": [
+          {
+            "id": "HP:0010943",
+            "label": "Echogenic fetal bowel",
+            "observed": "yes"
+          }
+        ],
+        "genomicFeatures": [
+          {
+            "gene": {
+              "id": "GUCY2C"
+              }
+            }
+        ],
+        "id": "patient_2",
+        "label": "Patient number 2"
+    }]
+    return fakey_patients
