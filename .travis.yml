@@ -14,7 +14,6 @@ script:
     - py.test -rxs tests/
 
 install:
-    - pip install cython
     - pip install -r requirements.txt -r requirements-dev.txt -e .
 
 notifications:
