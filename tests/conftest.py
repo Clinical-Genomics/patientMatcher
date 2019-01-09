@@ -83,12 +83,60 @@ def json_patients():
           }
         ],
         "genomicFeatures": [
-          {
+        {
             "gene": {
-              "id": "GUCY2C"
-              }
-            }
-        ],
+              "id": "LIMS2"
+            },
+            "type": {
+              "id": "SO:0001583",
+              "label": "MISSENSE"
+            },
+            "variant": {
+              "alternateBases": "C",
+              "assembly": "GRCh37",
+              "end": 128412081,
+              "referenceBases": "G",
+              "referenceName": "2",
+              "start": 128412080
+            },
+            "zygosity": 1
+        },
+        {
+            "gene": {
+              "id": "LIMS2"
+            },
+            "type": {
+              "id": "SO:0001583",
+              "label": "MISSENSE"
+            },
+            "variant": {
+              "alternateBases": "A",
+              "assembly": "GRCh37",
+              "end": 128412067,
+              "referenceBases": "G",
+              "referenceName": "2",
+              "start": 128412066
+            },
+            "zygosity": 1
+        },
+        {
+            "gene": {
+              "id": "KARS"
+            },
+            "type": {
+              "id": "SO:0001583",
+              "label": "MISSENSE"
+            },
+            "variant": {
+              "alternateBases": "A",
+              "assembly": "GRCh37",
+              "end": 75665092,
+              "referenceBases": "G",
+              "referenceName": "16",
+              "start": 75665091
+            },
+            "zygosity": 1
+        }],
         "id": "patient_2",
         "label": "Patient number 2"
     }]
