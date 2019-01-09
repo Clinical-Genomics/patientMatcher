@@ -54,7 +54,6 @@ def match(database, gt_features, max_score):
         query = {
             "genomicFeatures.variant" : {"$in" : non_canonical_vars}
         }
-        LOG.info(query)
         outside_genes_matching_patients = list(database['patients'].find(query))
         LOG.info("Found {0} patients with matches outside genes:".format(len(outside_genes_matching_patients)))
 
