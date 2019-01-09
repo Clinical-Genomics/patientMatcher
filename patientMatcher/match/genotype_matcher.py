@@ -21,7 +21,7 @@ def match(database, gt_features, max_score):
 
         max_feature_similarity = max_score/n_gtfeatures
 
-        LOG.info('Query patient has {0} genotype features. .'.format(n_gtfeatures))
+        LOG.info('Query patient has {0} genotype features.'.format(n_gtfeatures))
         LOG.info('Each GT feature will contribute with a weight of {0} to a total GT score (max GT score is {1})'.format( max_feature_similarity, max_score ))
 
         # Look for database patients having variants in the same genes:
@@ -45,7 +45,7 @@ def match(database, gt_features, max_score):
                     'label' : patient.get('label'),
                     'patient_obj' : patient,
                     'gt_score' : gt_similarity,
-                    'type' : 'canonical' # patients share variants in same genes
+                    'type' : 'canonical' # patient with matching variants inside genes
                 }
                 matches.append(match)
 
