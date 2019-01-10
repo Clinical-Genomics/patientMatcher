@@ -13,10 +13,10 @@ services:
 install:
     - pip install -r requirements.txt -r requirements-dev.txt -e .
     - pip install pytest-cov
-    - pip install coverage
+    - pip install coveralls
 
 script:
-    - py.test -rxs --cov tests/
+    - py.test -rxs --cov=patientMatcher tests/
 
 notifications:
     email: false
