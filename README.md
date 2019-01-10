@@ -65,5 +65,5 @@ This way patients will be evaluated for genetic similarity even if the variants 
 [travis-url]: https://travis-ci.org/Clinical-Genomics/cg
 [travis-image]: https://img.shields.io/travis/Clinical-Genomics/cg.svg?style=flat-square
 
-[coveralls-url]: https://coveralls.io/github/Clinical-Genomics/patientMatcher
-[coveralls-image]: https://coveralls.io/repos/github/Clinical-Genomics/patientMatcher/badge.svg?branch=master
+[coveralls-url]: https://coveralls.io/github/northwestwitch/patientMatcher
+[coveralls-image]: https://coveralls.io/repos/github/northwestwitch/patientMatcher/badge.svg?branch=master
