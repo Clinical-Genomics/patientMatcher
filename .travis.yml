@@ -12,10 +12,11 @@ services:
 
 install:
     - pip install -r requirements.txt -r requirements-dev.txt -e .
+    - pip install pytest-cov
     - pip install coverage
 
 script:
-    - py.test -rxs /patientMatcher tests/
+    - py.test -rxs --cov /patientMatcher tests/
 
 notifications:
     email: false
