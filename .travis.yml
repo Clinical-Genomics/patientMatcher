@@ -10,12 +10,12 @@ env:
 services:
     - mongodb
 
-script:
-    - py.test -rxs tests/
-
 install:
     - pip install -r requirements.txt -r requirements-dev.txt -e .
     - pip install coverage
+
+script:
+    - py.test -rxs /patientMatcher tests/
 
 notifications:
     email: false
