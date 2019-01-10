@@ -38,8 +38,9 @@ def monarch_phenotypes(hpo_terms):
     """
     url = ''.join([MONARCH_BASE, '+'.join(hpo_terms), '&limit=20', '&target_species=9606' ])
     LOG.info(url)
-    response = None
     computed_phenotypes = []
+    json_resp = None
+    
     try:
         LOG.info('Sending HPO terms to Monarch service..')
         response = requests.get(url, timeout=10)
