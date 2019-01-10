@@ -18,6 +18,5 @@ def test_connection():
     click.echo('Collections in database: {}'.format(collections))
     return collections
 
-
 cli.add_command(add)
 cli.add_command(remove)
