@@ -18,18 +18,16 @@ def node():
     click.echo('adding a MME node')
 
 @add.command()
+@click.option('--build_phenotypes', is_flag=True, default=False, help='compute phenotypes from HPO terms')
 @with_appcontext
-def demo_patients():
+def demo_patients(build_phenotypes):
     """Adds a set of 50 demo patients to database"""
     click.echo('Adding 50 test patients to database..')
 
     path_to_json_patients = os.path.abspath(os.path.join(current_app.root_path, 'resources', 'benchmark_patients.json'))
-    inserted_ids = load_demo(path_to_json_data=path_to_json_patients, mongo_db=current_app.db)
+    inserted_ids = load_demo(path_to_json_data=path_to_json_patients, mongo_db=current_app.db, compute_phenotypes=build_phenotypes)
 
     click.echo('inserted {} patients into db'.format(len(inserted_ids)))
-
-
-
 
 
 add.add_command(node)

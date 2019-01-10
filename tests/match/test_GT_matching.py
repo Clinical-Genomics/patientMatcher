@@ -10,7 +10,7 @@ def test_genotype_matching(demo_data_path, database, json_patients):
 
     # load demo data in mock database
     # load demo data to mock database using function located under utils/load
-    inserted_ids = load_demo(demo_data_path, database)
+    inserted_ids = load_demo(demo_data_path, database, False)
     assert len(inserted_ids) == 50 # 50 test cases are loaded
 
     # test conversion to format required for the database:
