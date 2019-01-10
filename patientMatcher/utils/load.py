@@ -10,18 +10,18 @@ from patientMatcher.parse.patient import mme_patient
 
 LOG = logging.getLogger(__name__)
 
-def load_demo(path_to_json_data, mongo_db):
+def load_demo(path_to_json_data, mongo_db, compute_phenotypes=False):
     """Inserts demo patient data into database
         Demo data consists of a set of 50 patients from this paper: http://onlinelibrary.wiley.com/doi/10.1002/humu.22850
 
         Args:
             path_to_demo_data(str): absolute path to json file containing the demo patients.
-            mongo_db(pymongo.database.Database)
+            mongo_db(pymongo.database.Database),
+            compute_phenotypes(bool) : if True most likely phenotypes will be computed using Monarch
 
         Returns:
             inserted_ids(list): the database ID of the inserted patients
     """
-
     patients_collection = mongo_db['patients']
     patients = [] # a list of dictionaries
     inserted_ids = []
@@ -36,7 +36,7 @@ def load_demo(path_to_json_data, mongo_db):
             for json_patient in patients:
 
                 #parse patient into format accepted by database
-                patient = mme_patient(json_patient)
+                patient = mme_patient(json_patient, compute_phenotypes)
 
                 inserted_id = backend_add_patient(patients_collection, patient)
                 if inserted_id:
