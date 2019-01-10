@@ -16,7 +16,7 @@ install:
     - pip install coverage
 
 script:
-    - py.test -rxs --cov /patientMatcher tests/
+    - py.test -rxs --cov tests/
 
 notifications:
     email: false
