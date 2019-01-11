@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import logging
+
+from patientMatcher.parse.patient import gtfeatures_to_genes, gtfeatures_to_variants
 LOG = logging.getLogger(__name__)
 
 def match(database, gt_features, max_score):
@@ -24,94 +26,43 @@ def match(database, gt_features, max_score):
         LOG.info('Query patient has {0} genotype features.'.format(n_gtfeatures))
         LOG.info('Each GT feature will contribute with a weight of {0} to a total GT score (max GT score is {1})'.format( max_feature_similarity, max_score ))
 
-        # Look for database patients having variants in the same genes:
-        genes = get_query_genes(gt_features)
+        query = {}
+        query_fields = []
 
+        genes = gtfeatures_to_genes(gt_features)
         if genes:
-            LOG.info('unique genes:{}'.format(get_query_genes(gt_features)))
+            query_fields.append({'genomicFeatures.gene.id' : {"$in" : genes}})
 
-            query = {
-                "genomicFeatures.gene.id" : {"$in" : genes}
-            }
-            # query patients collection by gene name
-            gene_matching_patients = list(database['patients'].find(query)) # a list of patients with genomic feature/s in one or more of the query genes
-            LOG.info("Found {0} patients matching genes:{1}".format(len(gene_matching_patients), genes))
+        variants = gtfeatures_to_variants(gt_features)
+        if variants:
+            query_fields.append({'genomicFeatures.variant': {"$in" : variants} })
 
-            # assign a genetic similarity score for each of these patients
-            for patient in gene_matching_patients:
+        if len(query_fields) > 0:
+        # prepare a query that takes into account genes and variants in general (also outside genes!)
+            query = { '$or' : query_fields }
+            LOG.info('Querying database for genomic features:{}'.format(query))
+
+            # query patients collection
+            matching_patients = list(database['patients'].find(query)) # a list of patients with genomic feature/s in one or more of the query genes
+            LOG.info("Found {0} matching patients".format(len(matching_patients)))
+
+            # assign a genetic similarity score to each of these patients
+            for patient in matching_patients:
                 gt_similarity = evaluate_GT_similarity(gt_features, patient['genomicFeatures'], max_feature_similarity)
                 match = {
                     '_id' : patient['_id'],
                     'label' : patient.get('label'),
                     'patient_obj' : patient,
                     'gt_score' : gt_similarity,
-                    'type' : 'canonical' # patient with matching variants inside genes
                 }
                 matches.append(match)
-
-        # Look also for variant matches outside genes:
-        non_canonical_vars = non_canonical_variants(gt_features)
-        query = {
-            "genomicFeatures.variant" : {"$in" : non_canonical_vars}
-        }
-        outside_genes_matching_patients = list(database['patients'].find(query))
-        LOG.info("Found {0} patients with matches outside genes:".format(len(outside_genes_matching_patients)))
-
-        for patient in outside_genes_matching_patients:
-            gt_similarity = evaluate_GT_similarity(gt_features, patient['genomicFeatures'], max_feature_similarity)
-            match = {
-                '_id' : patient['_id'],
-                'label' : patient.get('label'),
-                'patient_obj' : patient,
-                'gt_score' : gt_similarity,
-                'type' : 'non_canonical' # patient with matching variants outside genes
-            }
-            matches.append(match)
-            LOG.info(match)
-    else:
-        LOG.info('Query patient has no genomic features. GT score is 0.')
 
     return matches
 
 
-def get_query_genes(gtfeatures):
-    """Extracts all gene names from a list of genomic features
-
-    Args:
-        gtfeatures(list): a list of genomic features objects
-
-    Returns:
-        gene_set(list): a list of unique gene names contained in the features
-    """
-    genes = []
-    for feature in gtfeatures:
-        if 'gene' in feature and feature['gene']['id']: # collect non-null gene IDs
-            genes.append(feature['gene']['id'])
-    gene_set = list(set(genes))
-    return gene_set
-
-
-def non_canonical_variants(gtfeatures):
-    """Extracts all variants that fall ouside genes from a list of genomic features
-
-    Args:
-        gtfeatures(list): a list of genomic features objects
-
-    Returns:
-        nc_variants(list): a list of non-canonical variants (variants outside genes)
-    """
-    nc_variants = []
-    for feature in gtfeatures:
-        if 'variant' in feature:
-            if not 'gene' in feature or feature['gene']['id'] == "":
-                nc_variants.append(feature['variant'])
-
-    return nc_variants
-
-
 def evaluate_GT_similarity(query_features, db_patient_features, max_feature_similarity):
     """ Evaluates the genomic similarity of two patients based on genomic similarities
-    
+
         Args:
             query_patient(list of dictionaries): genomic features of the query patient
             db_patient_features(list of dictionaries): genomic features of a patient in patientMatcher database
