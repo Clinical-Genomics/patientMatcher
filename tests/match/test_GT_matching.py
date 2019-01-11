@@ -46,11 +46,11 @@ def test_genotype_matching(demo_data_path, database, json_patients):
     # remove gene ID from first gt feature
     gt_features[0]['gene']['id'] = ''
     matches = match(database, gt_features, 0.75)
-    # same patients shpuld be returned, because of variant matching instead
+    # same patients should be returned, because of variant matching instead
     assert len(matches) == 4
 
     # Remove variant object from second gt feature
     gt_features[1]['variant'] = None
     matches = match(database, gt_features, 0.75)
-    # same patients shpuld be returned, because of GENE matching instead
+    # same patients shpuld be returned, because of gene matching instead
     assert len(matches) == 4
