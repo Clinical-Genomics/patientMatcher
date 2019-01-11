@@ -33,7 +33,7 @@ def test_backend_remove_patient(json_patients, database):
 
     # make sure that inserted patients contain computed phenotypes from Monarch
     a_patient = database['patients'].find_one()
-    assert len(a_patient['monarch_phenotypes']) == 10
+    assert len(a_patient['monarch_phenotypes']) == 5
 
     # test removing a patient by ID:
     remove_query = {'_id' : 'patient_1'}

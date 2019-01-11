@@ -110,7 +110,8 @@ def non_canonical_variants(gtfeatures):
 
 
 def evaluate_GT_similarity(query_features, db_patient_features, max_feature_similarity):
-    """
+    """ Evaluates the genomic similarity of two patients based on genomic similarities
+    
         Args:
             query_patient(list of dictionaries): genomic features of the query patient
             db_patient_features(list of dictionaries): genomic features of a patient in patientMatcher database
