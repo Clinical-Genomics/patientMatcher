@@ -71,5 +71,5 @@ def test_phenotype_matching(json_patients, database, demo_data_path):
 
     # make sure that matches obtained when OMIM and HPO terms are present are more or equal than
     # when either of these phenotype terms is present by itself
-    assert matches_HPO_OMIM >= matches_OMIM
-    assert matches_HPO_OMIM >= matches_HPO
+    assert len(matches_HPO_OMIM) >= len(matches_OMIM)
+    assert len(matches_HPO_OMIM) >= len(matches_HPO)

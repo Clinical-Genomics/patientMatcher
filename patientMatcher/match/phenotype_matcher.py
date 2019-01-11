@@ -122,7 +122,9 @@ def evaluate_subcategories(list1, list2, max_score):
         Returns:
             matching_score(float): a number reflecting the similarity between the lists
     """
-    list_item_score = max_score/len(list1) # the max value of each matching item between lists
-    n_shared_items = len(set(list1).intersection(list2)) # number of elements shared between the lists
-    matching_score = n_shared_items * list_item_score
+    matching_score = 0
+    if len(list1)>0:
+        list_item_score = max_score/len(list1) # the max value of each matching item between lists
+        n_shared_items = len(set(list1).intersection(list2)) # number of elements shared between the lists
+        matching_score = n_shared_items * list_item_score
     return matching_score
