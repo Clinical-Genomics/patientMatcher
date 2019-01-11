@@ -94,8 +94,8 @@ def evaluate_pheno_similariy(hpo_terms, disorders, monarch_phtypes, pheno_matchi
     if len(disorders) == 0: # no OMIM diagnoses available
         max_monarch_score = max_similarity/2 # half of the phenotype score will depend on computed phenotypes from Monarch
     else:
-        max_omim_score = max_similarity/4 # 0.25% of the phenotype score will depend on OMIM terms matching
-        max_monarch_score = max_similarity/4 # 0.25% of the phenotype score will depend on computed phenotypes from Monarch
+        max_omim_score = max_similarity/4 # 25% of the phenotype score will depend on OMIM terms matching
+        max_monarch_score = max_similarity/4 # 25% of the phenotype score will depend on computed phenotypes from Monarch
 
         # Compute similarity of OMIM terms:
         db_patient_omim_terms = disorders_to_omim(pheno_matching_patient['disorders'])
