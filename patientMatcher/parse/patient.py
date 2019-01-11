@@ -53,5 +53,35 @@ def features_to_hpo(features):
             hpo_terms(list): a list of HPO terms. Example : ['HP:0100026', 'HP:0009882', 'HP:0001285']
     """
 
-    hpo_terms = [feature['_id'] for feature in features]
+    hpo_terms = [feature.get('_id') for feature in features if feature.get('_id')]
+    if len(hpo_terms) == 0:
+        hpo_terms = [feature.get('id') for feature in features if feature.get('id')]
     return hpo_terms
+
+
+def disorders_to_omim(disorders):
+    """Extracts OMIM terms from a list of disorders of a patient
+
+        Args:
+            disorders(list): a list of disorders
+
+        Returns:
+            omim_terms(list): a list of OMIM terms. Example : ['MIM:616007', 'MIM:614665']
+    """
+
+    omim_terms = [disorder.get('id') for disorder in disorders if disorder.get('id')]
+    return omim_terms
+
+
+def monarch_hit_ids(monarch_phenotypes):
+    """Extracts monarch hit ids from a list of monarch phenotype objects
+
+        Args:
+            monarch_phenotypes(list) example:[{'combined_score': 79, 'hit_label': 'Rienhoff syndrome', 'hit_id': 'MONDO:0014262'}, ..]
+
+        Returns:
+            monarch_terms(list) example: [ 'MONDO:0014262' ..]
+    """
+
+    monarch_terms = [pheno.get('hit_id') for pheno in monarch_phenotypes if pheno.get('hit_id')]
+    return monarch_terms

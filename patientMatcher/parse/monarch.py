@@ -32,7 +32,7 @@ def parse_monarch_matches(json_response):
     monarch_matches = []
 
     # extract 10 topmost results
-    results = json_response['results'][:10]
+    results = json_response['results'][:5]
 
     for result in results:
         match = {
@@ -42,5 +42,6 @@ def parse_monarch_matches(json_response):
         }
         monarch_matches.append(match)
 
-    LOG.info('Monarch hits parsed to:{}'.format(monarch_matches))
+    if len(monarch_matches)>0:
+        LOG.info('Monarch hits parsed successfully.')
     return monarch_matches
