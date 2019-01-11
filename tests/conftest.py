@@ -47,6 +47,11 @@ def json_patients():
             "observed": "yes"
           }
         ],
+        "disorders": [
+            {
+                "id" : "MIM:616007"
+            }
+        ],
         "genomicFeatures": [
         {
             "gene": {

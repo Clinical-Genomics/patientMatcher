@@ -94,8 +94,8 @@ def evaluate_pheno_similariy(hpo_terms, disorders, monarch_phtypes, pheno_matchi
     if len(disorders) == 0: # no OMIM diagnoses available
         max_monarch_score = max_similarity/2 # half of the phenotype score will depend on computed phenotypes from Monarch
     else:
-        max_omim_score = max_similarity/4 # 0.25% of the phenotype score will depend on OMIM terms matching
-        max_monarch_score = max_similarity/4 # 0.25% of the phenotype score will depend on computed phenotypes from Monarch
+        max_omim_score = max_similarity/4 # 25% of the phenotype score will depend on OMIM terms matching
+        max_monarch_score = max_similarity/4 # 25% of the phenotype score will depend on computed phenotypes from Monarch
 
         # Compute similarity of OMIM terms:
         db_patient_omim_terms = disorders_to_omim(pheno_matching_patient['disorders'])
@@ -122,7 +122,9 @@ def evaluate_subcategories(list1, list2, max_score):
         Returns:
             matching_score(float): a number reflecting the similarity between the lists
     """
-    list_item_score = max_score/len(list1) # the max value of each matching item between lists
-    n_shared_items = len(set(list1).intersection(list2)) # number of elements shared between the lists
-    matching_score = n_shared_items * list_item_score
+    matching_score = 0
+    if len(list1)>0:
+        list_item_score = max_score/len(list1) # the max value of each matching item between lists
+        n_shared_items = len(set(list1).intersection(list2)) # number of elements shared between the lists
+        matching_score = n_shared_items * list_item_score
     return matching_score
