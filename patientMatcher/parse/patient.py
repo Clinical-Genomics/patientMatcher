@@ -85,3 +85,37 @@ def monarch_hit_ids(monarch_phenotypes):
 
     monarch_terms = [pheno.get('hit_id') for pheno in monarch_phenotypes if pheno.get('hit_id')]
     return monarch_terms
+
+
+def gtfeatures_to_genes(gtfeatures):
+    """Extracts all gene names from a list of genomic features
+
+    Args:
+        gtfeatures(list): a list of genomic features objects
+
+    Returns:
+        gene_set(list): a list of unique gene names contained in the features
+    """
+    genes = []
+    for feature in gtfeatures:
+        if 'gene' in feature and feature['gene']['id']: # collect non-null gene IDs
+            genes.append(feature['gene']['id'])
+    gene_set = list(set(genes))
+    return gene_set
+
+
+def gtfeatures_to_variants(gtfeatures):
+    """Extracts all variants from a list of genomic features
+
+    Args:
+        gtfeatures(list): a list of genomic features objects
+
+    Returns:
+        variants(list): a list of variants
+    """
+    variants = []
+    for feature in gtfeatures:
+        if 'variant' in feature:
+            variants.append(feature['variant'])
+
+    return variants

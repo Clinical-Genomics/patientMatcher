@@ -42,18 +42,15 @@ def test_genotype_matching(demo_data_path, database, json_patients):
         assert patient['gt_score'] > 0
 
 
-    # test matching of a patient (with variant outside genes) against the demo patients in database
-    nonconforming_patient = test_mme_patients[1]
-
-    # assert that genomicFeature has an empty gene field
-    assert nonconforming_patient['genomicFeatures'][0]['gene']['id'] == ''
-
-    gt_features = nonconforming_patient['genomicFeatures']
-
-    # match features against database of demo patients:
+    # make sure that the algorithm works even if a gene or a variant object is missing:
+    # remove gene ID from first gt feature
+    gt_features[0]['gene']['id'] = ''
     matches = match(database, gt_features, 0.75)
-    assert len(matches) == 2
+    # same patients should be returned, because of variant matching instead
+    assert len(matches) == 4
 
-    for patient in matches:
-        patient['type'] == 'non_canonical'
-        patient['gt_score'] == 0.75 # variant exact match
+    # Remove variant object from second gt feature
+    gt_features[1]['variant'] = None
+    matches = match(database, gt_features, 0.75)
+    # same patients shpuld be returned, because of gene matching instead
+    assert len(matches) == 4
