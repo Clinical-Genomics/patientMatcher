@@ -14,10 +14,12 @@ def match(database, gt_features, max_score):
         max_score(float): a number between 0 and 1
 
     Returns:
-        matches(list): a list of patient matches with GT score
+        matches(dict): a dictionary of patient matches with GT score
     """
-    matches = []
+    matches = {}
     n_gtfeatures = len(gt_features)
+
+    LOG.info('\n\n###### Running genome matcher module ######')
 
     if n_gtfeatures > 0:
 
@@ -48,15 +50,16 @@ def match(database, gt_features, max_score):
 
             # assign a genetic similarity score to each of these patients
             for patient in matching_patients:
+                #LOG.info('{0}PATIENT {1}'.format('\t', patient['_id']))
                 gt_similarity = evaluate_GT_similarity(gt_features, patient['genomicFeatures'], max_feature_similarity)
+                #LOG.info('{0}GENO_SCORE:{1}{2}'.format('\t', gt_similarity, '\n'*2))
                 match = {
-                    '_id' : patient['_id'],
-                    'label' : patient.get('label'),
                     'patient_obj' : patient,
-                    'gt_score' : gt_similarity,
+                    'geno_score' : gt_similarity,
                 }
-                matches.append(match)
+                matches[patient['_id']] = match
 
+    LOG.info("\n\nFOUND {} patients matching patients's genomic tracts\n\n".format(len(matching_patients)))
     return matches
 
 
@@ -103,5 +106,5 @@ def evaluate_GT_similarity(query_features, db_patient_features, max_feature_simi
         n_feature += 1
 
     features_sum = sum(matched_features)
-    LOG.info('Evaluated similarity among patients. Sum of GT features:{}'.format(features_sum))
+    #LOG.info('Evaluated similarity among patients. Sum of GT features:{}'.format(features_sum))
     return features_sum

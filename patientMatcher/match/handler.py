@@ -67,5 +67,5 @@ def database_matcher(database, patient_obj, max_pheno_score, max_geno_score):
     # sort patient matches by patient (combined) score
     sorted_matches = sorted(matches, key=lambda k : k['score']['patient'], reverse=True)
 
-    # return the highest scored matches only:
+    # return sorted matches
     return sorted_matches
