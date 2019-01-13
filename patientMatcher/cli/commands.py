@@ -15,8 +15,10 @@ cli = FlaskGroup(create_app=create_app)
 def test_connection():
     """Retrieves the names of all collections in db"""
     collections = current_app.db.collection_names()
-    click.echo('Collections in database: {}'.format(collections))
+    click.echo('Testing connection. Collections in database: {}'.format(collections))
     return collections
+
+
 
 cli.add_command(add)
 cli.add_command(remove)

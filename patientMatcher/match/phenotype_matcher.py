@@ -16,14 +16,16 @@ def match(database, max_score, features, disorders):
         disorders(list): a list of OMIM diagnoses (example ID = MIM:616007 )
 
     Returns:
-        matches(list): a list of patient matches with phenotype matching score
+        matches(dict): a dictionary of patient matches with phenotype matching score
     """
-    matches = []
+    matches = {}
 
     hpo_terms = []
     omim_terms = []
     monarch_terms = []
     query_fields = []
+
+    LOG.info('\n\n###### Running phenotype matcher module ######')
 
     if features: # at least one HPO term is specified
         hpo_terms = features_to_hpo(features)
@@ -49,17 +51,15 @@ def match(database, max_score, features, disorders):
         LOG.info("\n\nFOUND {} patients matching patients's phenotype tracts\n\n".format(len(pheno_matching_patients)))
 
         for patient in pheno_matching_patients:
-            LOG.info('{0}PATIENT {1}'.format('\t', patient['_id']))
+            #LOG.info('{0}PATIENT {1}'.format('\t', patient['_id']))
             similarity = evaluate_pheno_similariy(hpo_terms, omim_terms, monarch_terms, patient, max_score)
-            LOG.info('{0}PHENO_SCORE:{1}{2}'.format('\t', similarity, '\n'*2))
+            #LOG.info('{0}PHENO_SCORE:{1}{2}'.format('\t', similarity, '\n'*2))
 
             match = {
-                '_id' : patient['_id'],
-                'label' : patient.get('label'),
                 'patient_obj' : patient,
                 'pheno_score' : similarity,
             }
-            matches.append(match)
+            matches[patient['_id']] = match
 
     return matches
 
@@ -87,7 +87,7 @@ def evaluate_pheno_similariy(hpo_terms, disorders, monarch_phtypes, pheno_matchi
     max_hpo_score = max_similarity/2 # half of the phenotype score will depend on HPO terms matching
     db_patient_hpo_terms = features_to_hpo(pheno_matching_patient['features']) # HPO terms of the matching patient
     hpo_score = evaluate_subcategories(hpo_terms, db_patient_hpo_terms, max_hpo_score)
-    LOG.info("\t-Computed score from HPO terms:{}".format(hpo_score))
+    #LOG.info("\t-Computed score from HPO terms:{}".format(hpo_score))
 
     max_omim_score = 0
     max_monarch_score = 0
@@ -100,12 +100,12 @@ def evaluate_pheno_similariy(hpo_terms, disorders, monarch_phtypes, pheno_matchi
         # Compute similarity of OMIM terms:
         db_patient_omim_terms = disorders_to_omim(pheno_matching_patient['disorders'])
         omim_score = evaluate_subcategories(disorders, db_patient_omim_terms, max_omim_score)
-        LOG.info("\t-Computed score from OMIM terms:{}".format(omim_score))
+        #LOG.info("\t-Computed score from OMIM terms:{}".format(omim_score))
 
     # Compute similarity of Monarch-computed diagnoses:
     db_patient_monarch_terms = monarch_hit_ids(pheno_matching_patient.get('monarch_phenotypes',[]))
     monarch_score = evaluate_subcategories(monarch_phtypes, db_patient_monarch_terms, max_monarch_score)
-    LOG.info("\t-Computed score from Monarch phenotypes:{}".format(monarch_score))
+    #LOG.info("\t-Computed score from Monarch phenotypes:{}".format(monarch_score))
 
     patient_similarity = hpo_score + omim_score + monarch_score
     return patient_similarity
@@ -117,7 +117,7 @@ def evaluate_subcategories(list1, list2, max_score):
         Args:
             list1(list): a list of strings (this is a list of items from the query patient)
             list2(list): another list of strings (list of items from the patients in database)
-            max_score(float): the maximum value to return if the strings are identical
+            max_score(float): the maximum value to return if the lists are identical
 
         Returns:
             matching_score(float): a number reflecting the similarity between the lists

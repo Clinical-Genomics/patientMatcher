@@ -31,7 +31,7 @@ def parse_monarch_matches(json_response):
     """
     monarch_matches = []
 
-    # extract 10 topmost results
+    # extract 5 topmost results
     results = json_response['results'][:5]
 
     for result in results:

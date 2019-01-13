@@ -28,29 +28,25 @@ def test_genotype_matching(demo_data_path, database, json_patients):
     assert len(gt_features) == 3 # should have 3 features to match
 
     # match features against database of demo patients:
-    matches = match(database, gt_features, 0.75)
-    assert len(matches) == 4 # 4 matching patients are returned
+    matches = match(database, gt_features, 0.5)
+    assert len(matches.keys()) == 4 # 4 matching patients are returned
 
-    for patient in matches:
-        # make sure matching patient's ID is returned
-        assert '_id' in patient
-
+    for key, value in matches.items():
         # patient object should also be returned
-        assert 'patient_obj' in patient
+        assert 'patient_obj' in value
 
         # genotype score for each patient should be higher than 0
-        assert patient['gt_score'] > 0
-
+        assert value['geno_score'] > 0
 
     # make sure that the algorithm works even if a gene or a variant object is missing:
     # remove gene ID from first gt feature
     gt_features[0]['gene']['id'] = ''
-    matches = match(database, gt_features, 0.75)
+    matches = match(database, gt_features, 0.5)
     # same patients should be returned, because of variant matching instead
     assert len(matches) == 4
 
     # Remove variant object from second gt feature
     gt_features[1]['variant'] = None
-    matches = match(database, gt_features, 0.75)
+    matches = match(database, gt_features, 0.5)
     # same patients shpuld be returned, because of gene matching instead
-    assert len(matches) == 4
+    assert len(matches.keys()) == 4
