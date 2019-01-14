@@ -32,6 +32,18 @@ def demo_data_path():
 
 
 @pytest.fixture(scope='function')
+def demo_node():
+    """Returns a server or a client object"""
+    node = {
+        '_id' : 'test_node',
+        'auth_token' : 'superSecretToken',
+        'base_url' : 'test_node_institution.com',
+        'contact_email' : 'test_node@email.com'
+    }
+    return node
+
+
+@pytest.fixture(scope='function')
 def json_patients():
     """ returns a list containing two matchmaker-like patient objects """
     fakey_patients = [

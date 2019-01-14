@@ -5,7 +5,7 @@ import os
 import click
 from flask.cli import with_appcontext, current_app
 
-from patientMatcher.utils.load import load_demo
+from patientMatcher.utils.add import load_demo, add_node
 
 @click.group()
 def add():
@@ -13,12 +13,24 @@ def add():
     pass
 
 @add.command()
-def node():
-    """Adds a new MatchMaker node to database"""
-    click.echo('adding a MME node')
+@click.option('-id', type=click.STRING, nargs=1, required=True, help="Server/Client ID")
+@click.option('-token', type=click.STRING, nargs=1, required=True, help="Authorization token")
+@click.option('-is_client', is_flag=True, default=False, help='If True the node is a client of patientMatcher')
+@click.option('-url', type=click.STRING, nargs=1, required=True, help="Server/client URL")
+@click.option('-contact', type=click.STRING, nargs=1, required=False, help="An email address")
+@with_appcontext
+def node(is_client, id, token, url, contact=None):
+    """Registers a new client/server to database"""
+    click.echo("Adding new node to database. Is node client: {}".format(is_client))
+    inserted_id, collection = add_node(mongo_db=current_app.db, id=id, token=token, is_client=is_client, url=url, contact=contact)
+    if inserted_id:
+        click.echo('Inserted node with ID "{}" into database collection {}'.format(inserted_id, collection))
+    else:
+        click.echo('Aborted')
+
 
 @add.command()
-@click.option('--compute_phenotypes', is_flag=True, default=True, help='compute phenotypes from HPO terms')
+@click.option('-compute_phenotypes', is_flag=True, default=True, help='compute phenotypes from HPO terms')
 @with_appcontext
 def demo_patients(compute_phenotypes):
     """Adds a set of 50 demo patients to database"""
