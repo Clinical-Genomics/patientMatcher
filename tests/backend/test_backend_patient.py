@@ -3,7 +3,7 @@
 import os
 import pytest
 
-from patientMatcher.utils.load import load_demo, backend_add_patient
+from patientMatcher.utils.add import load_demo, backend_add_patient
 from patientMatcher.utils.delete import delete_by_query
 from patientMatcher.parse.patient import mme_patient
 

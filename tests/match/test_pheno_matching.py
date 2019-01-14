@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from patientMatcher.utils.phenotype import monarch_phenotypes
-from patientMatcher.utils.load import load_demo
+from patientMatcher.utils.add import load_demo
 from patientMatcher.match.phenotype_matcher import match as pheno_match
 from patientMatcher.parse.patient import mme_patient
 

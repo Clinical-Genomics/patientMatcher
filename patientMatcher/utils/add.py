@@ -59,7 +59,7 @@ def backend_add_patient(patients_collection, patient):
             patient(dict) : a MME patient entity
 
         Returns:
-            result.inserted_id(str) : the ID of the inserted patient or None if patient couldn't be saved
+            inserted_id(str) : the ID of the inserted patient or None if patient couldn't be saved
     """
 
     LOG.info("Adding patient with ID {} to database".format(patient.get('_id')))
@@ -67,6 +67,44 @@ def backend_add_patient(patients_collection, patient):
     try:
         inserted_id = patients_collection.insert_one(patient).inserted_id
     except Exception as err:
-        LOG.fatal("Error while inserting a patient into db: {}".format(err))
+        LOG.fatal("Error while inserting a patient into database: {}".format(err))
 
     return inserted_id
+
+
+def add_node(mongo_db, id, token, is_client, url, contact):
+    """
+        Insert a new node (client or server) into the database
+
+        Args:
+            mongo_db(pymongo.database.Database)
+            id(str): a unique ID to assign to the client/server
+            token(str): athorization token to submit patients or perform queries on database
+            is_client(bool): if True the new node a client of this server, if False this server is a client of the new the node
+            url(str): URL associated to the new client/Server
+            contact(str): email address of a contact at the client/server institution
+
+        Returns:
+            inserted_id(str): the ID of the new node or None if node couldn't be saved
+    """
+
+    node_obj = {
+        '_id' : id,
+        'auth_token' : token,
+        'base_url' : url,
+        'contact_email' : contact
+    }
+    inserted_id = None
+    collection = None
+
+    if is_client:
+        collection = "clients"
+    else:
+        collection = "nodes"
+
+    try:
+        inserted_id = mongo_db[collection].insert_one(node_obj).inserted_id
+    except Exception as err:
+        LOG.fatal('Error while inserting a new client/server node to database:{}'.format(err))
+
+    return inserted_id, collection
