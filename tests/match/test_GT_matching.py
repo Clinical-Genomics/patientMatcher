@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import pytest
 from patientMatcher.utils.load import load_demo
 from patientMatcher.parse.patient import mme_patient
 from patientMatcher.match.genotype_matcher import match
