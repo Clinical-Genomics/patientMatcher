@@ -40,7 +40,7 @@ def monarch_phenotypes(hpo_terms):
     LOG.info(url)
     computed_phenotypes = []
     json_resp = None
-    
+
     try:
         LOG.info('Sending HPO terms to Monarch service..')
         response = requests.get(url, timeout=10)

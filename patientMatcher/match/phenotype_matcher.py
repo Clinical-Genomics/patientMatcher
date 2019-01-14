@@ -29,7 +29,7 @@ def match(database, max_score, features, disorders):
 
     if features: # at least one HPO term is specified
         hpo_terms = features_to_hpo(features)
-        query_fields.append({'features._id': {"$in" : hpo_terms}})
+        query_fields.append({'features.id': {"$in" : hpo_terms}})
 
     if disorders: # at least one OMIM term was provided
         omim_terms = disorders_to_omim(disorders)

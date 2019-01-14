@@ -9,11 +9,12 @@ LOG = logging.getLogger(__name__)
 
 def create_app():
     #configuration files are relative to the instance folder
-    app = Flask(__name__, template_folder='server/templates', instance_relative_config=True)
+    app = Flask(__name__, instance_relative_config=True)
     app.config.from_pyfile('config.py')
 
     client = MongoClient(app.config['DB_URI'])
     app.db = client[app.config['DB_NAME']]
+    app.register_blueprint(server.views.blueprint)
     return app
 
 
@@ -26,3 +27,6 @@ def run_app():
 
 if __name__ == '__main__':
     create_app()
+
+
+import patientMatcher.server.views
