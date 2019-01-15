@@ -7,7 +7,6 @@ from patientMatcher.match.handler import database_matcher as dbmatcher
 def test_combined_matching(demo_data_path, database, json_patients):
     """Testing the combined matching algorithm"""
 
-    # load demo data in mock database
     # load demo data to mock database using function located under utils/load
     inserted_ids = load_demo(demo_data_path, database, False)
     assert len(inserted_ids) == 50 # 50 test cases are loaded

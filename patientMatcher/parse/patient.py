@@ -38,6 +38,26 @@ def mme_patient(json_patient, compute_phenotypes=False):
     return mme_patient
 
 
+def json_patients(mme_patients):
+    """ Converts a list of mme patients into a list json patient as in the MME APIs
+
+        Args:
+            mme_patients(list): a list of patients as in patientMatcher patients collection
+
+        Returns:
+            json_patients(list): a list of json-like patients to be included in server response
+    """
+    json_patients = []
+    for mme_p in mme_patients:
+        mme_p.pop('monarch_phenotypes')
+        mme_p['id'] = mme_p['_id']
+        mme_p.pop('_id')
+
+        json_patients.append(mme_p)
+
+    return json_patients
+
+
 def features_to_hpo(features):
     """Extracts HPO terms from a list of phenotype features of a patient
 
