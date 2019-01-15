@@ -45,7 +45,6 @@ def load_demo(path_to_json_data, mongo_db, compute_phenotypes=False):
 
     except Exception as err:
         LOG.fatal("An error occurred while importing benchmarking patients: {}".format(err))
-        sys.exit()
 
     return inserted_ids
 

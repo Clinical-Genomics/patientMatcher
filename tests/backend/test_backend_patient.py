@@ -21,6 +21,10 @@ def test_load_demo_patients(demo_data_path, database):
     re_inserted_ids = load_demo(demo_data_path, database)
     assert len(re_inserted_ids) == 0
 
+    # try to call load_demo with an invalid patient file:
+    inserted_ids = load_demo('this_is_a_fakey_json_file.json', database)
+    assert len(inserted_ids) == 0
+
 
 def test_backend_remove_patient(json_patients, database):
     """ Test adding 2 test patients and then removing them using label or ID """
