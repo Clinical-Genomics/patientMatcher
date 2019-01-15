@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-
-from click.testing import CliRunner
 import os
 import pytest
 import mongomock
@@ -16,11 +14,6 @@ def pymongo_client(request):
         mock_client.drop_database(DATABASE)
     request.addfinalizer(teardown)
     return mock_client
-
-
-@pytest.fixture(scope='function')
-def runner():
-    return CliRunner()
 
 
 @pytest.fixture(scope='function')
