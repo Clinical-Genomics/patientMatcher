@@ -8,7 +8,8 @@ from patientMatcher.utils.add import load_demo
 
 app = create_app()
 
-def test_cli_connection():
+def test_cli_connection(database):
+    app.db = database
     runner = app.test_cli_runner()
     result = runner.invoke(cli, ['test_connection'])
     assert 'Testing connection' in result.output
