@@ -17,6 +17,10 @@ def test_load_demo_patients(demo_data_path, database):
     inserted_ids = load_demo(demo_data_path, database)
     assert len(inserted_ids) == 50 # 50 test cases should be loaded
 
+    # make sure that trying to re-insert the same patients will not work
+    re_inserted_ids = load_demo(demo_data_path, database)
+    assert len(re_inserted_ids) == 0
+
 
 def test_backend_remove_patient(json_patients, database):
     """ Test adding 2 test patients and then removing them using label or ID """
