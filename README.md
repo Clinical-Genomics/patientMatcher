@@ -62,8 +62,8 @@ GTscore assigned to the MATCH patients will then be: 0.25/4 + 0.25 + 0.
 Note that the algorithm will evaluate and assign a score of 0.25 (max relative weight of the variant) also to matching variants outside genes.
 This way patients will be evaluated for genetic similarity even if the variants lay outside genes.
 
-[travis-url]: https://travis-ci.org/Clinical-Genomics/cg
-[travis-image]: https://img.shields.io/travis/Clinical-Genomics/cg.svg?style=flat-square
+[travis-url]: https://travis-ci.org/Clinical-Genomics/patientMatcher
+[travis-image]: https://img.shields.io/travis/Clinical-Genomics/patientMatcher.svg?style=flat-square
 
 [coveralls-url]: https://coveralls.io/github/Clinical-Genomics/patientMatcher
 [coveralls-image]: https://coveralls.io/repos/github/Clinical-Genomics/patientMatcher/badge.svg?branch=master
