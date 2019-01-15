@@ -1,3 +1,6 @@
 # testing:
 pytest
 mongomock<=3.12
+
+# server-related stuff
+ requests
