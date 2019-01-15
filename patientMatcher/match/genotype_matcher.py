@@ -50,9 +50,7 @@ def match(database, gt_features, max_score):
 
             # assign a genetic similarity score to each of these patients
             for patient in matching_patients:
-                #LOG.info('{0}PATIENT {1}'.format('\t', patient['_id']))
                 gt_similarity = evaluate_GT_similarity(gt_features, patient['genomicFeatures'], max_feature_similarity)
-                #LOG.info('{0}GENO_SCORE:{1}{2}'.format('\t', gt_similarity, '\n'*2))
                 match = {
                     'patient_obj' : patient,
                     'geno_score' : gt_similarity,
@@ -77,8 +75,6 @@ def evaluate_GT_similarity(query_features, db_patient_features, max_feature_simi
         Returns:
             patient_similarity(float): the computed genetic similarity among the patients
     """
-    # gene_matching similarity among features = 0.25 of the max_feature_similarity
-    # exact variant matching among features = max_feature_similarity
 
     matched_features = []
     n_feature = 0
@@ -106,5 +102,4 @@ def evaluate_GT_similarity(query_features, db_patient_features, max_feature_simi
         n_feature += 1
 
     features_sum = sum(matched_features)
-    #LOG.info('Evaluated similarity among patients. Sum of GT features:{}'.format(features_sum))
     return features_sum
