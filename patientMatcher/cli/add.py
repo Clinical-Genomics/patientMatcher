@@ -30,7 +30,7 @@ def node(is_client, id, token, url, contact=None):
 
 
 @add.command()
-@click.option('-compute_phenotypes', is_flag=True, default=True, help='compute phenotypes from HPO terms')
+@click.option('-compute_phenotypes', is_flag=True, default=False, help='compute phenotypes from HPO terms')
 @with_appcontext
 def demo_patients(compute_phenotypes):
     """Adds a set of 50 demo patients to database"""
