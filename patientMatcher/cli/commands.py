@@ -19,6 +19,6 @@ def test_connection():
     return collections
 
 
-
+cli.add_command(test_connection)
 cli.add_command(add)
 cli.add_command(remove)
