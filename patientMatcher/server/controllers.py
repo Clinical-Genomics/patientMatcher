@@ -7,7 +7,7 @@ LOG = logging.getLogger(__name__)
 
 def get_patients(database, patient_ids=None):
     """return all patients in response to client"""
-    mme_patients = list(patients(database))
+    mme_patients = list(patients(database, patient_ids))
     json_like_patients = json_patients(mme_patients)
 
     return json_like_patients
