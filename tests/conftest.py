@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import os
-import flask
 import pytest
 import mongomock
 from pathlib import Path
