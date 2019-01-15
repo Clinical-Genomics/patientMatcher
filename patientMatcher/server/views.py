@@ -43,7 +43,7 @@ def matches():
     return "Get all matches for a patient ID"
 
 
-@blueprint.route('/match/external', methods=['POST'])
+@blueprint.route('/match', methods=['POST'])
 def match_external():
     return "Match patient against external nodes"
 
