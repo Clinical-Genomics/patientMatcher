@@ -4,6 +4,7 @@
 import pymongo
 from patientMatcher import create_app
 from patientMatcher.cli.commands import cli
+from patientMatcher.cli.add import demo_patients
 from patientMatcher.utils.add import load_demo
 
 app = create_app()
@@ -48,7 +49,7 @@ def test_cli_add_demo_data(database):
     # run the load demo command without the -compute_phenotypes flag
     result =  runner.invoke(cli, ['add', 'demo_patients'])
     #assert result.exit_code == 0
-    assert result.output == "this is for testing" 
+    assert result.output == "this is for testing"
 
     # check that the 50 demo patients where inserted into database
     #assert database['patients'].find().count() == 50
