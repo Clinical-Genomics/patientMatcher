@@ -14,11 +14,11 @@ def test_baseapp():
     assert result.output == 'patientMatcher\n'
 
 
-def test_cli_connection(database):
+def test_cli_testconnect(database):
     app.db = database
     runner = app.test_cli_runner()
-    result = runner.invoke(cli, ['test_connection'])
-    #assert 'Testing connection' in result.output
+    result = runner.invoke(cli, ['testconnect'])
+    assert 'Testing connection' in result.output
 
 
 def test_cli_add_node(database, demo_node):
@@ -46,7 +46,7 @@ def test_cli_add_demo_data(database):
     assert database['patients'].find().count() == 0
 
     # run the load demo command without the -compute_phenotypes flag
-    result =  runner.invoke(cli, ['add', 'demo_patients', '-no_monarch_phenotypes'])
+    result =  runner.invoke(cli, ['add', 'demodata', '-no_monarch_phenotypes'])
     assert result.exit_code == 0
 
     # check that the 50 demo patients where inserted into database

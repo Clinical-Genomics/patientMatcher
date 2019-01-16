@@ -5,3 +5,6 @@ mongomock<=3.12
 
 # server-related stuff
  requests
+
+# database connection
+pymongo<3.7

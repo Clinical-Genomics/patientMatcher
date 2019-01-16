@@ -32,7 +32,7 @@ def node(is_client, id, token, url, contact=None):
 @add.command()
 @click.option('-monarch_phenotypes/-no_monarch_phenotypes', default=False)
 @with_appcontext
-def demo_patients(monarch_phenotypes):
+def demodata(monarch_phenotypes):
     """Adds a set of 50 demo patients to database"""
     click.echo('Adding 50 test patients to database..')
     path_to_json_patients = os.path.abspath(os.path.join(current_app.root_path, 'resources', 'benchmark_patients.json'))
@@ -42,4 +42,4 @@ def demo_patients(monarch_phenotypes):
 
 
 add.add_command(node)
-add.add_command(demo_patients)
+add.add_command(demodata)
