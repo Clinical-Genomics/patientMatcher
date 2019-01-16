@@ -17,6 +17,14 @@ def test_load_demo_patients(demo_data_path, database):
     inserted_ids = load_demo(demo_data_path, database)
     assert len(inserted_ids) == 50 # 50 test cases should be loaded
 
+    # make sure that trying to re-insert the same patients will not work
+    re_inserted_ids = load_demo(demo_data_path, database)
+    assert len(re_inserted_ids) == 0
+
+    # try to call load_demo with an invalid patient file:
+    inserted_ids = load_demo('this_is_a_fakey_json_file.json', database)
+    assert len(inserted_ids) == 0
+
 
 def test_backend_remove_patient(json_patients, database):
     """ Test adding 2 test patients and then removing them using label or ID """
@@ -33,7 +41,7 @@ def test_backend_remove_patient(json_patients, database):
 
     # make sure that inserted patients contain computed phenotypes from Monarch
     a_patient = database['patients'].find_one()
-    #assert len(a_patient['monarch_phenotypes']) == 5 --------------------------------------------!
+    assert len(a_patient['monarch_phenotypes']) == 5
 
     # test removing a patient by ID:
     remove_query = {'_id' : 'patient_1'}

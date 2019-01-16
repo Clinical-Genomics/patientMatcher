@@ -30,17 +30,16 @@ def node(is_client, id, token, url, contact=None):
 
 
 @add.command()
-@click.option('-compute_phenotypes', is_flag=True, default=True, help='compute phenotypes from HPO terms')
+@click.option('-monarch_phenotypes/-no_monarch_phenotypes', default=False)
 @with_appcontext
-def demo_patients(compute_phenotypes):
+def demodata(monarch_phenotypes):
     """Adds a set of 50 demo patients to database"""
     click.echo('Adding 50 test patients to database..')
-
     path_to_json_patients = os.path.abspath(os.path.join(current_app.root_path, 'resources', 'benchmark_patients.json'))
-    inserted_ids = load_demo(path_to_json_data=path_to_json_patients, mongo_db=current_app.db, compute_phenotypes=compute_phenotypes)
-
+    inserted_ids = load_demo(path_to_json_data=path_to_json_patients, mongo_db=current_app.db, compute_phenotypes=monarch_phenotypes)
     click.echo('inserted {} patients into db'.format(len(inserted_ids)))
 
 
+
 add.add_command(node)
-add.add_command(demo_patients)
+add.add_command(demodata)

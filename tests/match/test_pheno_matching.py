@@ -15,10 +15,10 @@ def test_monarch_phenotypes():
     computed_phenotypes = monarch_phenotypes(HPO_terms)
 
     # only the 5 topmost hits should be returned
-    #assert len(computed_phenotypes) == 5  --------------------------------------------!
+    assert len(computed_phenotypes) == 5
 
-    # matches should be ranked from the highest --------------------------------------------!
-    #assert computed_phenotypes[0]['combined_score'] > computed_phenotypes[4]['combined_score']
+    # matches should be ranked from the highest
+    assert computed_phenotypes[0]['combined_score'] > computed_phenotypes[4]['combined_score']
 
 
 def test_phenotype_matching(json_patients, database, demo_data_path):

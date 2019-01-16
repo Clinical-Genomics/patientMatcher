@@ -72,13 +72,6 @@ def test_internal_match_view():
 
 
 
-
-
-
-
-
-
-
 def get_headers(test_token):
     head = {'X-Auth-Token': test_token}
     return head
