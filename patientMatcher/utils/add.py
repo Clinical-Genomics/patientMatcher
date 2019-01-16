@@ -16,7 +16,7 @@ def load_demo(path_to_json_data, mongo_db, compute_phenotypes=False):
 
         Args:
             path_to_demo_data(str): absolute path to json file containing the demo patients.
-            mongo_db(pymongo.database.Database),
+            mongo_db(pymongo.database.Database)
             compute_phenotypes(bool) : if True most likely phenotypes will be computed using Monarch
 
         Returns:
