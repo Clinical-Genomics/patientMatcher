@@ -3,8 +3,7 @@
 
 import click
 import pymongo
-from flask.cli import FlaskGroup
-from flask.cli import with_appcontext, current_app
+from flask.cli import FlaskGroup, with_appcontext
 from patientMatcher import create_app
 from .add import add
 from .remove import remove
