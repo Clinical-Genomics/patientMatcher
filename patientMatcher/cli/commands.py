@@ -22,7 +22,7 @@ def appname():
 @with_appcontext
 def testconnect():
     """Retrieves the names of all collections in db"""
-    collections = current_app.db.list_collection_names()
+    collections = current_app.db.collection_names()
     click.echo('Testing connection. Collections in database: {}'.format(collections))
 
 
