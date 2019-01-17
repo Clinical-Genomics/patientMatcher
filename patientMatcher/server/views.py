@@ -3,7 +3,9 @@
 import logging
 from flask import Blueprint, request, current_app, jsonify
 from patientMatcher import create_app
+from patientMatcher.utils.add import backend_add_patient
 from patientMatcher.auth.auth import authorize
+from patientMatcher.parse.patient import validate_api, mme_patient
 from patientMatcher.constants import STATUS_CODES
 from . import controllers
 
@@ -12,7 +14,38 @@ blueprint = Blueprint('server', __name__)
 
 @blueprint.route('/patient/add', methods=['POST'])
 def add():
-    return "Patient add"
+    """Add patient to database"""
+    #check if request is authorized
+    if not authorize(current_app.db, request):
+        return controllers.bad_request(401)
+
+    try: # make sure request has valid json data
+        request_json = request.get_json(force=True)
+    except Exception as err:
+        LOG.info("Json data in request is not valid:{}".format(err))
+        return controllers.bad_request(400)
+
+    try: # validate json data against MME API
+        validate_api(json_obj=request_json, is_request=True)
+    except Exception as err:
+        LOG.info("Patient data does not conform to API:{}".format(err))
+        return controllers.bad_request(422)
+
+    formatted_patient = mme_patient(json_patient=request_json['patient'], compute_phenotypes=True)
+    modified, inserted = backend_add_patient(current_app.db['patients'], formatted_patient)
+    message = ''
+
+    if modified:
+        message = 'Patient was successfully updated.'.format(formatted_patient['_id'])
+    elif inserted:
+        message = 'Patient was successfully inserted into database.'.format(formatted_patient['_id'])
+    else:
+        message = 'Database content is unchanged.'
+
+    resp = jsonify(message)
+    resp.status_code = 200
+    return resp
+
 
 
 @blueprint.route('/patient/delete', methods=['DELETE'])
@@ -28,12 +61,12 @@ def view():
         LOG.info('Authorized clients requests all patients..')
         results = controllers.get_patients(database=current_app.db)
         resp = jsonify(results)
-        resp.status_code = STATUS_CODES['ok']['status_code']
+        resp.status_code = 200
 
     else: # not authorized, return a 401 status code
-        message = STATUS_CODES['unauthorized']['message']
+        message = STATUS_CODES[401]['message']
         resp = jsonify(message)
-        resp.status_code = STATUS_CODES['unauthorized']['status_code']
+        resp.status_code = 401
 
     return resp
 

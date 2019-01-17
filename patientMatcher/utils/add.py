@@ -38,7 +38,7 @@ def load_demo(path_to_json_data, mongo_db, compute_phenotypes=False):
                 #parse patient into format accepted by database
                 patient = mme_patient(json_patient, compute_phenotypes)
 
-                inserted_id = backend_add_patient(patients_collection, patient)
+                inserted_id = backend_add_patient(patients_collection, patient)[1]
                 if inserted_id:
                     inserted_ids.append(inserted_id)
                 pbar.update()
@@ -51,7 +51,7 @@ def load_demo(path_to_json_data, mongo_db, compute_phenotypes=False):
 
 def backend_add_patient(patients_collection, patient):
     """
-        Insert a patient into patientMatcher database
+        Insert or update a patient in patientMatcher database
 
         Args:
             patients_collection(pymongo.collection.Collection): a pymongo collection
@@ -60,15 +60,17 @@ def backend_add_patient(patients_collection, patient):
         Returns:
             inserted_id(str) : the ID of the inserted patient or None if patient couldn't be saved
     """
-
-    LOG.info("Adding patient with ID {} to database".format(patient.get('_id')))
-    inserted_id = None
+    modified = None
+    upserted = None
     try:
-        inserted_id = patients_collection.insert_one(patient).inserted_id
+        result = patients_collection.replace_one({'_id': patient['_id']}, patient , upsert=True)
+        modified = result.modified_count
+        upserted = result.upserted_id
+
     except Exception as err:
         LOG.fatal("Error while inserting a patient into database: {}".format(err))
 
-    return inserted_id
+    return modified, upserted
 
 
 def add_node(mongo_db, id, token, is_client, url, contact):
