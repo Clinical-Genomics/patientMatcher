@@ -8,9 +8,9 @@ from patientMatcher.utils.add import load_demo
 
 app = create_app()
 
-def test_baseapp():
+def test_appcontext():
     runner = app.test_cli_runner()
-    result = runner.invoke(cli, ['appname'])
+    result = runner.invoke(cli, ['appcontext'])
     assert result.output == 'patientMatcher\n'
 
 
@@ -66,8 +66,12 @@ def test_cli_remove_patient(database, json_patients):
     # there is now 1 patient in database
     assert database['patients'].find().count() == 1
 
-    # involke cli command to remove the patient
-    result =  runner.invoke(cli, ['remove', 'patient', '-id', inserted_id])
+    # test that without a valid id or label no patient is removed
+    result =  runner.invoke(cli, ['remove', 'patient', '-id', '', '-label', ''])
+    assert 'Error' in result.output
+
+    # involke cli command to remove the patient by id and label
+    result =  runner.invoke(cli, ['remove', 'patient', '-id', inserted_id, '-label', 'Patient number 2'])
     assert result.exit_code == 0
 
     # check that the patient was removed from database
