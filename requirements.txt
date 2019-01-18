@@ -1,6 +1,7 @@
 ## server
 Flask
 requests
+jsonschema
 
 ## database connection
 pymongo<3.7

@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 
+import json
+from jsonschema import validate, RefResolver, FormatChecker, ValidationError
+from pkgutil import get_data
 import logging
 from patientMatcher.utils.phenotype import monarch_phenotypes
 
 LOG = logging.getLogger(__name__)
+SCHEMA_FILE = 'api.json'
 
 def mme_patient(json_patient, compute_phenotypes=False):
     """
@@ -134,3 +138,28 @@ def gtfeatures_to_variants(gtfeatures):
             variants.append(feature['variant'])
 
     return variants
+
+
+def validate_api(json_obj, is_request):
+    """Validates a request against the MME API
+       The code for the validation against the API and the API specification is taken from
+       this project: https://github.com/MatchmakerExchange/reference-server
+
+    Args:
+        json_obj(dict): json request or response to validate
+        is_request(bool): True if it is a request, False if it is a response
+
+    Returns
+        validated(bool): True or False
+    """
+    validated = True
+    schema = '#/definitions/response'
+    if is_request:
+        schema = '#/definitions/request'
+
+    # get API definitions
+    schema_data = json.loads(get_data('patientMatcher.resources', SCHEMA_FILE).decode('utf-8'))
+    resolver = RefResolver.from_schema(schema_data)
+    format_checker = FormatChecker()
+    resolver_schema = resolver.resolve_from_url(schema)
+    validate(json_obj, resolver_schema, resolver=resolver, format_checker=format_checker)
