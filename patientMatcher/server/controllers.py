@@ -16,7 +16,9 @@ def get_patients(database, patient_ids=None):
     return json_like_patients
 
 def check_request(database, request):
-    """Check if request is valid, if it is return MME formatted patient"""
+    """Check if request is valid, if it is return MME formatted patient
+       Otherwise return error code.
+    """
     check_result = None
 
     # check that request is using a valid auth token
@@ -38,6 +40,18 @@ def check_request(database, request):
 
     formatted_patient = mme_patient(json_patient=request_json['patient'], compute_phenotypes=True)
     return formatted_patient
+
+
+def validate_response(matches):
+    """Validates patient matching results before sending them away in a response"""
+
+    for match in matches:
+        try: # validate json data against MME API
+            validate_api(json_obj=match, is_request=False)
+        except Exception as err:
+            LOG.info("Patient data does not conform to API:{}".format(err))
+            return 422
+    return matches
 
 
 def bad_request(error_code):

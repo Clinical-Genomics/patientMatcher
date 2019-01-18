@@ -4,7 +4,7 @@ import json
 import pymongo
 from werkzeug.datastructures import Headers
 from patientMatcher import create_app
-from patientMatcher.utils.add import add_node
+from patientMatcher.utils.add import add_node, load_demo
 from patientMatcher.auth.auth import authorize
 
 app = create_app()
@@ -84,13 +84,6 @@ def test_add_patient(database, json_patients, demo_node):
     assert database['patients'].find({'label' : 'modified patient label'}).count() == 1
 
 
-
-
-
-
-
-
-
 def test_delete_patient():
     # send a DELETE request to patient delete view
     response = app.test_client().delete('patient/delete')
@@ -105,25 +98,35 @@ def test_patient_matches():
     # yet to be implemented!
 
 
-def test_match_view():
-    # send a POST request to the external match view
-    response = app.test_client().post('/match')
-    assert response.status_code == 200
-    # yet to be implemented!
+def test_match_view(json_patients, demo_node, demo_data_path, database):
+    """Testing patient matching against patientMatcher database (internal match)"""
+    app.db = database
+
+    # add an authorized client to database
+    ok_token = demo_node['auth_token']
+    add_node(mongo_db=app.db, id=demo_node['_id'], token=ok_token,
+        is_client=True, url=demo_node['base_url'], contact=demo_node['contact_email'])
+
+    query_patient = {'patient' : json_patients[0]}
+
+    # load demo data in mock database
+    inserted_ids = load_demo(demo_data_path, database, False)
+
+    # send a POST request to match patient with patients in database
+    response = app.test_client().post('/match', data=json.dumps(query_patient), headers = get_headers(demo_node['auth_token']))
+    assert response.status_code == 200 # POST request should be successful
+    data = json.loads(response.data)
+    assert data['results'] # data should contain results object
+    assert type(data['results']) == list # which is a list
+    assert 'patient' in data['results'][0] # of patients
+    assert 'score' in data['results'][0]['patient'] # with matching scores
 
 
-def test_internal_match_view():
+def test_external_match_view():
     # send a POST request to the internal match view
-    response = app.test_client().post('/match/internal')
+    response = app.test_client().post('/match/external')
     assert response.status_code == 200
     # yet to be implemented!
-
-
-
-
-
-
-
 
 
 def get_headers(test_token):
