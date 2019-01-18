@@ -4,6 +4,7 @@ import logging
 
 from patientMatcher.match.genotype_matcher import match as genomatch
 from patientMatcher.match.phenotype_matcher import match as phenomatch
+from patientMatcher.parse.patient import json_patients
 
 LOG = logging.getLogger(__name__)
 
@@ -17,7 +18,7 @@ def database_matcher(database, patient_obj, max_pheno_score, max_geno_score):
         max_geno_score(float): a number between 0 and 1
 
     Returns:
-        sorted_matches(list): a list of patient matches sorted by descending score
+        sorted_json_matches(list): a list of json-like patient matches sorted by descending score
     """
     pheno_matches = []
     geno_matches = []
@@ -53,19 +54,17 @@ def database_matcher(database, patient_obj, max_pheno_score, max_geno_score):
             patient_obj = geno_matches[key]['patient_obj']
 
         p_score = pheno_score + geno_score
-
-        match = {
-            'score' : {
-                'patient' : p_score,
-                'genotype' : geno_score,
-                'phenotype' : pheno_score
-            },
-            'patient' : patient_obj
+        #patient_obj.pop('monarch_phenotypes')
+        patient_obj['score'] = {
+            'patient' : p_score,
+            'genotype' : geno_score,
+            'phenotype' : pheno_score
         }
-        matches.append(match)
+        matches.append(patient_obj)
 
     # sort patient matches by patient (combined) score
     sorted_matches = sorted(matches, key=lambda k : k['score']['patient'], reverse=True)
+    sorted_json_matches = json_patients(sorted_matches)
 
     # return sorted matches
-    return sorted_matches
+    return sorted_json_matches

@@ -53,7 +53,8 @@ def json_patients(mme_patients):
     """
     json_patients = []
     for mme_p in mme_patients:
-        mme_p.pop('monarch_phenotypes')
+        if 'monarch_phenotypes' in mme_p:
+            mme_p.pop('monarch_phenotypes')
         mme_p['id'] = mme_p['_id']
         mme_p.pop('_id')
 
