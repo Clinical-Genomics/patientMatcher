@@ -47,7 +47,13 @@ def test_add_patient(database, json_patients, demo_node):
     add_node(mongo_db=app.db, id=demo_node['_id'], token=ok_token,
         is_client=True, url=demo_node['base_url'], contact=demo_node['contact_email'])
 
-    # add a malformed patient using a valid auth token
+    # send a malformed json object using a valid auth token
+    malformed_json = "{'_id': 'patient_id' }"
+    response = app.test_client().post('patient/add', data=malformed_json, headers = get_headers(demo_node['auth_token']))
+    # and check that you get the correct error code from server(400)
+    assert response.status_code == 400
+
+    # add a patient not conforming to MME API using a valid auth token
     response = app.test_client().post('patient/add', data=json.dumps(patient_data), headers = get_headers(demo_node['auth_token']))
     # and check that the server returns an error 422 (unprocessable entity)
     assert response.status_code == 422
