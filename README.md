@@ -1,5 +1,5 @@
-# patientMatcher [![Build Status][travis-image]][travis-url] [![Coverage Status][coveralls-image]][coveralls-url]
-A MatchMaker Exchange server
+# patientMatcher [![Build Status][travis-image]][travis-url]
+[![Coverage Status](https://coveralls.io/repos/github/Clinical-Genomics/patientMatcher/badge.svg?branch=master)](https://coveralls.io/github/Clinical-Genomics/patientMatcher?branch=master)
 
 ## Installation
 Clone the repository from github using this command:
@@ -64,6 +64,3 @@ This way patients will be evaluated for genetic similarity even if the variants 
 
 [travis-url]: https://travis-ci.org/Clinical-Genomics/patientMatcher
 [travis-image]: https://img.shields.io/travis/Clinical-Genomics/patientMatcher.svg?style=flat-square
-
-[coveralls-url]: https://coveralls.io/github/Clinical-Genomics/patientMatcher
-[coveralls-image]: https://coveralls.io/repos/github/Clinical-Genomics/patientMatcher/badge.svg?branch=master
