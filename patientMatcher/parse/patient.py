@@ -29,7 +29,7 @@ def mme_patient(json_patient, compute_phenotypes=False):
         'features' : json_patient['features'],
         'genomicFeatures' : json_patient.get('genomicFeatures'),
         'disorders' : json_patient.get('disorders'),
-        'species' : json_patient.get('soecies'),
+        'species' : json_patient.get('species'),
         'ageOfOnset' : json_patient.get('ageOfOnset'),
         'inheritanceMode' : json_patient.get('inheritanceMode')
     }
