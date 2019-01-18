@@ -6,6 +6,7 @@ from werkzeug.datastructures import Headers
 from patientMatcher import create_app
 from patientMatcher.utils.add import add_node, load_demo
 from patientMatcher.auth.auth import authorize
+from patientMatcher.server.controllers import validate_response
 
 app = create_app()
 
@@ -111,6 +112,10 @@ def test_match_view(json_patients, demo_node, demo_data_path, database):
 
     # load demo data in mock database
     inserted_ids = load_demo(demo_data_path, database, False)
+
+    # test the API response validator with non valid patient data:
+    malformed_patient = ['fakey_patient']
+    assert validate_response(malformed_patient) == 422
 
     # send a POST request to match patient with patients in database
     response = app.test_client().post('/match', data=json.dumps(query_patient), headers = get_headers(demo_node['auth_token']))
