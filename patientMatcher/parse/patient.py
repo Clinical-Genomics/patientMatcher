@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import json
-from jsonschema import validate, RefResolver, FormatChecker, ValidationError
+from jsonschema import validate, RefResolver, FormatChecker
 from pkgutil import get_data
 import logging
 from patientMatcher.utils.phenotype import monarch_phenotypes
@@ -39,28 +39,28 @@ def mme_patient(json_patient, compute_phenotypes=False):
         computed_phenotypes = monarch_phenotypes(hpo_terms)
         mme_patient['monarch_phenotypes'] = computed_phenotypes
 
+    # remove keys with empty values from mme_patient object
+    mme_patient = {k:v for k,v in mme_patient.items() if v is not None}
+
     return mme_patient
 
 
-def json_patients(mme_patients):
-    """ Converts a list of mme patients into a list json patient as in the MME APIs
+def json_patient(mme_patient):
+    """ Converts a mme patient into a json-like as in the MME APIs
 
         Args:
-            mme_patients(list): a list of patients as in patientMatcher patients collection
+            mme_patient(dict): a patient object as it is stored in database
 
         Returns:
-            json_patients(list): a list of json-like patients to be included in server response
+            json_patient(dict): a patient object conforming to MME API
     """
-    json_patients = []
-    for mme_p in mme_patients:
-        if 'monarch_phenotypes' in mme_p:
-            mme_p.pop('monarch_phenotypes')
-        mme_p['id'] = mme_p['_id']
-        mme_p.pop('_id')
+    json_patient = mme_patient
+    if 'monarch_phenotypes' in json_patient:
+        json_patient.pop('monarch_phenotypes')
+    json_patient['id'] = json_patient['_id']
+    json_patient.pop('_id')
 
-        json_patients.append(mme_p)
-
-    return json_patients
+    return json_patient
 
 
 def features_to_hpo(features):
@@ -157,6 +157,8 @@ def validate_api(json_obj, is_request):
     schema = '#/definitions/response'
     if is_request:
         schema = '#/definitions/request'
+
+    LOG.info("Validating against SCHEMA {}".format(schema))
 
     # get API definitions
     schema_data = json.loads(get_data('patientMatcher.resources', SCHEMA_FILE).decode('utf-8'))

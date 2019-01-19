@@ -114,8 +114,8 @@ def test_match_view(json_patients, demo_node, demo_data_path, database):
     inserted_ids = load_demo(demo_data_path, database, False)
 
     # test the API response validator with non valid patient data:
-    malformed_patient = ['fakey_patient']
-    assert validate_response(malformed_patient) == 422
+    malformed_match_results = 'fakey result'
+    assert validate_response(malformed_match_results) == 422
 
     # send a POST request to match patient with patients in database
     response = app.test_client().post('/match', data=json.dumps(query_patient), headers = get_headers(demo_node['auth_token']))
@@ -124,7 +124,7 @@ def test_match_view(json_patients, demo_node, demo_data_path, database):
     assert data['results'] # data should contain results object
     assert type(data['results']) == list # which is a list
     assert 'patient' in data['results'][0] # of patients
-    assert 'score' in data['results'][0]['patient'] # with matching scores
+    assert 'score' in data['results'][0] # with matching scores
 
 
 def test_external_match_view():
