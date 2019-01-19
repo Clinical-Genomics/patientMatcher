@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 import logging
 from flask import jsonify
+from jsonschema import ValidationError
 from patientMatcher.constants import STATUS_CODES
 from patientMatcher.utils.patient import patients
-from patientMatcher.parse.patient import json_patients, validate_api, mme_patient
+from patientMatcher.parse.patient import json_patient, validate_api, mme_patient
 from patientMatcher.auth.auth import authorize
 
 LOG = logging.getLogger(__name__)
@@ -11,8 +12,7 @@ LOG = logging.getLogger(__name__)
 def get_patients(database, patient_ids=None):
     """return all patients in response to client"""
     mme_patients = list(patients(database, patient_ids))
-    json_like_patients = json_patients(mme_patients)
-
+    json_like_patients = [json_patient(mmep) for mmep in mme_patients]
     return json_like_patients
 
 def check_request(database, request):
@@ -45,12 +45,11 @@ def check_request(database, request):
 def validate_response(matches):
     """Validates patient matching results before sending them away in a response"""
 
-    for match in matches:
-        try: # validate json data against MME API
-            validate_api(json_obj=match, is_request=False)
-        except Exception as err:
-            LOG.info("Patient data does not conform to API:{}".format(err))
-            return 422
+    try: # validate json data against MME API
+        validate_api(json_obj=matches, is_request=False)
+    except ValidationError as err:
+        LOG.info("Patient data does not conform to API:{}".format(err))
+        return 422
     return matches
 
 
