@@ -4,7 +4,7 @@ import json
 import pymongo
 from werkzeug.datastructures import Headers
 from patientMatcher import create_app
-from patientMatcher.utils.add import add_node
+from patientMatcher.utils.add import add_node, load_demo
 from patientMatcher.auth.auth import authorize
 
 app = create_app()
@@ -62,7 +62,7 @@ def test_add_patient(database, json_patients, demo_node):
     # There should be one patient in database now
     assert database['patients'].find().count() == 1
     # the patient in database has label "Patient number 2"
-    assert database['patients'].find({'label' : 'Patient number 2'}).count() == 1
+    assert database['patients'].find({'label' : 'Patient number 1'}).count() == 1
 
     # modify patient label and check the update command (add a patient with the same id) works
     patient_data['label'] = 'modified patient label'
@@ -74,22 +74,38 @@ def test_add_patient(database, json_patients, demo_node):
     assert database['patients'].find().count() == 1
 
     # But its label is changed
-    assert database['patients'].find({'label' : 'Patient number 2'}).count() == 0
+    assert database['patients'].find({'label' : 'Patient number 1'}).count() == 0
     assert database['patients'].find({'label' : 'modified patient label'}).count() == 1
 
 
+def test_delete_patient(database, demo_data_path, demo_node):
+    """Test deleting a patient from database by sending a DELETE request"""
 
+    app.db = database
+    # load demo data to mock database using function located under utils/load
+    inserted_ids = load_demo(demo_data_path, database)
+    assert len(inserted_ids) == 50 # 50 test cases should be loaded
 
+    # 50 cases present on patients collection
+    assert database['patients'].find().count() == 50
 
+    delete_id = inserted_ids[0]
 
+    # try to delete patient without auth token:
+    response = app.test_client().delete(''.join(['patient/delete/', delete_id]))
+    assert response.status_code == 401
 
+    # Add a valid client node
+    ok_token = demo_node['auth_token']
+    add_node(mongo_db=app.db, id=demo_node['_id'], token=ok_token,
+        is_client=True, url=demo_node['base_url'], contact=demo_node['contact_email'])
 
-
-def test_delete_patient():
-    # send a DELETE request to patient delete view
-    response = app.test_client().delete('patient/delete')
+    # Send delete request providing a valid token
+    response = app.test_client().delete(''.join(['patient/delete/', delete_id]), headers = get_headers(ok_token))
     assert response.status_code == 200
-    # yet to be implemented!
+
+    # make sure that the patient was removed from database
+    assert database['patients'].find().count() == 49
 
 
 def test_patient_matches():

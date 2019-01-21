@@ -71,7 +71,7 @@ def test_cli_remove_patient(database, json_patients):
     assert 'Error' in result.output
 
     # involke cli command to remove the patient by id and label
-    result =  runner.invoke(cli, ['remove', 'patient', '-id', inserted_id, '-label', 'Patient number 2'])
+    result =  runner.invoke(cli, ['remove', 'patient', '-id', inserted_id, '-label', 'Patient number 1'])
     assert result.exit_code == 0
 
     # check that the patient was removed from database

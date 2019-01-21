@@ -55,6 +55,7 @@ def delete(patient_id):
         message = STATUS_CODES[401]['message']
         resp = jsonify(message)
         resp.status_code = 401
+        return resp
 
     LOG.info('Authorized client is removing patient with id {}'.format(patient_id))
     message = controllers.delete_patient(current_app.db, patient_id)

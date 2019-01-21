@@ -49,7 +49,7 @@ def json_patients():
     {
         "contact": {
           "href": "http://test_institute.se",
-          "name": "Another user"
+          "name": "A contact at an institute"
         },
         "features": [
           {
@@ -118,13 +118,13 @@ def json_patients():
             },
             "zygosity": 1
         }],
-        "id": "patient_2",
-        "label": "Patient number 2"
+        "id": "patient_1",
+        "label": "Patient number 1"
     },
     {
         "contact": {
           "href": "http://test_institute.se",
-          "name": "A User"
+          "name": "A contact at an institute"
         },
         "features": [
           {
@@ -153,7 +153,7 @@ def json_patients():
             "zygosity": 1
           },
         ],
-        "id": "patient_1",
-        "label": "Patient number 1"
+        "id": "patient_2",
+        "label": "Patient number 2"
     }]
     return fakey_patients
