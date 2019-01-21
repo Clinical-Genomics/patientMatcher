@@ -48,7 +48,7 @@ def json_patients():
     fakey_patients = [
     {
         "contact": {
-          "href": "mme_user@mail.com",
+          "href": "http://test_institute.se",
           "name": "Another user"
         },
         "features": [
@@ -123,7 +123,7 @@ def json_patients():
     },
     {
         "contact": {
-          "href": "mme_user@mail.com",
+          "href": "http://test_institute.se",
           "name": "A User"
         },
         "features": [
