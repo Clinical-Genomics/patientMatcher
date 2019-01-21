@@ -48,13 +48,8 @@ def json_patients():
     fakey_patients = [
     {
         "contact": {
-<<<<<<< HEAD
           "href": "http://test_institute.se",
           "name": "A contact at an institute"
-=======
-          "href": "http://an_institution.com",
-          "name": "Another user"
->>>>>>> 4a5a3218afdf929ec56131481905260363564460
         },
         "features": [
           {
@@ -128,13 +123,8 @@ def json_patients():
     },
     {
         "contact": {
-<<<<<<< HEAD
           "href": "http://test_institute.se",
           "name": "A contact at an institute"
-=======
-          "href": "http://an_institution.com",
-          "name": "A User"
->>>>>>> 4a5a3218afdf929ec56131481905260363564460
         },
         "features": [
           {

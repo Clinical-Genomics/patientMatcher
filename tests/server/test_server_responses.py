@@ -85,7 +85,6 @@ def test_add_patient(database, json_patients, demo_node):
     assert database['patients'].find({'label' : 'modified patient label'}).count() == 1
 
 
-<<<<<<< HEAD
 def test_delete_patient(database, demo_data_path, demo_node):
     """Test deleting a patient from database by sending a DELETE request"""
 
@@ -110,11 +109,6 @@ def test_delete_patient(database, demo_data_path, demo_node):
 
     # Send delete request providing a valid token
     response = app.test_client().delete(''.join(['patient/delete/', delete_id]), headers = get_headers(ok_token))
-=======
-def test_delete_patient():
-    # send a DELETE request to patient delete view
-    response = app.test_client().delete('patient/delete')
->>>>>>> 4a5a3218afdf929ec56131481905260363564460
     assert response.status_code == 200
 
     # make sure that the patient was removed from database

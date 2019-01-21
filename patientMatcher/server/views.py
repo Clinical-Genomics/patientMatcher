@@ -38,7 +38,6 @@ def add():
     return resp
 
 
-<<<<<<< HEAD
 @blueprint.route('/patient/delete/<patient_id>', methods=['DELETE'])
 def delete(patient_id):
     #check if request is authorized
@@ -54,11 +53,6 @@ def delete(patient_id):
     resp = jsonify(message)
     resp.status_code = 200
     return resp
-=======
-@blueprint.route('/patient/delete', methods=['DELETE'])
-def delete():
-    return "Patient delete"
->>>>>>> 4a5a3218afdf929ec56131481905260363564460
 
 
 @blueprint.route('/patient/view', methods=['GET'])
