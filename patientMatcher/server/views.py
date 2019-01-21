@@ -38,9 +38,21 @@ def add():
     return resp
 
 
-@blueprint.route('/patient/delete', methods=['DELETE'])
-def delete():
-    return "Patient delete"
+@blueprint.route('/patient/delete/<patient_id>', methods=['DELETE'])
+def delete(patient_id):
+    #check if request is authorized
+    resp = None
+    if not authorize(current_app.db, request): # not authorized, return a 401 status code
+        message = STATUS_CODES[401]['message']
+        resp = jsonify(message)
+        resp.status_code = 401
+        return resp
+
+    LOG.info('Authorized client is removing patient with id {}'.format(patient_id))
+    message = controllers.delete_patient(current_app.db, patient_id)
+    resp = jsonify(message)
+    resp.status_code = 200
+    return resp
 
 
 @blueprint.route('/patient/view', methods=['GET'])
@@ -48,7 +60,7 @@ def view():
     """Get all patients in database"""
     resp = None
     if authorize(current_app.db, request):
-        LOG.info('Authorized clients requests all patients..')
+        LOG.info('Authorized client requests all patients..')
         results = controllers.get_patients(database=current_app.db)
         resp = jsonify(results)
         resp.status_code = 200

@@ -6,6 +6,7 @@ from patientMatcher.constants import STATUS_CODES
 from patientMatcher.utils.patient import patients
 from patientMatcher.parse.patient import json_patient, validate_api, mme_patient
 from patientMatcher.auth.auth import authorize
+from patientMatcher.utils.delete import delete_by_query
 
 LOG = logging.getLogger(__name__)
 
@@ -59,3 +60,15 @@ def bad_request(error_code):
     resp = jsonify(message)
     resp.status_code = error_code
     return resp
+
+
+def delete_patient(database, patient_id):
+    """Remove a patient by ID"""
+    message = ''
+    query = {'_id' : patient_id}
+    deleted = delete_by_query(query, database, 'patients')
+    if deleted == 1:
+        message = 'Patient was successfully deleted from database'
+    else:
+        message = 'ERROR. Could not delete a patient with ID {} from database'.format(patient_id)
+    return message

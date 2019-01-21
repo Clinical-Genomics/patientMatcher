@@ -14,17 +14,16 @@ def delete_by_query(query, mongo_db, mongo_collection):
         mongo_collection(str): the name of a collection
 
     Returns:
-        deleted_entries(int): the number of deleted deleted entries
+        deleted_entries(int): the number of deleted deleted entries or the error
     """
 
     LOG.info('Removing entries from collection "{0}" using the following parameters:{1}'.format(mongo_collection, query))
     deleted_entries = 0
+
     try:
         result = mongo_db[mongo_collection].delete_many(query)
         deleted_entries = result.deleted_count
-
     except Exception as err:
-        LOG.fatal("An error occurred while performing delete: {}".format(err))
-        sys.exit
+        deleted_entries = err
 
     return deleted_entries
