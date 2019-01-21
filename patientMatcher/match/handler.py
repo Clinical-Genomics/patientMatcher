@@ -4,6 +4,7 @@ import logging
 
 from patientMatcher.match.genotype_matcher import match as genomatch
 from patientMatcher.match.phenotype_matcher import match as phenomatch
+from patientMatcher.parse.patient import json_patient
 
 LOG = logging.getLogger(__name__)
 
@@ -26,7 +27,7 @@ def database_matcher(database, patient_obj, max_pheno_score, max_geno_score):
     # phenotype score can be obtained if patient has an associated phenotype (HPO or OMIM terms)
     if len(patient_obj['features']) or len(patient_obj['disorders']) > 0:
         LOG.info('Matching phenotypes against database patients..')
-        pheno_matches = phenomatch(database, max_pheno_score, patient_obj['features'], patient_obj['disorders'])
+        pheno_matches = phenomatch(database, max_pheno_score, patient_obj.get('features',[]), patient_obj.get('disorders',[]))
 
     # genomic score can be obtained if patient has at least one genomic feature
     if len(patient_obj['genomicFeatures']) > 0:
@@ -53,14 +54,14 @@ def database_matcher(database, patient_obj, max_pheno_score, max_geno_score):
             patient_obj = geno_matches[key]['patient_obj']
 
         p_score = pheno_score + geno_score
-
+        score = {
+            'patient' : p_score,
+            'genotype' : geno_score,
+            'phenotype' : pheno_score
+        }
         match = {
-            'score' : {
-                'patient' : p_score,
-                'genotype' : geno_score,
-                'phenotype' : pheno_score
-            },
-            'patient' : patient_obj
+            'patient' : json_patient(patient_obj),
+            'score' : score
         }
         matches.append(match)
 

@@ -6,6 +6,7 @@ from werkzeug.datastructures import Headers
 from patientMatcher import create_app
 from patientMatcher.utils.add import add_node, load_demo
 from patientMatcher.auth.auth import authorize
+from patientMatcher.server.controllers import validate_response
 
 app = create_app()
 
@@ -47,7 +48,13 @@ def test_add_patient(database, json_patients, demo_node):
     add_node(mongo_db=app.db, id=demo_node['_id'], token=ok_token,
         is_client=True, url=demo_node['base_url'], contact=demo_node['contact_email'])
 
-    # add a malformed patient using a valid auth token
+    # send a malformed json object using a valid auth token
+    malformed_json = "{'_id': 'patient_id' }"
+    response = app.test_client().post('patient/add', data=malformed_json, headers = get_headers(demo_node['auth_token']))
+    # and check that you get the correct error code from server(400)
+    assert response.status_code == 400
+
+    # add a patient not conforming to MME API using a valid auth token
     response = app.test_client().post('patient/add', data=json.dumps(patient_data), headers = get_headers(demo_node['auth_token']))
     # and check that the server returns an error 422 (unprocessable entity)
     assert response.status_code == 422
@@ -78,6 +85,7 @@ def test_add_patient(database, json_patients, demo_node):
     assert database['patients'].find({'label' : 'modified patient label'}).count() == 1
 
 
+<<<<<<< HEAD
 def test_delete_patient(database, demo_data_path, demo_node):
     """Test deleting a patient from database by sending a DELETE request"""
 
@@ -102,6 +110,11 @@ def test_delete_patient(database, demo_data_path, demo_node):
 
     # Send delete request providing a valid token
     response = app.test_client().delete(''.join(['patient/delete/', delete_id]), headers = get_headers(ok_token))
+=======
+def test_delete_patient():
+    # send a DELETE request to patient delete view
+    response = app.test_client().delete('patient/delete')
+>>>>>>> 4a5a3218afdf929ec56131481905260363564460
     assert response.status_code == 200
 
     # make sure that the patient was removed from database
@@ -115,25 +128,39 @@ def test_patient_matches():
     # yet to be implemented!
 
 
-def test_match_view():
-    # send a POST request to the external match view
-    response = app.test_client().post('/match')
-    assert response.status_code == 200
-    # yet to be implemented!
+def test_match_view(json_patients, demo_node, demo_data_path, database):
+    """Testing patient matching against patientMatcher database (internal match)"""
+    app.db = database
+
+    # add an authorized client to database
+    ok_token = demo_node['auth_token']
+    add_node(mongo_db=app.db, id=demo_node['_id'], token=ok_token,
+        is_client=True, url=demo_node['base_url'], contact=demo_node['contact_email'])
+
+    query_patient = {'patient' : json_patients[0]}
+
+    # load demo data in mock database
+    inserted_ids = load_demo(demo_data_path, database, False)
+
+    # test the API response validator with non valid patient data:
+    malformed_match_results = 'fakey result'
+    assert validate_response(malformed_match_results) == 422
+
+    # send a POST request to match patient with patients in database
+    response = app.test_client().post('/match', data=json.dumps(query_patient), headers = get_headers(demo_node['auth_token']))
+    assert response.status_code == 200 # POST request should be successful
+    data = json.loads(response.data)
+    assert data['results'] # data should contain results object
+    assert type(data['results']) == list # which is a list
+    assert 'patient' in data['results'][0] # of patients
+    assert 'score' in data['results'][0] # with matching scores
 
 
-def test_internal_match_view():
+def test_external_match_view():
     # send a POST request to the internal match view
-    response = app.test_client().post('/match/internal')
+    response = app.test_client().post('/match/external')
     assert response.status_code == 200
     # yet to be implemented!
-
-
-
-
-
-
-
 
 
 def get_headers(test_token):
