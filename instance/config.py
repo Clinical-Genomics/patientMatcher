@@ -9,10 +9,8 @@ SECRET_KEY = 'MySuperSecretKey'
 #PORT = 9020
 
 # Database connection string
-DB_URI = "mongodb://127.0.0.1:27017/pmatcher"
+DB_URI = "mongodb://pmUser:pmPassword@127.0.0.1:27017/pmatcher"
 DB_NAME = "pmatcher"
-DB_USER = 'pmUser'
-DB_PW = 'pmPassword'
 
 # Matching Algorithms scores
 # sum of MAX_GT_SCORE and MAX_PHENO_SCORE should be 1
