@@ -54,7 +54,6 @@ def json_patient(mme_patient):
         Returns:
             json_patient(dict): a patient object conforming to MME API
     """
-    LOG.info('IN HERE!!!!')
     json_patient = mme_patient
     if 'monarch_phenotypes' in json_patient:
         json_patient.pop('monarch_phenotypes')
