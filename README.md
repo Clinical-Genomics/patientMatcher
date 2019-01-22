@@ -1,11 +1,29 @@
 # patientMatcher
 [![Build Status](https://travis-ci.com/northwestwitch/patientMatcher.svg?branch=master)](https://travis-ci.com/northwestwitch/patientMatcher) [![Coverage Status](https://coveralls.io/repos/github/Clinical-Genomics/patientMatcher/badge.svg?branch=master&kill_cache=1)](https://coveralls.io/github/Clinical-Genomics/patientMatcher?branch=master)
 
+## Prerequisites
+To use this server you'll need to have a working instance of MongoDB. from the mongo shell you can create a database and an authenticated user to handle connections using this
+syntax:
+
+```bash
+use pmatcher
+db.createUser(
+   {
+     user: "pmUser",
+     pwd: "pmPassword",
+     roles: [ "dbOwner" ]
+   }
+)
+```
+
 ## Installation
 Clone the repository from github using this command:
 ```bash
 git clone https://github.com/Clinical-Genomics/patientMatcher.git
 ```
+
+To customize the server configuration you'll need to edit the "config.py" file under the /instance folder. For testing purposes you can keep the default configuration values as they are, but be sure no to use these values in production!
+
 
 Change directory to the cloned folder and from there install the software using the following command:
 ```bash
