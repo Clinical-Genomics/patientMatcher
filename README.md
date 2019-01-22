@@ -2,8 +2,7 @@
 [![Build Status](https://travis-ci.com/northwestwitch/patientMatcher.svg?branch=master)](https://travis-ci.com/northwestwitch/patientMatcher) [![Coverage Status](https://coveralls.io/repos/github/Clinical-Genomics/patientMatcher/badge.svg?branch=master&kill_cache=1)](https://coveralls.io/github/Clinical-Genomics/patientMatcher?branch=master)
 
 ## Prerequisites
-To use this server you'll need to have a working instance of MongoDB. from the mongo shell you can create a database and an authenticated user to handle connections using this
-syntax:
+To use this server you'll need to have a working instance of MongoDB. from the mongo shell you can create a database and an authenticated user to handle connections using this syntax:
 
 ```bash
 use pmatcher
@@ -41,7 +40,7 @@ pmatcher
 ```
 
 ### Adding demo data to server
-For testing purposed you can upload a list of [50 benchmarking patients](https://github.com/ga4gh/mme-apis/tree/master/testing).
+For testing purposes you can upload a list of [50 benchmarking patients](https://github.com/ga4gh/mme-apis/tree/master/testing).
 To add these patients to the database run the following command:
 ```bash
 pmatcher add demodata
@@ -79,7 +78,7 @@ POST request aimed at adding or modifying a patient in patientMatcher **should b
 
 
 ### Removing a patient from the database.
-You can remove a patient from the server using the command line interface using this command and providing **either its ID or its label** (or both actually).
+You can remove a patient using the command line interface by invoking this command and providing **either its ID or its label** (or both actually):
 
 ```bash
 pmatcher remove patient [OPTIONS]
@@ -202,13 +201,13 @@ This way patients will be evaluated for genetic similarity even if the variants 
 Phenotype similarity is calculated by taking into account **features, disorders and computed phenotypes** of a patient
 
 - **Patient features**
-Are specifies by the eventual HPO terms provided for the query patient. **Similarity between HPO features will make for half of the maximum similarity score** between two patients.
+Are specifies by the eventual HPO terms provided for the query patient. **Similarity between HPO features will make up half of the maximum similarity score** between two patients.
 
 - **Monarch phenotypes**
-Will be computed using the [Monarch Phenotype Profile Analysis tool](https://monarchinitiative.org/analyze/phenotypes). The 5 highest scored computed phenotypes obtained by submitting a patient's HPO terms to Monarch will be used for patient matching. The similarity between computed phenotypes **will make for 1/4 of the of the maximum similarity score between two patient. For patients with no OMIM diagnosis (empty disorders field) the Monarch phenotypes will count for half of the maximum similarity score between two patient**
+Will be computed using the [Monarch Phenotype Profile Analysis tool](https://monarchinitiative.org/analyze/phenotypes). The 5 highest scored computed phenotypes obtained by submitting a patient's HPO terms to Monarch will be used for patient matching. The similarity between computed phenotypes **will make up 1/4 of the of the maximum similarity score between two patient. For patients with no OMIM diagnosis (empty disorders field) the Monarch phenotypes will count for half of the maximum similarity score between two patient**
 
 - **Disorders**
-OMIM diagnoses, if available, will make for **1/4 of the maximum similarity score**.
+OMIM diagnoses, if available, will make up **1/4 of the maximum similarity score**.
 
 
 
