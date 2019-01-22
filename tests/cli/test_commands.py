@@ -8,9 +8,9 @@ from patientMatcher.utils.add import load_demo
 
 app = create_app()
 
-def test_appcontext():
+def test_appname():
     runner = app.test_cli_runner()
-    result = runner.invoke(cli, ['appcontext'])
+    result = runner.invoke(cli, ['appname'])
     assert result.output == 'patientMatcher\n'
 
 

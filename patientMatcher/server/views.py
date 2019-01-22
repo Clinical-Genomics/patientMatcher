@@ -23,13 +23,13 @@ def add():
         return controllers.bad_request(formatted_patient)
 
     # else import patient to database
-    modified, inserted = backend_add_patient(current_app.db['patients'], formatted_patient)
+    modified, inserted = backend_add_patient(mongo_db=current_app.db, patient=formatted_patient, match_external=True)
     message = ''
 
     if modified:
-        message = 'Patient was successfully updated.'.format(formatted_patient['_id'])
+        message = 'Patient was successfully updated.'
     elif inserted:
-        message = 'Patient was successfully inserted into database.'.format(formatted_patient['_id'])
+        message = 'Patient was successfully inserted into database.'
     else:
         message = 'Database content is unchanged.'
 

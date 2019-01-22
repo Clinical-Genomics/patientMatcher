@@ -4,7 +4,7 @@
 import click
 import pymongo
 from flask.cli import FlaskGroup, with_appcontext, current_app
-from patientMatcher import create_app
+from patientMatcher import create_app, run_app
 from .add import add
 from .remove import remove
 
@@ -12,7 +12,7 @@ cli = FlaskGroup(create_app=create_app)
 
 @cli.command()
 @with_appcontext
-def appcontext():
+def appname():
     """Returns the app name, for testing purposes, mostly"""
     click.echo(current_app.name)
 

@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import logging
-
+import datetime
+import requests
+import json
+from werkzeug.datastructures import Headers
 from patientMatcher.match.genotype_matcher import match as genomatch
 from patientMatcher.match.phenotype_matcher import match as phenomatch
 from patientMatcher.parse.patient import json_patient
@@ -70,3 +73,72 @@ def database_matcher(database, patient_obj, max_pheno_score, max_geno_score):
 
     # return sorted matches
     return sorted_matches
+
+
+def node_matcher(database, patient):
+    """Handles a query patient matching against all connected MME nodes
+
+    Args:
+        database(pymongo.database.Database)
+        patient(dict) : a MME patient entity
+
+    Returns:
+        matching_id(str): The ID of the matching object created in database
+    """
+
+    connected_nodes = list(database['nodes'].find()) #get all connected nodes
+    if len(connected_nodes) == 0:
+        LOG.error("Could't find any connected MME nodes. Aborting external matching.")
+        return None
+
+    # create request headers
+    headers = Headers()
+    data = {'patient': json_patient(patient)} # convert into something that follows the API specs
+
+    # this is saved to server, regardless of the results returned by the nodes
+    external_match = {
+        'created' : datetime.datetime.now(),
+        'has_matches' : False, # it changes if a similar patient is returned by any other MME nodes
+        'data' : data, # description of the patient submitted
+        'results' : [],
+        'errors' : []
+    }
+
+    LOG.info("Matching patient against {} nodes..".format(len(connected_nodes)))
+    for node in connected_nodes:
+
+        server_name = node['_id']
+        node_url = node['matching_url']
+        token = node['auth_token']
+        request_content_type = node['request_content_type']
+
+        headers = {'Content-Type': request_content_type, 'Accept': 'application/vnd.ga4gh.matchmaker.v1.0+json', "X-Auth-Token": token}
+        LOG.info('sending HTTP request to server: "{}"'.format(server_name))
+        # send request and get response from server
+        server_return = requests.request(
+            method = 'POST',
+            url = node_url,
+            headers = headers,
+            data = json.dumps(data)
+        )
+        json_response = None
+        try:
+            json_response = server_return.json()
+        except Exception as json_exp:
+            error = server_return.text
+            LOG.error('Server returned error:{}'.format(error))
+            external_match['errors'].append(error)
+
+        if json_response:
+            LOG.info('server returns the following response: {}'.format(json_response))
+            results = json_response['results']
+            if len(results):
+                external_match['has_matches'] = True
+                external_match['results'].append(results)
+
+    # save external match in database, "matches" collection
+    matching_id = database['matches'].insert_one(external_match).inserted_id
+
+
+    # INSERT HERE THE CODE TO SEND ALL EVENTUAL MATCHES BY EMAIL TO CLIENT!!!
+    return matching_id
