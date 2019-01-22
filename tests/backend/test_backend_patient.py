@@ -36,11 +36,12 @@ def test_backend_remove_patient(json_patients, database):
     assert len(test_mme_patients) == 2
 
     # insert the 2 patients into the database
-    inserted_ids = [ backend_add_patient(database['patients'], mme_patient) for mme_patient in test_mme_patients ]
+    inserted_ids = [ backend_add_patient(mongo_db=database, patient=mme_patient, match_external=False) for mme_patient in test_mme_patients ]
     assert len(inserted_ids) == 2
 
     # make sure that inserted patients contain computed phenotypes from Monarch
     a_patient = database['patients'].find_one()
+    assert a_patient
     assert len(a_patient['monarch_phenotypes']) == 5
 
     # test removing a patient by ID:

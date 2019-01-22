@@ -79,28 +79,18 @@ def backend_add_patient(mongo_db, patient, match_external=False):
     return modified, upserted
 
 
-def add_node(mongo_db, id, token, is_client, url, contact):
+def add_node(mongo_db, obj, is_client):
     """
         Insert a new node (client or server) into the database
 
         Args:
             mongo_db(pymongo.database.Database)
-            id(str): a unique ID to assign to the client/server
-            token(str): athorization token to submit patients or perform queries on database
+            obj(dict): a client or a server object to add to database
             is_client(bool): if True the new node a client of this server, if False this server is a client of the new the node
-            url(str): URL associated to the new client/Server
-            contact(str): email address of a contact at the client/server institution
 
         Returns:
-            inserted_id(str): the ID of the new node or None if node couldn't be saved
+            inserted_id(str), collection(str): a tuple with values inserted_id and collection name
     """
-
-    node_obj = {
-        '_id' : id,
-        'auth_token' : token,
-        'base_url' : url,
-        'contact_email' : contact
-    }
     inserted_id = None
     collection = None
 
@@ -110,7 +100,7 @@ def add_node(mongo_db, id, token, is_client, url, contact):
         collection = "nodes"
 
     try:
-        inserted_id = mongo_db[collection].insert_one(node_obj).inserted_id
+        inserted_id = mongo_db[collection].insert_one(obj).inserted_id
     except Exception as err:
         LOG.fatal('Error while inserting a new client/server node to database:{}'.format(err))
 

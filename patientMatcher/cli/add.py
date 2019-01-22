@@ -15,18 +15,47 @@ def add():
 @add.command()
 @click.option('-id', type=click.STRING, nargs=1, required=True, help="Server/Client ID")
 @click.option('-token', type=click.STRING, nargs=1, required=True, help="Authorization token")
-@click.option('-is_client', is_flag=True, default=False, help='If True the node is a client of patientMatcher')
-@click.option('-url', type=click.STRING, nargs=1, required=True, help="Server/client URL")
+@click.option('-matching_url', type=click.STRING, nargs=1, required=True, help="URL to send match requests to")
+@click.option('-accepted_content', type=click.STRING, nargs=1, required=True, help="Accepted Content-Type", default="application/vnd.ga4gh.matchmaker.v1.0+json")
 @click.option('-contact', type=click.STRING, nargs=1, required=False, help="An email address")
 @with_appcontext
-def node(is_client, id, token, url, contact=None):
-    """Registers a new client/server to database"""
-    click.echo("Adding new node to database. Is node client: {}".format(is_client))
-    inserted_id, collection = add_node(mongo_db=current_app.db, id=id, token=token, is_client=is_client, url=url, contact=contact)
+def node(id, token, matching_url, accepted_content, contact=None):
+    """Adds a new server to database"""
+    click.echo("Adding a new MatchMaker node to database")
+    node_obj = {
+        '_id' : id,
+        'auth_token' : token,
+        'matching_url' : matching_url,
+        'accepted_content' : accepted_content,
+        'contact' : contact
+    }
+    inserted_id, collection = add_node(mongo_db=current_app.db, obj=node_obj, is_client=False)
     if inserted_id:
         click.echo('Inserted node with ID "{}" into database collection {}'.format(inserted_id, collection))
     else:
         click.echo('Aborted')
+
+@add.command()
+@click.option('-id', type=click.STRING, nargs=1, required=True, help="Client ID")
+@click.option('-token', type=click.STRING, nargs=1, required=True, help="Authorization token")
+@click.option('-url', type=click.STRING, nargs=1, required=True, help="Client URL")
+@click.option('-contact', type=click.STRING, nargs=1, required=False, help="Client email")
+@with_appcontext
+def client(id, token, url, contact=None):
+    """Adds a new client to database"""
+    click.echo("Adding a new client to database")
+    client_obj = {
+        '_id' : id,
+        'auth_token' : token,
+        'base_url' : url,
+        'contact' : contact
+    }
+    inserted_id, collection = add_node(mongo_db=current_app.db, obj=client_obj, is_client=True)
+    if inserted_id:
+        click.echo('Inserted client with ID "{}" into database collection {}'.format(inserted_id, collection))
+    else:
+        click.echo('Aborted')
+
 
 
 @add.command()
@@ -40,6 +69,6 @@ def demodata(monarch_phenotypes):
     click.echo('inserted {} patients into db'.format(len(inserted_ids)))
 
 
-
 add.add_command(node)
+add.add_command(client)
 add.add_command(demodata)

@@ -31,13 +31,26 @@ def demo_data_path():
 
 
 @pytest.fixture(scope='function')
-def demo_node():
-    """Returns a server or a client object"""
-    node = {
-        '_id' : 'test_node',
+def test_client():
+    """Returns a test client object"""
+    client = {
+        '_id' : 'client_1',
         'auth_token' : 'superSecretToken',
-        'base_url' : 'test_node_institution.com',
-        'contact_email' : 'test_node@email.com'
+        'base_url' : 'http://test_node_institution.com',
+        'contact' : 'test_client@email.com'
+    }
+    return client
+
+
+@pytest.fixture(scope='function')
+def test_node():
+    """Returns a test client object"""
+    node = {
+        '_id' : 'node_1',
+        'auth_token' : 'superSecretToken',
+        'matching_url' : 'http://test_node/match/',
+        'accepted_content' : 'application/vnd.ga4gh.matchmaker.v1.0+json',
+        'contact' : 'test_node_user@email.com'
     }
     return node
 

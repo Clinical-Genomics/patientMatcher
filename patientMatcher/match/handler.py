@@ -110,24 +110,25 @@ def node_matcher(database, patient):
         server_name = node['_id']
         node_url = node['matching_url']
         token = node['auth_token']
-        request_content_type = node['request_content_type']
+        request_content_type = node['accepted_content']
 
         headers = {'Content-Type': request_content_type, 'Accept': 'application/vnd.ga4gh.matchmaker.v1.0+json', "X-Auth-Token": token}
         LOG.info('sending HTTP request to server: "{}"'.format(server_name))
         # send request and get response from server
-        server_return = requests.request(
-            method = 'POST',
-            url = node_url,
-            headers = headers,
-            data = json.dumps(data)
-        )
         json_response = None
+        server_return = None
         try:
+            server_return = requests.request(
+                method = 'POST',
+                url = node_url,
+                headers = headers,
+                data = json.dumps(data)
+            )
             json_response = server_return.json()
         except Exception as json_exp:
-            error = server_return.text
+            error = json_exp
             LOG.error('Server returned error:{}'.format(error))
-            external_match['errors'].append(error)
+            external_match['errors'].append(str(type(error)))
 
         if json_response:
             LOG.info('server returns the following response: {}'.format(json_response))
@@ -138,7 +139,5 @@ def node_matcher(database, patient):
 
     # save external match in database, "matches" collection
     matching_id = database['matches'].insert_one(external_match).inserted_id
-
-
     # INSERT HERE THE CODE TO SEND ALL EVENTUAL MATCHES BY EMAIL TO CLIENT!!!
     return matching_id
