@@ -57,8 +57,9 @@ def json_patient(mme_patient):
     json_patient = mme_patient
     if 'monarch_phenotypes' in json_patient:
         json_patient.pop('monarch_phenotypes')
-    json_patient['id'] = json_patient['_id']
-    json_patient.pop('_id')
+    if '_id' in json_patient:
+        json_patient['id'] = json_patient['_id']
+        json_patient.pop('_id')
 
     return json_patient
 

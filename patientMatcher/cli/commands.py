@@ -12,7 +12,7 @@ cli = FlaskGroup(create_app=create_app)
 
 @cli.command()
 @with_appcontext
-def appcontext():
+def appname():
     """Returns the app name, for testing purposes, mostly"""
     click.echo(current_app.name)
 

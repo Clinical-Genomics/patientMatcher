@@ -7,6 +7,7 @@ import logging
 from pymongo import MongoClient
 
 from patientMatcher.parse.patient import mme_patient
+from patientMatcher.match.handler import node_matcher
 
 LOG = logging.getLogger(__name__)
 
@@ -22,7 +23,6 @@ def load_demo(path_to_json_data, mongo_db, compute_phenotypes=False):
         Returns:
             inserted_ids(list): the database ID of the inserted patients
     """
-    patients_collection = mongo_db['patients']
     patients = [] # a list of dictionaries
     inserted_ids = []
 
@@ -38,7 +38,7 @@ def load_demo(path_to_json_data, mongo_db, compute_phenotypes=False):
                 #parse patient into format accepted by database
                 patient = mme_patient(json_patient, compute_phenotypes)
 
-                inserted_id = backend_add_patient(patients_collection, patient)[1]
+                inserted_id = backend_add_patient(mongo_db, patient)[1]
                 if inserted_id:
                     inserted_ids.append(inserted_id)
                 pbar.update()
@@ -49,12 +49,12 @@ def load_demo(path_to_json_data, mongo_db, compute_phenotypes=False):
     return inserted_ids
 
 
-def backend_add_patient(patients_collection, patient):
+def backend_add_patient(mongo_db, patient, match_external=False):
     """
         Insert or update a patient in patientMatcher database
 
         Args:
-            patients_collection(pymongo.collection.Collection): a pymongo collection
+            mongo_db(pymongo.database.Database)
             patient(dict) : a MME patient entity
 
         Returns:
@@ -63,38 +63,34 @@ def backend_add_patient(patients_collection, patient):
     modified = None
     upserted = None
     try:
-        result = patients_collection.replace_one({'_id': patient['_id']}, patient , upsert=True)
+        result = mongo_db['patients'].replace_one({'_id': patient['_id']}, patient , upsert=True)
         modified = result.modified_count
         upserted = result.upserted_id
 
     except Exception as err:
         LOG.fatal("Error while inserting a patient into database: {}".format(err))
 
+    # this will happen only if patient is added via POST request,
+    # and if there is a change in patients' collections (new patient or updated patient)
+    # Matching is not triggered by inserting demo data into database
+    if match_external and (modified or upserted):
+        node_matcher(mongo_db, patient)
+
     return modified, upserted
 
 
-def add_node(mongo_db, id, token, is_client, url, contact):
+def add_node(mongo_db, obj, is_client):
     """
         Insert a new node (client or server) into the database
 
         Args:
             mongo_db(pymongo.database.Database)
-            id(str): a unique ID to assign to the client/server
-            token(str): athorization token to submit patients or perform queries on database
+            obj(dict): a client or a server object to add to database
             is_client(bool): if True the new node a client of this server, if False this server is a client of the new the node
-            url(str): URL associated to the new client/Server
-            contact(str): email address of a contact at the client/server institution
 
         Returns:
-            inserted_id(str): the ID of the new node or None if node couldn't be saved
+            inserted_id(str), collection(str): a tuple with values inserted_id and collection name
     """
-
-    node_obj = {
-        '_id' : id,
-        'auth_token' : token,
-        'base_url' : url,
-        'contact_email' : contact
-    }
     inserted_id = None
     collection = None
 
@@ -104,7 +100,7 @@ def add_node(mongo_db, id, token, is_client, url, contact):
         collection = "nodes"
 
     try:
-        inserted_id = mongo_db[collection].insert_one(node_obj).inserted_id
+        inserted_id = mongo_db[collection].insert_one(obj).inserted_id
     except Exception as err:
         LOG.fatal('Error while inserting a new client/server node to database:{}'.format(err))
 
