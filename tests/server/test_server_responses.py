@@ -114,7 +114,14 @@ def test_delete_patient(database, demo_data_path, test_client):
     ok_token = test_client['auth_token']
     add_node(mongo_db=app.db, obj=test_client, is_client=True)
 
-    # Send delete request providing a valid token
+    # Send delete request providing a valid token but a non valid id
+    response = app.test_client().delete(''.join(['patient/delete/', 'not_a_valid_ID']), headers = get_headers(ok_token))
+    assert response.status_code == 200
+    data = json.loads(response.data)
+    # but server returns error
+    assert data == 'ERROR. Could not delete a patient with ID not_a_valid_ID from database'
+
+    # Send valid patient ID and valid token
     response = app.test_client().delete(''.join(['patient/delete/', delete_id]), headers = get_headers(ok_token))
     assert response.status_code == 200
 

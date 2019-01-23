@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import logging
+from bson import json_util
+import json
 from flask import Blueprint, request, current_app, jsonify
 from patientMatcher import create_app
 from patientMatcher.utils.add import backend_add_patient
 from patientMatcher.auth.auth import authorize
-from patientMatcher.match.handler import internal_matcher
+from patientMatcher.match.handler import internal_matcher, patient_matches
 
 from patientMatcher.parse.patient import validate_api, mme_patient
 from patientMatcher.constants import STATUS_CODES
@@ -71,9 +73,26 @@ def view():
     return resp
 
 
-@blueprint.route('/patient/matches', methods=['GET'])
-def matches():
-    return "Get all matches for a patient ID"
+@blueprint.route('/patient/matches/<patient_id>', methods=['GET'])
+def matches(patient_id):
+    """Get all matches (external and internal) for a patient ID"""
+    resp = None
+    message = None
+    if not authorize(current_app.db, request): # not authorized, return a 401 status code
+        message = STATUS_CODES[401]['message']
+        resp = jsonify(message)
+        resp.status_code = 401
+        return resp
+
+    # return only matches with at least one result
+    results = patient_matches(current_app.db, patient_id)
+    if results:
+        message = json.loads(json_util.dumps({'results' : results}))
+    else:
+        message = "Could not find any matches in database for patient ID {}".format(patient_id)
+    resp = jsonify(message)
+    resp.status_code = 200
+    return resp
 
 
 @blueprint.route('/match/external/<patient_id>', methods=['POST'])
