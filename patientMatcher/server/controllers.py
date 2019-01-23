@@ -7,6 +7,7 @@ from patientMatcher.utils.patient import patients
 from patientMatcher.parse.patient import json_patient, validate_api, mme_patient
 from patientMatcher.auth.auth import authorize
 from patientMatcher.utils.delete import delete_by_query
+from patientMatcher.match.handler import external_matcher
 
 LOG = logging.getLogger(__name__)
 
@@ -15,6 +16,24 @@ def get_patients(database, patient_ids=None):
     mme_patients = list(patients(database, patient_ids))
     json_like_patients = [json_patient(mmep) for mmep in mme_patients]
     return json_like_patients
+
+
+def patient(database, patient_id):
+    """Return a mme-like patient from database by providing its ID"""
+    query_patient = None
+    query_result = list(patients(database, ids=[patient_id]))
+    if query_result:
+        query_patient = query_result[0]
+    return query_patient
+
+
+def match_external(database, query_patient):
+    """Trigger an external patient matching for a given patient object"""
+    # trigger the matching and save the matching id to variable
+    matching_id = external_matcher(database, query_patient)
+    matching_obj = database['matches'].find_one({'_id' : matching_id})
+    return matching_obj['results'], matching_obj['errors']
+
 
 def check_request(database, request):
     """Check if request is valid, if it is return MME formatted patient

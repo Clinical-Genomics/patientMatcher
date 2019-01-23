@@ -76,15 +76,36 @@ def matches():
     return "Get all matches for a patient ID"
 
 
-@blueprint.route('/match/external', methods=['POST'])
-def match_external():
-    return "Match patient against external nodes"
+@blueprint.route('/match/external/<patient_id>', methods=['POST'])
+def match_external(patient_id):
+    """Trigger a patient matching on external nodes by providing a patient ID"""
+    resp = None
+    if not authorize(current_app.db, request): # not authorized, return a 401 status code
+        message = STATUS_CODES[401]['message']
+        resp = jsonify(message)
+        resp.status_code = 401
+        return resp
+
+    LOG.info('Authorized clients is matching patient with ID {} against external nodes'.format(patient_id))
+    query_patient = controllers.patient(current_app.db, patient_id)
+
+    if not query_patient:
+        LOG.error('ERROR. Could not find amy patient with ID {} in database'.format(patient_id))
+        message = "ERROR. Could not find amy patient with ID {} in database".format(patient_id)
+        resp = jsonify(message)
+        resp.status_code = 200
+        return resp
+
+    results, errors = controllers.match_external(current_app.db, query_patient)
+    resp = jsonify(results)
+    resp.status_code = 200
+    return resp
 
 
 @blueprint.route('/match', methods=['POST'])
 def match_internal():
     """Match a query patient against patients from local database and
-    return a response with the patients which are most similar to the
+    return a response containing patients which are most similar to the
     query patient"""
 
     query_patient = controllers.check_request(current_app.db, request)
