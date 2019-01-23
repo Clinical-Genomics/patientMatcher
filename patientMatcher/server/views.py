@@ -5,7 +5,7 @@ from flask import Blueprint, request, current_app, jsonify
 from patientMatcher import create_app
 from patientMatcher.utils.add import backend_add_patient
 from patientMatcher.auth.auth import authorize
-from patientMatcher.match.handler import database_matcher
+from patientMatcher.match.handler import internal_matcher
 
 from patientMatcher.parse.patient import validate_api, mme_patient
 from patientMatcher.constants import STATUS_CODES
@@ -97,7 +97,7 @@ def match_internal():
     max_geno_score = current_app.config.get('MAX_GT_SCORE', 0.5) # get max genotyping score from app settings, if available
 
     # get a list of matching patients ordered by score
-    matches = database_matcher(current_app.db, query_patient, max_pheno_score, max_geno_score)
+    matches = internal_matcher(current_app.db, query_patient, max_pheno_score, max_geno_score)
 
     validate_response = controllers.validate_response({'results': matches})
     if isinstance(validate_response, int): # some error must have occurred during validation

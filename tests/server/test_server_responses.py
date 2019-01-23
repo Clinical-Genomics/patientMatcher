@@ -103,7 +103,6 @@ def test_delete_patient(database, demo_data_path, test_client):
 
     # 50 cases present on patients collection
     assert database['patients'].find().count() == 50
-
     delete_id = inserted_ids[0]
 
     # try to delete patient without auth token:
@@ -146,6 +145,9 @@ def test_match_view(json_patients, test_client, demo_data_path, database):
     malformed_match_results = 'fakey result'
     assert validate_response(malformed_match_results) == 422
 
+    # make sure that there are no patient matches in the 'matches collection'
+    assert database['matches'].find().count()==0
+
     # send a POST request to match patient with patients in database
     response = app.test_client().post('/match', data=json.dumps(query_patient), headers = get_headers(ok_token))
     assert response.status_code == 200 # POST request should be successful
@@ -154,6 +156,9 @@ def test_match_view(json_patients, test_client, demo_data_path, database):
     assert type(data['results']) == list # which is a list
     assert 'patient' in data['results'][0] # of patients
     assert 'score' in data['results'][0] # with matching scores
+
+    # make sure that there are match object is created in db for this internal matching
+    assert database['matches'].find().count()==1
 
 
 def test_external_match_view():

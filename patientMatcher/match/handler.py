@@ -11,7 +11,7 @@ from patientMatcher.parse.patient import json_patient
 
 LOG = logging.getLogger(__name__)
 
-def database_matcher(database, patient_obj, max_pheno_score, max_geno_score):
+def internal_matcher(database, patient_obj, max_pheno_score, max_geno_score):
     """Handles a query patient matching against the database of patients
 
     Args:
@@ -23,6 +23,7 @@ def database_matcher(database, patient_obj, max_pheno_score, max_geno_score):
     Returns:
         sorted_matches(list): a list of patient matches sorted by descending score
     """
+    json_pat = json_patient(patient_obj)
     pheno_matches = []
     geno_matches = []
     matches = []
@@ -71,11 +72,25 @@ def database_matcher(database, patient_obj, max_pheno_score, max_geno_score):
     # sort patient matches by patient (combined) score
     sorted_matches = sorted(matches, key=lambda k : k['score']['patient'], reverse=True)
 
+    # this is saved to server, regardless of the results returned by the nodes
+    has_matches = False
+    if sorted_matches:
+        has_matches = True
+
+    internal_match = {
+        'created' : datetime.datetime.now(),
+        'has_matches' : has_matches,
+        'data' : {'patient' : json_pat}, # description of the patient submitted
+        'results' : sorted_matches,
+        'match_type' : 'internal'
+    }
+    database['matches'].insert_one(internal_match)
+
     # return sorted matches
     return sorted_matches
 
 
-def node_matcher(database, patient):
+def external_matcher(database, patient):
     """Handles a query patient matching against all connected MME nodes
 
     Args:
@@ -101,7 +116,8 @@ def node_matcher(database, patient):
         'has_matches' : False, # it changes if a similar patient is returned by any other MME nodes
         'data' : data, # description of the patient submitted
         'results' : [],
-        'errors' : []
+        'errors' : [],
+        'match_type' : 'external'
     }
 
     LOG.info("Matching patient against {} nodes..".format(len(connected_nodes)))
@@ -139,5 +155,7 @@ def node_matcher(database, patient):
 
     # save external match in database, "matches" collection
     matching_id = database['matches'].insert_one(external_match).inserted_id
+
     # INSERT HERE THE CODE TO SEND ALL EVENTUAL MATCHES BY EMAIL TO CLIENT!!!
+
     return matching_id

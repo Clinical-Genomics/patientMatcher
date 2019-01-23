@@ -2,9 +2,9 @@
 
 from patientMatcher.utils.add import load_demo
 from patientMatcher.parse.patient import mme_patient
-from patientMatcher.match.handler import database_matcher as dbmatcher
+from patientMatcher.match.handler import internal_matcher as dbmatcher
 
-def test_combined_matching(demo_data_path, database, json_patients):
+def test_internal_matching(demo_data_path, database, json_patients):
     """Testing the combined matching algorithm"""
 
     # load demo data to mock database using function located under utils/load
