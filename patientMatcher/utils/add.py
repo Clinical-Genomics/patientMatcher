@@ -7,7 +7,7 @@ import logging
 from pymongo import MongoClient
 
 from patientMatcher.parse.patient import mme_patient
-from patientMatcher.match.handler import node_matcher
+from patientMatcher.match.handler import external_matcher
 
 LOG = logging.getLogger(__name__)
 
@@ -74,7 +74,7 @@ def backend_add_patient(mongo_db, patient, match_external=False):
     # and if there is a change in patients' collections (new patient or updated patient)
     # Matching is not triggered by inserting demo data into database
     if match_external and (modified or upserted):
-        node_matcher(mongo_db, patient)
+        external_matcher(mongo_db, patient)
 
     return modified, upserted
 
