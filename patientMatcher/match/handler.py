@@ -3,6 +3,7 @@
 import logging
 import datetime
 import requests
+import pymongo
 import json
 from werkzeug.datastructures import Headers
 from patientMatcher.match.genotype_matcher import match as genomatch
@@ -10,6 +11,30 @@ from patientMatcher.match.phenotype_matcher import match as phenomatch
 from patientMatcher.parse.patient import json_patient
 
 LOG = logging.getLogger(__name__)
+
+
+def patient_matches(database, patient_id, type=None, with_results=True):
+    """Retrieve all matches for a patient specified by an ID
+
+    Args:
+        database(pymongo.database.Database)
+        patient_id(str): ID of a patient in database
+        type(str): type of matching, external or internal
+        with_results(bool): if True only matches with results are returned
+
+    Returns:
+        matches(list): a list of dictionaries = [ {match_obj1}, {match_obj2}, .. ]
+    """
+    query = { 'data.patient.id' : patient_id }
+    if type:
+        query['match_type'] = type
+    if with_results:
+        query['has_matches'] = True
+
+    matches = list(database['matches'].find(query))
+    LOG.info(matches)
+    return matches
+
 
 def internal_matcher(database, patient_obj, max_pheno_score, max_geno_score):
     """Handles a query patient matching against the database of patients

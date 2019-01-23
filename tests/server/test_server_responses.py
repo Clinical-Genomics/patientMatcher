@@ -8,6 +8,7 @@ from patientMatcher.utils.add import add_node, load_demo
 from patientMatcher.auth.auth import authorize
 from patientMatcher.server.controllers import validate_response
 from patientMatcher.parse.patient import mme_patient
+from patientMatcher.match.handler import patient_matches
 
 app = create_app()
 
@@ -114,7 +115,14 @@ def test_delete_patient(database, demo_data_path, test_client):
     ok_token = test_client['auth_token']
     add_node(mongo_db=app.db, obj=test_client, is_client=True)
 
-    # Send delete request providing a valid token
+    # Send delete request providing a valid token but a non valid id
+    response = app.test_client().delete(''.join(['patient/delete/', 'not_a_valid_ID']), headers = get_headers(ok_token))
+    assert response.status_code == 200
+    data = json.loads(response.data)
+    # but server returns error
+    assert data == 'ERROR. Could not delete a patient with ID not_a_valid_ID from database'
+
+    # Send valid patient ID and valid token
     response = app.test_client().delete(''.join(['patient/delete/', delete_id]), headers = get_headers(ok_token))
     assert response.status_code == 200
 
@@ -122,11 +130,53 @@ def test_delete_patient(database, demo_data_path, test_client):
     assert database['patients'].find().count() == 49
 
 
-def test_patient_matches():
-    # send a GET request to patient matches view
-    response = app.test_client().get('patient/matches')
+def test_patient_matches(database, match_obs, test_client):
+    """testing the endpoint that retrieves the matchings by patient ID"""
+
+    app.db = database
+    # Add a valid client node
+    ok_token = test_client['auth_token']
+    add_node(mongo_db=app.db, obj=test_client, is_client=True)
+
+    # start from a database with no matches
+    assert database['matches'].find().count() == 0
+    # import mock matches into datababase
+    database['matches'].insert_many(match_obs)
+    # database now should have two matching objects
+
+    # test endpoint to get matches by ID
+    # test by sending a non-authorized request
+    response = app.test_client().get('matches/test_patient')
+    # response gives a 401 code (not authorized)
+    assert response.status_code == 401
+
+    # try with an authorized request with a used ID that is not in database
+    response = app.test_client().get('matches/unknown_patient', headers = get_headers(ok_token))
+    # response gives success
     assert response.status_code == 200
-    # yet to be implemented!
+    data = json.loads(response.data)
+    # but the patient is not found by server
+    assert data == 'Could not find any matches in database for patient ID unknown_patient'
+
+    # Try with authenticates request and valid patient
+    response = app.test_client().get('matches/test_patient', headers = get_headers(ok_token))
+    # response gives success
+    assert response.status_code == 200
+    data = json.loads(response.data)
+    # and there are matches in it
+    assert len(data['results']) == 1 # One match is resturned, because endpoint returns only matches with results
+
+    # Test that there are actually 2 matches by calling directly the function returning matches
+    matches = patient_matches(database=database, patient_id='test_patient', type=None, with_results=False)
+    assert len(matches) == 2
+
+    # Call the same function to get only external matches
+    matches = patient_matches(database=database, patient_id='test_patient', type='external', with_results=False)
+    assert len(matches) == 1
+
+    # Call the same function to get only external matches
+    matches = patient_matches(database=database, patient_id='test_patient', type='internal', with_results=False)
+    assert len(matches) == 1
 
 
 def test_match_view(json_patients, test_client, demo_data_path, database):

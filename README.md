@@ -149,13 +149,24 @@ curl -X POST \
 ```
 
 - **/match/external/<patient_id>**
-Trigger a search in external nodes for patients similar to the one specified by the ID.
-In progress!!
+Trigger a search in external nodes for patients similar to the one specified by the ID. Example:
+```bash
+curl -X POST \
+  -H 'X-Auth-Token: custom_token' \
+  -H 'Content-Type: application/vnd.ga4gh.matchmaker.v1.0+json' \
+  -H 'Accept: application/vnd.ga4gh.matchmaker.v1.0+json' \
+  localhost:9020/match/external/patient_id
+```
 
 - **/patient/matches/<patient_id>**
-Return all matches found on external nodes for a patient specified by an ID
-In progress!!
-
+Return all matches (internal and external) with positive results for a patient specified by an ID. Example:
+```bash
+curl -X POST \
+  -H 'X-Auth-Token: custom_token' \
+  -H 'Content-Type: application/vnd.ga4gh.matchmaker.v1.0+json' \
+  -H 'Accept: application/vnd.ga4gh.matchmaker.v1.0+json' \
+  localhost:9020/matches/patient_id
+```
 
 ## Patient matching algorithm, used both for internal and external searches
 Each patient query submitted to the server triggers a matching algorithm which will search and return those patients on the server that are most similar to the queried one.
