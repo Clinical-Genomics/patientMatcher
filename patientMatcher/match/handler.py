@@ -23,6 +23,7 @@ def internal_matcher(database, patient_obj, max_pheno_score, max_geno_score):
     Returns:
         sorted_matches(list): a list of patient matches sorted by descending score
     """
+    json_pat = json_patient(patient_obj)
     pheno_matches = []
     geno_matches = []
     matches = []
@@ -46,7 +47,7 @@ def internal_matcher(database, patient_obj, max_pheno_score, max_geno_score):
     for key in unique_patients:
         pheno_score = 0
         geno_score = 0
-        patient = None
+        patient_obj = None
 
         if key in pheno_m_keys:
             pheno_score = pheno_matches[key]['pheno_score']
@@ -79,7 +80,7 @@ def internal_matcher(database, patient_obj, max_pheno_score, max_geno_score):
     internal_match = {
         'created' : datetime.datetime.now(),
         'has_matches' : has_matches,
-        'data' : {'patient' : json_patient(patient_obj)}, # description of the patient submitted
+        'data' : {'patient' : json_pat}, # description of the patient submitted
         'results' : sorted_matches,
         'match_type' : 'internal'
     }

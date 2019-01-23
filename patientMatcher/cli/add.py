@@ -3,6 +3,7 @@
 
 import os
 import click
+import datetime
 from flask.cli import with_appcontext, current_app
 
 from patientMatcher.utils.add import load_demo, add_node
@@ -24,6 +25,7 @@ def node(id, token, matching_url, accepted_content, contact=None):
     click.echo("Adding a new MatchMaker node to database")
     node_obj = {
         '_id' : id,
+        'created' : datetime.datetime.now(),
         'auth_token' : token,
         'matching_url' : matching_url,
         'accepted_content' : accepted_content,
@@ -46,6 +48,7 @@ def client(id, token, url, contact=None):
     click.echo("Adding a new client to database")
     client_obj = {
         '_id' : id,
+        'created' : datetime.datetime.now(),
         'auth_token' : token,
         'base_url' : url,
         'contact' : contact

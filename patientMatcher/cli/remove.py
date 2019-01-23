@@ -13,7 +13,7 @@ def remove():
 
 @remove.command()
 @click.option('-id', type=click.STRING, nargs=1, required=False, help="ID of the patient to be removed from database")
-@click.option('-label', type=click.STRING, nargs=1, required=False, help="ID of the patient to be removed from database")
+@click.option('-label', type=click.STRING, nargs=1, required=False, help="Label of the patient to be removed from database")
 @with_appcontext
 def patient(id, label):
     """Removing a patient from patientMatcher providing its ID"""
