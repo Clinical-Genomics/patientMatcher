@@ -73,7 +73,7 @@ def view():
     return resp
 
 
-@blueprint.route('/patient/matches/<patient_id>', methods=['GET'])
+@blueprint.route('/matches/<patient_id>', methods=['GET'])
 def matches(patient_id):
     """Get all matches (external and internal) for a patient ID"""
     resp = None

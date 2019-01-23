@@ -56,6 +56,39 @@ def test_node():
 
 
 @pytest.fixture(scope='function')
+def match_obs():
+    """Mock the results of an internal and an external match"""
+    matches = [
+        {
+            '_id' : 'match_1',
+            'has_matches' : True,
+            'data' : {
+                'patient' : {
+                    'id' : 'test_patient'
+                }
+            },
+            'results' : [
+                {'patient' : { 'patient_data' : 'test_stuff'}},
+                {'patient' : { 'patient_data2' : 'test_stuff2'}},
+            ],
+            'match_type' : 'external'
+        },
+        {
+            '_id' : 'match_2',
+            'has_matches' : False,
+            'data' : {
+                'patient' : {
+                    'id' : 'test_patient'
+                }
+            },
+            'results' : [],
+            'match_type' : 'internal'
+        },
+    ]
+    return matches
+
+
+@pytest.fixture(scope='function')
 def json_patients():
     """ returns a list containing two matchmaker-like patient objects """
     fakey_patients = [
