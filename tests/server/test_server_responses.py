@@ -7,6 +7,7 @@ from patientMatcher import create_app
 from patientMatcher.utils.add import add_node, load_demo
 from patientMatcher.auth.auth import authorize
 from patientMatcher.server.controllers import validate_response
+from patientMatcher.parse.patient import mme_patient
 
 app = create_app()
 
@@ -161,11 +162,44 @@ def test_match_view(json_patients, test_client, demo_data_path, database):
     assert database['matches'].find().count()==1
 
 
-def test_external_match_view():
-    # send a POST request to the internal match view
-    response = app.test_client().post('/match/external')
+def test_match_external_view(test_client, test_node, database, json_patients):
+    """Testing the view that is sending post request to trigger matches on external nodes"""
+    app.db = database
+
+    # add an authorized client to database
+    ok_token = test_client['auth_token']
+    add_node(mongo_db=app.db, obj=test_client, is_client=True) # required to trigger external matches
+    add_node(mongo_db=app.db, obj=test_node, is_client=False) # required for external matches
+
+    a_patient = json_patients[0]
+    parsed_patient = mme_patient(a_patient)
+
+    # insert patient into mock database:
+    assert database['patients'].find().count() == 0
+    inserted_id = database['patients'].insert_one(parsed_patient).inserted_id
+    assert database['patients'].find().count() == 1
+
+    # send an un-authorized match request to server
+    response = app.test_client().post(''.join(['/match/external/', inserted_id]))
+    # server should return 401 (not authorized)
+    assert response.status_code == 401
+
+    # send an authorized request with a patient ID that doesn't exist on server:
+    response = app.test_client().post(''.join(['/match/external/', 'not_a_valid_ID']), headers = get_headers(ok_token))
+    # Response is valid
     assert response.status_code == 200
-    # yet to be implemented!
+    data = json.loads(response.data)
+    # but server returns error
+    assert data == 'ERROR. Could not find amy patient with ID not_a_valid_ID in database'
+
+    # there are no matches in mock database
+    assert database['matches'].find().count() == 0
+    # after sending an authorized request with a patient ID that exists on database
+    response = app.test_client().post(''.join(['/match/external/', inserted_id]), headers = get_headers(ok_token))
+    # Response should be valid
+    assert response.status_code == 200
+    # And a new match should be created in matches collection
+    assert database['matches'].find().count() == 1
 
 
 def get_headers(test_token):
