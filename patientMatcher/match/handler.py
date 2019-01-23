@@ -4,6 +4,7 @@ import logging
 import datetime
 import requests
 import pymongo
+import json
 from werkzeug.datastructures import Headers
 from patientMatcher.match.genotype_matcher import match as genomatch
 from patientMatcher.match.phenotype_matcher import match as phenomatch
