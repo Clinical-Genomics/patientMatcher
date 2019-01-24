@@ -30,9 +30,10 @@ def patient(database, patient_id):
 def match_external(database, query_patient):
     """Trigger an external patient matching for a given patient object"""
     # trigger the matching and save the matching id to variable
-    matching_id = external_matcher(database, query_patient)
-    matching_obj = database['matches'].find_one({'_id' : matching_id})
-    return matching_obj['results'], matching_obj['errors']
+    matching_obj = external_matcher(database, query_patient)
+    # save matching object to database
+    database['matches'].insert_one(matching_obj)
+    return matching_obj.get('results'), matching_obj.get('errors')
 
 
 def check_request(database, request):

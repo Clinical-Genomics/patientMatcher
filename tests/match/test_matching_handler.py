@@ -17,7 +17,8 @@ def test_internal_matching(demo_data_path, database, json_patients):
     a_patient = test_mme_patients[0]
     assert a_patient
 
-    matches = dbmatcher(database, a_patient, 0.5, 0.5)
+    match_obj = dbmatcher(database, a_patient, 0.5, 0.5)
+    matches = match_obj['results']
     assert len(matches) > 0
 
     higest_scored_patient = matches[0]

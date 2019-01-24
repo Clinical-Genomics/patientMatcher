@@ -50,7 +50,7 @@ def internal_matcher(database, patient_obj, max_pheno_score, max_geno_score):
         max_geno_score(float): a number between 0 and 1
 
     Returns:
-        sorted_matches(list): a list of patient matches sorted by descending score
+        internal_match(dict): a matching object with results(list) sorted by score
     """
     json_pat = json_patient(patient_obj)
     pheno_matches = []
@@ -113,10 +113,9 @@ def internal_matcher(database, patient_obj, max_pheno_score, max_geno_score):
         'results' : sorted_matches,
         'match_type' : 'internal'
     }
-    database['matches'].insert_one(internal_match)
 
-    # return sorted matches
-    return sorted_matches
+    # return matching object
+    return internal_match
 
 
 def external_matcher(database, patient):
@@ -127,7 +126,7 @@ def external_matcher(database, patient):
         patient(dict) : a MME patient entity
 
     Returns:
-        matching_id(str): The ID of the matching object created in database
+        external_match(dict): a matching object containing a list of results in 'results' field
     """
 
     connected_nodes = list(database['nodes'].find()) #get all connected nodes
@@ -182,9 +181,4 @@ def external_matcher(database, patient):
                 external_match['has_matches'] = True
                 external_match['results'].append(results)
 
-    # save external match in database, "matches" collection
-    matching_id = database['matches'].insert_one(external_match).inserted_id
-
-    # INSERT HERE THE CODE TO SEND ALL EVENTUAL MATCHES BY EMAIL TO CLIENT!!!
-
-    return matching_id
+    return external_match

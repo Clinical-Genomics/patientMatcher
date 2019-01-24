@@ -143,7 +143,10 @@ def match_internal():
     max_geno_score = current_app.config.get('MAX_GT_SCORE', 0.5) # get max genotyping score from app settings, if available
 
     # get a list of matching patients ordered by score
-    matches = internal_matcher(current_app.db, query_patient, max_pheno_score, max_geno_score)
+    match_obj = internal_matcher(current_app.db, query_patient, max_pheno_score, max_geno_score)
+    # save matching object to database
+    current_app.db['matches'].insert_one(match_obj)
+    matches = match_obj['results']
 
     validate_response = controllers.validate_response({'results': matches})
     if isinstance(validate_response, int): # some error must have occurred during validation
