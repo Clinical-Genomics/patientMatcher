@@ -25,7 +25,11 @@ def patient_matches(database, patient_id, type=None, with_results=True):
     Returns:
         matches(list): a list of dictionaries = [ {match_obj1}, {match_obj2}, .. ]
     """
-    query = { 'data.patient.id' : patient_id }
+    query = {
+        '$or' : [
+            {'data.patient.id' : patient_id }, # collect matches triggered by patient
+            {'results.patient.id' : patient_id} # and matches where patient is among results
+        ]}
     if type:
         query['match_type'] = type
     if with_results:

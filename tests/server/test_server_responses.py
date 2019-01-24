@@ -165,11 +165,11 @@ def test_patient_matches(database, match_obs, test_client):
     assert response.status_code == 200
     data = json.loads(response.data)
     # and there are matches in it
-    assert len(data['results']) == 1 # One match is resturned, because endpoint returns only matches with results
+    assert len(data['results']) == 2 # 2 matches returned because endpoint returns only matches with results
 
-    # Test that there are actually 2 matches by calling directly the function returning matches
+    # Test that there are actually 3 matches by calling directly the function returning matches
     matches = patient_matches(database=database, patient_id='test_patient', type=None, with_results=False)
-    assert len(matches) == 2
+    assert len(matches) == 3
 
     # Call the same function to get only external matches
     matches = patient_matches(database=database, patient_id='test_patient', type='external', with_results=False)
@@ -177,7 +177,7 @@ def test_patient_matches(database, match_obs, test_client):
 
     # Call the same function to get only external matches
     matches = patient_matches(database=database, patient_id='test_patient', type='internal', with_results=False)
-    assert len(matches) == 1
+    assert len(matches) == 2
 
 
 def test_match_view(json_patients, test_client, demo_data_path, database):

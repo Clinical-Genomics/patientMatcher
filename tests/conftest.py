@@ -59,7 +59,7 @@ def test_node():
 def match_obs():
     """Mock the results of an internal and an external match"""
     matches = [
-        {
+        {    # External match where test_patient is the query and with results
             '_id' : 'match_1',
             'has_matches' : True,
             'data' : {
@@ -73,7 +73,7 @@ def match_obs():
             ],
             'match_type' : 'external'
         },
-        {
+        {    # Internal match where test_patient is the query and there are no results
             '_id' : 'match_2',
             'has_matches' : False,
             'data' : {
@@ -82,6 +82,19 @@ def match_obs():
                 }
             },
             'results' : [],
+            'match_type' : 'internal'
+        },
+        {    #  Internal match where test_patient is among results
+            '_id' : 'match_3',
+            'has_matches' : True,
+            'data' : {
+                'patient' : {
+                    'id' : 'external_patient_1'
+                }
+            },
+            'results' : [
+                {'patient' : { 'id' : 'test_patient'}},
+            ],
             'match_type' : 'internal'
         },
     ]
