@@ -96,13 +96,12 @@ To add patients using a **POST** request. Example:
 curl -X POST \
   -H 'X-Auth-Token: custom_token' \
   -H 'Content-Type: application/vnd.ga4gh.matchmaker.v1.0+json' \
-  -H 'Accept: application/vnd.ga4gh.matchmaker.v1.0+json' \
+  -H 'Accept: application/json' \
   -d '{"patient":{
     "id":"patient_id",
-    "contact": {"name":"Jane Doe", "href":"mailto:jdoe@example.edu"},
+    "contact": {"name":"Contact Name", "href":"mailto:contact_name@mail.com"},
     "features":[{"id":"HP:0009623"}],
-    "genomicFeatures":[{"gene":{"id":"EFTUD2"}}],
-    "test": true
+    "genomicFeatures":[{"gene":{"id":"EFTUD2"}}]
   }}' localhost:9020/patient/add
 ```
 
@@ -117,8 +116,6 @@ You can delete a patient from the database by sending a **DELETE** request with 
 ```bash
 curl -X DELETE \
   -H 'X-Auth-Token: custom_token' \
-  -H 'Content-Type: application/vnd.ga4gh.matchmaker.v1.0+json' \
-  -H 'Accept: application/vnd.ga4gh.matchmaker.v1.0+json' \
   localhost:9020/patient/delete/patient_id
 ```
 
@@ -127,8 +124,6 @@ Use this endpoint to **get** a list of all patients in the database. Example:
 ```bash
 curl -X GET \
   -H 'X-Auth-Token: custom_token' \
-  -H 'Content-Type: application/vnd.ga4gh.matchmaker.v1.0+json' \
-  -H 'Accept: application/vnd.ga4gh.matchmaker.v1.0+json' \
   localhost:9020/patient/view
 ```
 
@@ -141,10 +136,9 @@ curl -X POST \
   -H 'Accept: application/vnd.ga4gh.matchmaker.v1.0+json' \
   -d '{"patient":{
     "id":"patient_id",
-    "contact": {"name":"Jane Doe", "href":"mailto:jdoe@example.edu"},
-    "features":[{"id":"HP:0010943"}],
-    "genomicFeatures":[{"gene":{"id":"EFTUD2"}}],
-    "test": true
+    "contact": {"name":"Contact Name", "href":"mailto:contact_name@mail.com"},
+    "features":[{"id":"HP:0009623"}],
+    "genomicFeatures":[{"gene":{"id":"EFTUD2"}}]
   }}' localhost:9020/match
 ```
 
@@ -153,18 +147,14 @@ Trigger a search in external nodes for patients similar to the one specified by 
 ```bash
 curl -X POST \
   -H 'X-Auth-Token: custom_token' \
-  -H 'Content-Type: application/vnd.ga4gh.matchmaker.v1.0+json' \
-  -H 'Accept: application/vnd.ga4gh.matchmaker.v1.0+json' \
   localhost:9020/match/external/patient_id
 ```
 
 - **/patient/matches/<patient_id>**
 Return all matches (internal and external) with positive results for a patient specified by an ID. Example:
 ```bash
-curl -X POST \
+curl -X GET \
   -H 'X-Auth-Token: custom_token' \
-  -H 'Content-Type: application/vnd.ga4gh.matchmaker.v1.0+json' \
-  -H 'Accept: application/vnd.ga4gh.matchmaker.v1.0+json' \
   localhost:9020/matches/patient_id
 ```
 

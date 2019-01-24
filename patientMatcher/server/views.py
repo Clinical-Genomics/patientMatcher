@@ -4,19 +4,23 @@ import logging
 from bson import json_util
 import json
 from flask import Blueprint, request, current_app, jsonify
+from flask_negotiate import consumes, produces
+
 from patientMatcher import create_app
 from patientMatcher.utils.add import backend_add_patient
 from patientMatcher.auth.auth import authorize
 from patientMatcher.match.handler import internal_matcher, patient_matches
-
 from patientMatcher.parse.patient import validate_api, mme_patient
 from patientMatcher.constants import STATUS_CODES
 from . import controllers
 
 LOG = logging.getLogger(__name__)
 blueprint = Blueprint('server', __name__)
+API_MIME_TYPE = 'application/vnd.ga4gh.matchmaker.v1.0+json'
 
 @blueprint.route('/patient/add', methods=['POST'])
+@consumes(API_MIME_TYPE, 'application/json')
+@produces('application/json')
 def add():
     """Add patient to database"""
 
@@ -109,8 +113,8 @@ def match_external(patient_id):
     query_patient = controllers.patient(current_app.db, patient_id)
 
     if not query_patient:
-        LOG.error('ERROR. Could not find amy patient with ID {} in database'.format(patient_id))
-        message = "ERROR. Could not find amy patient with ID {} in database".format(patient_id)
+        LOG.error('ERROR. Could not find any patient with ID {} in database'.format(patient_id))
+        message = "ERROR. Could not find any patient with ID {} in database".format(patient_id)
         resp = jsonify(message)
         resp.status_code = 200
         return resp
@@ -122,6 +126,8 @@ def match_external(patient_id):
 
 
 @blueprint.route('/match', methods=['POST'])
+@consumes(API_MIME_TYPE)
+@produces(API_MIME_TYPE, 'application/json')
 def match_internal():
     """Match a query patient against patients from local database and
     return a response containing patients which are most similar to the
