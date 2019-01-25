@@ -96,7 +96,7 @@ def test_patient_view(database, test_client):
     assert auth_response.status_code == 200
 
 
-def test_delete_patient(database, demo_data_path, test_client):
+def test_delete_patient(database, demo_data_path, test_client, match_obs):
     """Test deleting a patient from database by sending a DELETE request"""
 
     app.db = database
@@ -106,7 +106,7 @@ def test_delete_patient(database, demo_data_path, test_client):
 
     # 50 cases present on patients collection
     assert database['patients'].find().count() == 50
-    delete_id = inserted_ids[0]
+    delete_id = 'P0000079'
 
     # try to delete patient without auth token:
     response = app.test_client().delete(''.join(['patient/delete/', delete_id]))
@@ -123,12 +123,23 @@ def test_delete_patient(database, demo_data_path, test_client):
     # but server returns error
     assert data == 'ERROR. Could not delete a patient with ID not_a_valid_ID from database'
 
+    assert database['matches'].find().count() == 0 # no matches in database
+    # insert into database some mock matching objects
+    database['matches'].insert_many(match_obs)
+
+    # patient "delete_id" should have two associated matches in database
+    assert database['matches'].find({'data.patient.id' : delete_id}).count() == 2
+
     # Send valid patient ID and valid token
     response = app.test_client().delete(''.join(['patient/delete/', delete_id]), headers = auth_headers(ok_token))
     assert response.status_code == 200
 
     # make sure that the patient was removed from database
     assert database['patients'].find().count() == 49
+
+    # make sure that patient matches are also gone
+    assert database['matches'].find().count() == 1
+
 
 
 def test_patient_matches(database, match_obs, test_client):
@@ -147,7 +158,7 @@ def test_patient_matches(database, match_obs, test_client):
 
     # test endpoint to get matches by ID
     # test by sending a non-authorized request
-    response = app.test_client().get('matches/test_patient')
+    response = app.test_client().get('matches/P0000079')
     # response gives a 401 code (not authorized)
     assert response.status_code == 401
 
@@ -160,7 +171,7 @@ def test_patient_matches(database, match_obs, test_client):
     assert data == 'Could not find any matches in database for patient ID unknown_patient'
 
     # Try with authenticates request and valid patient
-    response = app.test_client().get('matches/test_patient', headers = auth_headers(ok_token))
+    response = app.test_client().get('matches/P0000079', headers = auth_headers(ok_token))
     # response gives success
     assert response.status_code == 200
     data = json.loads(response.data)
@@ -168,15 +179,15 @@ def test_patient_matches(database, match_obs, test_client):
     assert len(data['results']) == 2 # 2 matches returned because endpoint returns only matches with results
 
     # Test that there are actually 3 matches by calling directly the function returning matches
-    matches = patient_matches(database=database, patient_id='test_patient', type=None, with_results=False)
+    matches = patient_matches(database=database, patient_id='P0000079', type=None, with_results=False)
     assert len(matches) == 3
 
     # Call the same function to get only external matches
-    matches = patient_matches(database=database, patient_id='test_patient', type='external', with_results=False)
+    matches = patient_matches(database=database, patient_id='P0000079', type='external', with_results=False)
     assert len(matches) == 1
 
     # Call the same function to get only external matches
-    matches = patient_matches(database=database, patient_id='test_patient', type='internal', with_results=False)
+    matches = patient_matches(database=database, patient_id='P0000079', type='internal', with_results=False)
     assert len(matches) == 2
 
 

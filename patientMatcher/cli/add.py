@@ -62,7 +62,7 @@ def client(id, token, url, contact=None):
 
 
 @add.command()
-@click.option('-monarch_phenotypes/-no_monarch_phenotypes', default=False)
+@click.option('-monarch_phenotypes/-no_monarch_phenotypes', default=False, help="Compute Monarch phenotypes")
 @with_appcontext
 def demodata(monarch_phenotypes):
     """Adds a set of 50 demo patients to database"""

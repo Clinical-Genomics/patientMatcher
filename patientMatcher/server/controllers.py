@@ -85,10 +85,17 @@ def bad_request(error_code):
 def delete_patient(database, patient_id):
     """Remove a patient by ID"""
     message = ''
+
+    # first delete all matches in database for this patient:
+    query = {'data.patient.id' : patient_id}
+    deleted = delete_by_query(query, database, 'matches')
+    LOG.info('deleted {} matche/s triggered by this patient'.format(deleted))
+
+
     query = {'_id' : patient_id}
     deleted = delete_by_query(query, database, 'patients')
     if deleted == 1:
-        message = 'Patient was successfully deleted from database'
+        message = 'Patient and its matches were successfully deleted from database'
     else:
         message = 'ERROR. Could not delete a patient with ID {} from database'.format(patient_id)
     return message

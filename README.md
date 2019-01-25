@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.com/northwestwitch/patientMatcher.svg?branch=master)](https://travis-ci.com/northwestwitch/patientMatcher) [![Coverage Status](https://coveralls.io/repos/github/Clinical-Genomics/patientMatcher/badge.svg?branch=master&kill_cache=1)](https://coveralls.io/github/Clinical-Genomics/patientMatcher?branch=master)
 
 ## Prerequisites
-To use this server you'll need to have a working instance of MongoDB. from the mongo shell you can create a database and an authenticated user to handle connections using this syntax:
+To use this server you'll need to have a working instance of **MongoDB**. from the mongo shell you can create a database and an authenticated user to handle connections using this syntax:
 
 ```bash
 use pmatcher
@@ -14,6 +14,11 @@ db.createUser(
    }
 )
 ```
+After setting up the restricted access to the server you'll just have to launch the mongo demon using authentication:
+```bash
+mongod --auth --dbpath path_to_database_data
+```
+
 
 ## Installation
 Clone the repository from github using this command:
@@ -61,6 +66,7 @@ Options:
   -contact TEXT           An email address
 ```
 
+
 ### Adding a client to the database
 In order to save patients into patientMatcher you need to create at least one authorized client.
 Use the following command to insert a client object in the database:
@@ -77,6 +83,7 @@ Options:
 POST request aimed at adding or modifying a patient in patientMatcher **should be using a token** from a client present in the database.
 
 
+
 ### Removing a patient from the database.
 You can remove a patient using the command line interface by invoking this command and providing **either its ID or its label** (or both actually):
 
@@ -87,6 +94,7 @@ Options:
 -id TEXT     ID of the patient to be removed from database
 -label TEXT  label of the patient to be removed from database
 ```
+
 
 ## Server endpoints
 
@@ -104,11 +112,11 @@ curl -X POST \
     "genomicFeatures":[{"gene":{"id":"EFTUD2"}}]
   }}' localhost:9020/patient/add
 ```
-
 To update the data of a patient already submitted to the server you can use the same command and add a patient with the same ID.
 
 The action of adding or updating a patient in the server will trigger an **external search of similar patients from connected nodes**.
 If there are no connected nodes in the database or you are uploading demo data no search will be performed on other nodes.
+
 
 
 - **patient/delete/<patient_id>**
@@ -118,6 +126,10 @@ curl -X DELETE \
   -H 'X-Auth-Token: custom_token' \
   localhost:9020/patient/delete/patient_id
 ```
+Please note that when a patient is deleted all its match results will be also deleted from the database. This is valid for **matches where the patient was used as the query patient** in searches performed on other nodes or the internal patientMatcher database (internal search).
+Matching results where the removed patient is instead listed among the matching results will be not removed from the database.
+
+
 
 - **/patient/view**
 Use this endpoint to **get** a list of all patients in the database. Example:
@@ -126,6 +138,7 @@ curl -X GET \
   -H 'X-Auth-Token: custom_token' \
   localhost:9020/patient/view
 ```
+
 
 - **/match**
 **POST** a request with a query patient to patientMatcher and get a response with the patients in the server which are most similar to your query. Example:
@@ -142,6 +155,7 @@ curl -X POST \
   }}' localhost:9020/match
 ```
 
+
 - **/match/external/<patient_id>**
 Trigger a search in external nodes for patients similar to the one specified by the ID. Example:
 ```bash
@@ -150,6 +164,7 @@ curl -X POST \
   localhost:9020/match/external/patient_id
 ```
 
+
 - **/patient/matches/<patient_id>**
 Return all matches (internal and external) with positive results for a patient specified by an ID. Example:
 ```bash
@@ -157,6 +172,7 @@ curl -X GET \
   -H 'X-Auth-Token: custom_token' \
   localhost:9020/matches/patient_id
 ```
+
 
 ## Patient matching algorithm, used both for internal and external searches
 Each patient query submitted to the server triggers a matching algorithm which will search and return those patients on the server that are most similar to the queried one.

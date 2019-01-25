@@ -26,7 +26,7 @@ def test_load_demo_patients(demo_data_path, database):
     assert len(inserted_ids) == 0
 
 
-def test_backend_remove_patient(json_patients, database):
+def test_backend_remove_patient(json_patients, database, match_obs):
     """ Test adding 2 test patients and then removing them using label or ID """
 
     # test conversion to format required for the database:
