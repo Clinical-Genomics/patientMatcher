@@ -42,3 +42,25 @@ def patient(id, label, remove_matches):
         query = {'data.patient.id' : id}
         n_removed = delete_by_query(query=query, mongo_db= current_app.db, mongo_collection='matches')
         click.echo('Number of matches for this patient removed from database:{}'.format(n_removed))
+
+
+@remove.command()
+@click.option('-id', type=click.STRING, nargs=1, required=True, help="ID of the client to be removed from database")
+@with_appcontext
+def client(id):
+    """Remove a client from database by providing its ID"""
+
+    query = {'_id' : id}
+    n_removed = delete_by_query(query=query, mongo_db= current_app.db, mongo_collection='clients')
+    click.echo('Number of clients removed from database:{}'.format(n_removed))
+
+
+@remove.command()
+@click.option('-id', type=click.STRING, nargs=1, required=True, help="ID of the node to be removed from database")
+@with_appcontext
+def node(id):
+    """Remove a node from database by providing its ID"""
+
+    query = {'_id' : id}
+    n_removed = delete_by_query(query=query, mongo_db= current_app.db, mongo_collection='nodes')
+    click.echo('Number of nodes removed from database:{}'.format(n_removed))

@@ -54,6 +54,53 @@ def test_cli_add_client(database, test_client):
     assert database['clients'].find().count() == 1
 
 
+def test_cli_remove_client(database, test_client):
+
+    app.db = database
+
+    # Add a client to database
+    runner = app.test_cli_runner()
+    result =  runner.invoke(cli, ['add', 'client', '-id', test_client['_id'],
+        '-token', test_client['auth_token'], '-url', test_client['base_url']])
+    assert result.exit_code == 0
+
+    # check that the server was added to the "nodes" collection
+    assert database['clients'].find().count() == 1
+
+    # Use the cli to remove client
+    result =  runner.invoke(cli, ['remove', 'client', '-id', test_client['_id'] ])
+
+    # check that command is executed withour errors
+    assert result.exit_code == 0
+
+    # and that client is gone from database
+    assert database['clients'].find().count() == 0
+
+
+def test_cli_remove_node(database, test_node):
+
+    app.db = database
+
+    # Add a node to database
+    runner = app.test_cli_runner()
+    result =  runner.invoke(cli, ['add', 'node', '-id', test_node['_id'],
+        '-token', test_node['auth_token'], '-matching_url', test_node['matching_url'],
+        '-accepted_content', test_node['accepted_content']])
+    assert result.exit_code == 0
+
+    # check that the server was added to the "nodes" collection
+    assert database['nodes'].find().count() == 1
+
+    # Use the cli to remove client
+    result =  runner.invoke(cli, ['remove', 'node', '-id', test_node['_id'] ])
+
+    # check that command is executed withour errors
+    assert result.exit_code == 0
+
+    # and that node is gone from database
+    assert database['nodes'].find().count() == 0
+
+
 def test_cli_add_demo_data(database):
     app.db = database
     runner = app.test_cli_runner()
