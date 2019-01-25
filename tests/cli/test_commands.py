@@ -69,15 +69,15 @@ def test_cli_add_demo_data(database):
     assert database['patients'].find().count() == 50
 
 
-def test_cli_remove_patient(database, json_patients):
+def test_cli_remove_patient(database, json_patients, match_obs):
     app.db = database
     runner = app.test_cli_runner()
 
     # add a test patient to database
     test_patient = json_patients[0]
-    test_patient['_id'] = 'test_id'
+    test_patient['_id'] = 'P0000079'
     inserted_id = app.db['patients'].insert_one(test_patient).inserted_id
-    assert inserted_id == 'test_id'
+    assert inserted_id == 'P0000079'
 
     # there is now 1 patient in database
     assert database['patients'].find().count() == 1
@@ -86,9 +86,29 @@ def test_cli_remove_patient(database, json_patients):
     result =  runner.invoke(cli, ['remove', 'patient', '-id', '', '-label', ''])
     assert 'Error' in result.output
 
+    # Add mock patient matches objects to database
+    database['matches'].insert_many(match_obs)
+    # There should be 2 matches in database for this patient:
+    assert database['matches'].find( {'data.patient.id' : inserted_id }).count() == 2
+
     # involke cli command to remove the patient by id and label
-    result =  runner.invoke(cli, ['remove', 'patient', '-id', inserted_id, '-label', 'Patient number 1'])
+    result =  runner.invoke(cli, ['remove', 'patient', '-id', inserted_id, '-label', 'Patient number 1', '-leave_matches'])
     assert result.exit_code == 0
 
     # check that the patient was removed from database
     assert database['patients'].find().count() == 0
+
+    # But matches are still there
+    assert database['matches'].find( {'data.patient.id' : inserted_id }).count() == 2
+
+    # Run remove patient command with option to remove matches but without patient ID
+    result =  runner.invoke(cli, ['remove', 'patient', '-label', 'Patient number 1', '-remove_matches'])
+    # And make sure that it doesn't work
+    assert 'Please provide patient ID and not label to remove all its matches.' in result.output
+
+    # Test now the proper command to remove patient matches:
+    result =  runner.invoke(cli, ['remove', 'patient', '-id', inserted_id, '-remove_matches'])
+    assert result.exit_code == 0
+
+    # And make sure that patient removal removed its matchings
+    assert database['matches'].find( {'data.patient.id' : inserted_id }).count() == 0

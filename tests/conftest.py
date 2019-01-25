@@ -64,7 +64,7 @@ def match_obs():
             'has_matches' : True,
             'data' : {
                 'patient' : {
-                    'id' : 'test_patient'
+                    'id' : 'P0000079'
                 }
             },
             'results' : [
@@ -78,7 +78,7 @@ def match_obs():
             'has_matches' : False,
             'data' : {
                 'patient' : {
-                    'id' : 'test_patient'
+                    'id' : 'P0000079'
                 }
             },
             'results' : [],
@@ -93,7 +93,7 @@ def match_obs():
                 }
             },
             'results' : [
-                {'patient' : { 'id' : 'test_patient'}},
+                {'patient' : { 'id' : 'P0000079'}},
             ],
             'match_type' : 'internal'
         },
