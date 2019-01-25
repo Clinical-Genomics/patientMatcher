@@ -40,7 +40,7 @@ def patient_matches(database, patient_id, type=None, with_results=True):
     return matches
 
 
-def internal_matcher(database, patient_obj, max_pheno_score, max_geno_score):
+def internal_matcher(database, patient_obj, max_pheno_score, max_geno_score, max_results=5):
     """Handles a query patient matching against the database of patients
 
     Args:
@@ -48,6 +48,7 @@ def internal_matcher(database, patient_obj, max_pheno_score, max_geno_score):
         patient_obj(dic): a mme formatted patient object
         max_pheno_score(float): a number between 0 and 1
         max_geno_score(float): a number between 0 and 1
+        max_results(int): the maximum number of results that the server should return.
 
     Returns:
         internal_match(dict): a matching object with results(list) sorted by score
@@ -110,7 +111,7 @@ def internal_matcher(database, patient_obj, max_pheno_score, max_geno_score):
         'created' : datetime.datetime.now(),
         'has_matches' : has_matches,
         'data' : {'patient' : json_pat}, # description of the patient submitted
-        'results' : sorted_matches,
+        'results' : sorted_matches[:max_results],
         'match_type' : 'internal'
     }
 

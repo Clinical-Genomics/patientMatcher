@@ -191,7 +191,7 @@ def test_patient_matches(database, match_obs, test_client):
     assert len(matches) == 2
 
 
-def test_match_view(json_patients, test_client, demo_data_path, database):
+def test_match(json_patients, test_client, demo_data_path, database):
     """Testing patient matching against patientMatcher database (internal match)"""
     app.db = database
 
@@ -215,7 +215,9 @@ def test_match_view(json_patients, test_client, demo_data_path, database):
     response = app.test_client().post('/match', data=json.dumps(query_patient), headers = auth_headers(ok_token))
     assert response.status_code == 200 # POST request should be successful
     data = json.loads(response.data)
-    assert data['results'] # data should contain results object
+    # data should contain results and the max number of results is as defined in the config file
+    assert len(data['results']) == app.config['MAX_RESULTS']
+
     assert type(data['results']) == list # which is a list
     assert 'patient' in data['results'][0] # of patients
     assert 'score' in data['results'][0] # with matching scores
@@ -224,7 +226,7 @@ def test_match_view(json_patients, test_client, demo_data_path, database):
     assert database['matches'].find().count()==1
 
 
-def test_match_external_view(test_client, test_node, database, json_patients):
+def test_match_external(test_client, test_node, database, json_patients):
     """Testing the view that is sending post request to trigger matches on external nodes"""
     app.db = database
 
