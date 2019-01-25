@@ -172,7 +172,7 @@ curl -X POST \
   }}' localhost:9020/match
 ```
 The **maximum number of patients returned by the server** is a parameter which can be customized by editing the "MAX_RESULTS" field in the config.py file. Default value is 5.
-Patient matches are returned in order or descending similarity with the query patient (The most similar patient are higher in the list of results).
+Patient matches are returned in order or descending similarity with the query patient (The most similar patients are higher in the list of results).
 
 &nbsp;&nbsp;
 
