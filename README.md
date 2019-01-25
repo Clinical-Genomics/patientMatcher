@@ -26,16 +26,23 @@ Clone the repository from github using this command:
 git clone https://github.com/Clinical-Genomics/patientMatcher.git
 ```
 
-To customize the server configuration you'll need to edit the **config.py** file under the /instance folder. For testing purposes you can keep the default configuration values as they are, but be sure no to use these values in production!&nbsp;
-
 Change directory to the cloned folder and from there install the software using the following command:
 ```bash
 pip install -e .
 ```
-To run the application server you can execute the following command:
+
+To customize the server configuration you'll need to edit the **config.py** file under the /instance folder. &nbsp;
+For testing purposes you can keep the default configuration values as they are, but keep in mind that you should adjust these numbers when in production.
+
+To run the server run this command:
 ```bash
 python run.py
 ```
+
+## Data types
+This server implements the [Matchmaker Exchange APIs](https://github.com/ga4gh/mme-apis). It accepts and returns patient data validated against the [json schema](https://github.com/MatchmakerExchange/reference-server/blob/master/mme_server/schemas/api.json) defined in the [MME reference-server project](https://github.com/MatchmakerExchange/reference-server).
+
+&nbsp;&nbsp;
 
 ## Command line interface
 A list of available commands can be invoked by running the following command:
@@ -163,6 +170,8 @@ curl -X POST \
     "genomicFeatures":[{"gene":{"id":"EFTUD2"}}]
   }}' localhost:9020/match
 ```
+The **maximum number of patients returned by the server** is a parameter which can be customized by editing the "MAX_RESULTS" field in the config.py file. Default value is 5.
+Patient matches are returned in order or descending similarity with the query patient (The most similar patient are higher in the list of results).
 &nbsp;&nbsp;
 
 - **/match/external/<patient_id>**
