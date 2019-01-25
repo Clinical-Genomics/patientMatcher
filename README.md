@@ -26,13 +26,12 @@ Clone the repository from github using this command:
 git clone https://github.com/Clinical-Genomics/patientMatcher.git
 ```
 
-To customize the server configuration you'll need to edit the **config.py** file under the /instance folder. For testing purposes you can keep the default configuration values as they are, but be sure no to use these values in production!
+To customize the server configuration you'll need to edit the **config.py** file under the /instance folder. For testing purposes you can keep the default configuration values as they are, but be sure no to use these values in production!&nbsp;
 
 Change directory to the cloned folder and from there install the software using the following command:
 ```bash
 pip install -e .
 ```
-
 To run the application server you can execute the following command:
 ```bash
 python run.py
@@ -43,16 +42,50 @@ A list of available commands can be invoked by running the following command:
 ```bash
 pmatcher
 ```
+&nbsp;&nbsp;
 
 ### Adding demo data to server
-For testing purposes you can upload a list of [50 benchmarking patients](https://github.com/ga4gh/mme-apis/tree/master/testing).
+For testing purposes you can upload a list of [50 benchmarking patients](https://github.com/ga4gh/mme-apis/tree/master/testing).&nbsp;
 To add these patients to the database run the following command:
 ```bash
 pmatcher add demodata
 ```
+&nbsp;&nbsp;
+
+### Removing a patient from the database.
+You can remove a patient using the command line interface by invoking this command and providing **either its ID or its label** (or both actually):
+
+```bash
+pmatcher remove patient [OPTIONS]
+
+Options:
+-id TEXT     ID of the patient to be removed from database
+-label TEXT  label of the patient to be removed from database
+```
+&nbsp;&nbsp;
+
+### Adding a client to the database
+In order to save patients into patientMatcher you need to create at least one authorized client.&nbsp;
+Use the following command to insert a client object in the database:
+
+```bash
+pmatcher add client [OPTIONS]
+
+Options:
+-id TEXT       Client ID  [required]
+-token TEXT    Authorization token  [required]
+-url TEXT      Client URL  [required]
+-contact TEXT  Client email
+```
+POST request aimed at adding or modifying a patient in patientMatcher **should be using a token** from a client present in the database.&nbsp;
+Clients may be from the command line with this command:
+```bash
+pmatcher remove node -id node_id
+```
+&nbsp;&nbsp;
 
 ### Adding a connected node to the database
-To connect to another MME node and submit requests to it you should know the authentication token to the other node.
+To connect to another MME node and submit requests to it you should know the authentication token to the other node.&nbsp;
 You can add a node to the database by running the command:
 
 ```bash
@@ -65,35 +98,11 @@ Options:
   -accepted_content TEXT  Accepted Content-Type  [required]
   -contact TEXT           An email address
 ```
-
-
-### Adding a client to the database
-In order to save patients into patientMatcher you need to create at least one authorized client.
-Use the following command to insert a client object in the database:
-
+Connected nodes may be removed any time using the command:&nbsp;
 ```bash
-pmatcher add client [OPTIONS]
-
-Options:
--id TEXT       Client ID  [required]
--token TEXT    Authorization token  [required]
--url TEXT      Client URL  [required]
--contact TEXT  Client email
+pmatcher remove node -id node_id
 ```
-POST request aimed at adding or modifying a patient in patientMatcher **should be using a token** from a client present in the database.
-
-
-
-### Removing a patient from the database.
-You can remove a patient using the command line interface by invoking this command and providing **either its ID or its label** (or both actually):
-
-```bash
-pmatcher remove patient [OPTIONS]
-
-Options:
--id TEXT     ID of the patient to be removed from database
--label TEXT  label of the patient to be removed from database
-```
+&nbsp;&nbsp;
 
 
 ## Server endpoints
@@ -112,12 +121,12 @@ curl -X POST \
     "genomicFeatures":[{"gene":{"id":"EFTUD2"}}]
   }}' localhost:9020/patient/add
 ```
-To update the data of a patient already submitted to the server you can use the same command and add a patient with the same ID.
+To update the data of a patient already submitted to the server you can use the same command and add a patient with the same ID.&nbsp;
 
-The action of adding or updating a patient in the server will trigger an **external search of similar patients from connected nodes**.
+The action of adding or updating a patient in the server will trigger an **external search of similar patients from connected nodes**.&nbsp;
 If there are no connected nodes in the database or you are uploading demo data no search will be performed on other nodes.
 
-
+&nbsp;&nbsp;
 
 - **patient/delete/<patient_id>**
 You can delete a patient from the database by sending a **DELETE** request with its ID to the server. Example:
@@ -129,7 +138,7 @@ curl -X DELETE \
 Please note that when a patient is deleted all its match results will be also deleted from the database. This is valid for **matches where the patient was used as the query patient** in searches performed on other nodes or the internal patientMatcher database (internal search).
 Matching results where the removed patient is instead listed among the matching results will be not removed from the database.
 
-
+&nbsp;&nbsp;
 
 - **/patient/view**
 Use this endpoint to **get** a list of all patients in the database. Example:
@@ -138,7 +147,7 @@ curl -X GET \
   -H 'X-Auth-Token: custom_token' \
   localhost:9020/patient/view
 ```
-
+&nbsp;&nbsp;
 
 - **/match**
 **POST** a request with a query patient to patientMatcher and get a response with the patients in the server which are most similar to your query. Example:
@@ -154,7 +163,7 @@ curl -X POST \
     "genomicFeatures":[{"gene":{"id":"EFTUD2"}}]
   }}' localhost:9020/match
 ```
-
+&nbsp;&nbsp;
 
 - **/match/external/<patient_id>**
 Trigger a search in external nodes for patients similar to the one specified by the ID. Example:
@@ -163,7 +172,7 @@ curl -X POST \
   -H 'X-Auth-Token: custom_token' \
   localhost:9020/match/external/patient_id
 ```
-
+&nbsp;&nbsp;
 
 - **/patient/matches/<patient_id>**
 Return all matches (internal and external) with positive results for a patient specified by an ID. Example:
@@ -172,7 +181,7 @@ curl -X GET \
   -H 'X-Auth-Token: custom_token' \
   localhost:9020/matches/patient_id
 ```
-
+&nbsp;&nbsp;
 
 ## Patient matching algorithm, used both for internal and external searches
 Each patient query submitted to the server triggers a matching algorithm which will search and return those patients on the server that are most similar to the queried one.
