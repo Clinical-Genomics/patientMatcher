@@ -3,6 +3,7 @@ import os
 from pymongo import MongoClient
 import logging
 from flask import Flask
+from flask_mail import Mail
 
 logging.basicConfig(level=logging.INFO)
 LOG = logging.getLogger(__name__)
@@ -12,22 +13,16 @@ def create_app():
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_pyfile('config.py')
 
-    if not app.config.get('DB_URI') or not app.config.get('DB_NAME'):
-        LOG.error('Please use values for DB_URI and DB_NAME parameters in config file.')
-        return None
-
-    if not app.config.get('MAX_GT_SCORE') or not app.config.get('MAX_PHENO_SCORE') or not (app.config.get('MAX_PHENO_SCORE') + app.config.get('MAX_GT_SCORE')) == 1:
-        LOG.error('Please chech that MAX_GT_SCORE and MAX_PHENO_SCORE have valid values')
-        return None
-
-    if not app.config.get('MAX_RESULTS') or not isinstance(app.config.get('MAX_RESULTS'), int):
-        LOG.error('MAX_RESULTS parameter in config file must be a number')
-        return None
-
     client = MongoClient(app.config['DB_URI'])
     app.db = client[app.config['DB_NAME']]
+
+    if app.config.get('MAIL_SERVER'):
+        mail = Mail(app)
+        app.mail = mail
+
     app.register_blueprint(server.views.blueprint)
     return app
+
 
 
 def run_app():

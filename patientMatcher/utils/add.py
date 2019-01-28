@@ -62,6 +62,8 @@ def backend_add_patient(mongo_db, patient, match_external=False):
     """
     modified = None
     upserted = None
+    matching_obj = None
+
     try:
         result = mongo_db['patients'].replace_one({'_id': patient['_id']}, patient , upsert=True)
         modified = result.modified_count
@@ -78,7 +80,7 @@ def backend_add_patient(mongo_db, patient, match_external=False):
         #save matching object to database
         mongo_db['matches'].insert_one(matching_obj)
 
-    return modified, upserted
+    return modified, upserted, matching_obj
 
 
 def add_node(mongo_db, obj, is_client):

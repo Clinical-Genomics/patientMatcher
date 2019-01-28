@@ -8,6 +8,7 @@ from flask_negotiate import consumes, produces
 
 from patientMatcher import create_app
 from patientMatcher.utils.add import backend_add_patient
+from patientMatcher.utils.notify import notify_match_external
 from patientMatcher.auth.auth import authorize
 from patientMatcher.match.handler import internal_matcher, patient_matches
 from patientMatcher.parse.patient import validate_api, mme_patient
@@ -29,7 +30,7 @@ def add():
         return controllers.bad_request(formatted_patient)
 
     # else import patient to database
-    modified, inserted = backend_add_patient(mongo_db=current_app.db, patient=formatted_patient, match_external=True)
+    modified, inserted, matching_obj= backend_add_patient(mongo_db=current_app.db, patient=formatted_patient, match_external=True)
     message = ''
 
     if modified:
@@ -38,6 +39,12 @@ def add():
         message = 'Patient was successfully inserted into database.'
     else:
         message = 'Database content is unchanged.'
+
+    # if patient is matching any other patient on other nodes
+    # and match notifications are on
+    if current_app.config.get('MAIL_SERVER') and matching_obj and len(matching_obj.get('results')):
+        # send an email to patient's contact:
+        notify_match_external(match_obj=matching_obj, admin_email=current_app.config.get('MAIL_USERNAME'), mail=current_app.mail)
 
     resp = jsonify(message)
     resp.status_code = 200
@@ -119,7 +126,15 @@ def match_external(patient_id):
         resp.status_code = 200
         return resp
 
-    results, errors = controllers.match_external(current_app.db, query_patient)
+    matching_obj = controllers.match_external(current_app.db, query_patient)
+    results = matching_obj.get('results')
+
+    # if patient is matching any other patient on other nodes
+    # and match notifications are on
+    if current_app.config.get('MAIL_SERVER') and matching_obj and len(results):
+        # send an email to patient's contact:
+        notify_match_external(match_obj=matching_obj, admin_email=current_app.config.get('MAIL_USERNAME'), mail=current_app.mail)
+
     resp = jsonify(results)
     resp.status_code = 200
     return resp
@@ -148,6 +163,11 @@ def match_internal():
     # save matching object to database
     current_app.db['matches'].insert_one(match_obj)
     matches = match_obj['results']
+
+    # if notifications are on and there are results
+    #if current_app.config.get('ADMIN_EMAIL') and len(results):
+
+
 
     validate_response = controllers.validate_response({'results': matches})
     if isinstance(validate_response, int): # some error must have occurred during validation
