@@ -5,6 +5,7 @@ from patientMatcher.utils.notify import notify_match_external, notify_match_inte
 def test_notify_match_external(match_objs, mock_sender, mock_mail):
 
     match_obj = match_objs[0] #an external match object with results
+    assert match_obj['match_type'] == 'external'
 
     # When calling the function that sends external match notifications
     notify_match_external(match_obj, mock_sender, mock_mail)
@@ -19,6 +20,7 @@ def test_notify_match_external(match_objs, mock_sender, mock_mail):
 def test_notify_match_internal(database, match_objs, mock_sender, mock_mail):
 
     match_obj = match_objs[2] # an internal match object with results
+    assert match_obj['match_type'] == 'internal'
 
     # insert patient used as query in database:
     assert database['patients'].find().count() == 0
