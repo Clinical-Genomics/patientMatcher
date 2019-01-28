@@ -2,8 +2,7 @@
 import pymongo
 from patientMatcher.utils.notify import notify_match_external, notify_match_internal
 
-def test_notify_external_match(match_obs, mock_sender, mock_mail):
-    """Test external match notification"""
+def test_notify_match_external(match_obs, mock_sender, mock_mail):
 
     match_obj = match_obs[0] #an external match object with results
 
@@ -17,7 +16,7 @@ def test_notify_external_match(match_obs, mock_sender, mock_mail):
     assert mock_mail._message
 
 
-def test_notify_external_match(database, match_obs, mock_sender, mock_mail):
+def test_notify_match_internal(database, match_obs, mock_sender, mock_mail):
 
     match_obj = match_obs[2] # an internal match object with results
 
