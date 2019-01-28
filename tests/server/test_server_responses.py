@@ -95,7 +95,7 @@ def test_patient_view(database, test_client):
     assert auth_response.status_code == 200
 
 
-def test_delete_patient(database, demo_data_path, test_client, match_obs):
+def test_delete_patient(database, demo_data_path, test_client, match_objs):
     """Test deleting a patient from database by sending a DELETE request"""
 
     app.db = database
@@ -124,7 +124,7 @@ def test_delete_patient(database, demo_data_path, test_client, match_obs):
 
     assert database['matches'].find().count() == 0 # no matches in database
     # insert into database some mock matching objects
-    database['matches'].insert_many(match_obs)
+    database['matches'].insert_many(match_objs)
 
     # patient "delete_id" should have two associated matches in database
     assert database['matches'].find({'data.patient.id' : delete_id}).count() == 2
@@ -141,7 +141,7 @@ def test_delete_patient(database, demo_data_path, test_client, match_obs):
 
 
 
-def test_patient_matches(database, match_obs, test_client):
+def test_patient_matches(database, match_objs, test_client):
     """testing the endpoint that retrieves the matchings by patient ID"""
 
     app.db = database
@@ -152,7 +152,7 @@ def test_patient_matches(database, match_obs, test_client):
     # start from a database with no matches
     assert database['matches'].find().count() == 0
     # import mock matches into datababase
-    database['matches'].insert_many(match_obs)
+    database['matches'].insert_many(match_objs)
     # database now should have two matching objects
 
     # test endpoint to get matches by ID

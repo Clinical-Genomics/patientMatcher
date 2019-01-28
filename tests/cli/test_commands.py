@@ -116,7 +116,7 @@ def test_cli_add_demo_data(database):
     assert database['patients'].find().count() == 50
 
 
-def test_cli_remove_patient(database, json_patients, match_obs):
+def test_cli_remove_patient(database, json_patients, match_objs):
     app.db = database
     runner = app.test_cli_runner()
 
@@ -134,7 +134,7 @@ def test_cli_remove_patient(database, json_patients, match_obs):
     assert 'Error' in result.output
 
     # Add mock patient matches objects to database
-    database['matches'].insert_many(match_obs)
+    database['matches'].insert_many(match_objs)
     # There should be 2 matches in database for this patient:
     assert database['matches'].find( {'data.patient.id' : inserted_id }).count() == 2
 

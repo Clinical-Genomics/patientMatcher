@@ -72,7 +72,7 @@ def test_node():
 
 
 @pytest.fixture(scope='function')
-def match_obs():
+def match_objs():
     """Mock the results of an internal and an external match"""
     matches = [
         {    # External match where test_patient is the query and with results
