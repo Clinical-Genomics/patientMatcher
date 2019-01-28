@@ -28,7 +28,7 @@ def notify_match_internal(database, match_obj, admin_email, mail):
     email_body = None
 
     # check if query patient belongs to patientMatcher database:
-    internal_patient = database['patients'].find({'_id':match_obj['data']['patient']['id']}).count()
+    internal_patient = database['patients'].find_one({'_id':match_obj['data']['patient']['id']})
     if internal_patient:
         #If patient used for the search is on patientMatcher database, notify querier as well:
         patient_id = match_obj['data']['patient']['id']
@@ -49,7 +49,13 @@ def notify_match_internal(database, match_obj, admin_email, mail):
 
     # Loop over the result patients and notify their contact about the matching with query patient
     for result in match_obj['results']:
+
         patient_id = result['patient']['id']
+
+        # do not notify when patient in results is the same as the one used for query
+        if internal_patient and internal_patient['_id'] == patient_id:
+            continue
+
         patient_label =  result['patient'].get('label')
         recipient = result['patient']['contact']['href'][7:]
         email_body = passive_match_email_body(patient_id, patient_label)
