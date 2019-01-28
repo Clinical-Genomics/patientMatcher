@@ -6,6 +6,22 @@ from pathlib import Path
 
 DATABASE = 'testdb'
 
+class MockMail:
+    _send_was_called = False
+    _message = None
+
+    def send(self, message):
+        self._send_was_called = True
+        self._message = message
+
+@pytest.fixture
+def mock_mail():
+    return MockMail()
+
+@pytest.fixture
+def mock_sender():
+    return 'mock_sender'
+
 @pytest.fixture(scope='function')
 def pymongo_client(request):
     """Get a client to the mongo database"""
@@ -64,7 +80,10 @@ def match_obs():
             'has_matches' : True,
             'data' : {
                 'patient' : {
-                    'id' : 'P0000079'
+                    'id' : 'P0000079',
+                    'contact' : {
+                        'href' : 'mailto:test_contact@email.com'
+                    }
                 }
             },
             'results' : [
@@ -79,6 +98,9 @@ def match_obs():
             'data' : {
                 'patient' : {
                     'id' : 'P0000079'
+                },
+                'contact' : {
+                    'href' : 'mailto:test_contact@email.com'
                 }
             },
             'results' : [],
@@ -89,11 +111,19 @@ def match_obs():
             'has_matches' : True,
             'data' : {
                 'patient' : {
-                    'id' : 'external_patient_1'
+                    'id' : 'external_patient_1',
+                    'contact' : {
+                        'href' : 'mailto:test_contact@email.com'
+                    }
                 }
             },
             'results' : [
-                {'patient' : { 'id' : 'P0000079'}},
+                {'patient' : {
+                    'id' : 'P0000079',
+                    'contact' : {
+                        'href' : 'mailto:test_contact2@email.com'
+                    }
+                }},
             ],
             'match_type' : 'internal'
         },

@@ -21,7 +21,6 @@ def test_add_patient(database, json_patients, test_client, test_node):
     response = app.test_client().post('patient/add', data=json.dumps(patient_data), headers=unauth_headers())
     assert response.status_code == 401
 
-
     # add an authorized client to database
     ok_token = test_client['auth_token']
 
@@ -265,6 +264,15 @@ def test_match_external(test_client, test_node, database, json_patients):
     # And a new match should be created in matches collection
     assert database['matches'].find().count() == 1
 
+
+
+
+
+
+
+
+def test_notify_internal_match():
+    assert 0 == 0
 
 def unauth_headers():
     head = {
