@@ -1,5 +1,6 @@
 ## server
 Flask
+Flask-Mail
 flask_negotiate
 requests
 jsonschema

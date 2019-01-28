@@ -33,7 +33,8 @@ def match_external(database, query_patient):
     matching_obj = external_matcher(database, query_patient)
     # save matching object to database
     database['matches'].insert_one(matching_obj)
-    return matching_obj.get('results'), matching_obj.get('errors')
+
+    return matching_obj
 
 
 def check_request(database, request):
