@@ -8,7 +8,7 @@ from flask_negotiate import consumes, produces
 
 from patientMatcher import create_app
 from patientMatcher.utils.add import backend_add_patient
-from patientMatcher.utils.notify import notify_match_external
+from patientMatcher.utils.notify import notify_match_external, notify_match_internal
 from patientMatcher.auth.auth import authorize
 from patientMatcher.match.handler import internal_matcher, patient_matches
 from patientMatcher.parse.patient import validate_api, mme_patient
@@ -164,9 +164,10 @@ def match_internal():
     current_app.db['matches'].insert_one(match_obj)
     matches = match_obj['results']
 
-    # if notifications are on and there are results
-    #if current_app.config.get('ADMIN_EMAIL') and len(results):
-
+    # if notifications are on and there are matching results
+    if current_app.config.get('MAIL_SERVER') and len(matches):
+        notify_match_internal(database=current_app.db, match_obj=match_obj,
+            admin_email=current_app.config.get('MAIL_USERNAME'), mail=current_app.mail)
 
 
     validate_response = controllers.validate_response({'results': matches})

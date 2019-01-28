@@ -6,23 +6,62 @@ from flask_mail import Message
 LOG = logging.getLogger(__name__)
 
 
-def notify_match_internal(database, match_obj, admin_email):
+def notify_match_internal(database, match_obj, admin_email, mail):
     """Send an email to patient contacts after an internal match
 
     Args:
+        database(pymongo.database.Database): patientMatcher database
         match_obj(dict): an object containing both query patient(dict) and matching results(list)
         admin_email(str): email of the server admin
+        mail(flask_mail.Mail): an email instance
     """
     # Internal matching can be triggered by a patient in the same database or by a patient on a connected node.
     # In the first case notify both querier contact and contacts in the result patients.
     # in the second case notify only contacts from patients in the results list.
 
+    sender = admin_email
+    patient_id = None
+    patient_label = None
+    results = None
+    recipient = None
+    email_subject = 'MatchMaker Exchange: new patient match available.'
+    email_body = None
+
     # check if query patient belongs to patientMatcher database:
-    #results = database['patients'].find_one( {'_id':match_obj['data']['patient']['id']} )
-    #if len()
+    internal_patient = database['patients'].find({'_id':match_obj['data']['patient']['id']}).count()
+    if internal_patient:
+        #If patient used for the search is on patientMatcher database, notify querier as well:
+        patient_id = match_obj['data']['patient']['id']
+        patient_label = match_obj['data']['patient'].get('label')
+        results = match_obj['results']
+        recipient = match_obj['data']['patient']['contact']['href'][7:]
+        email_body = active_match_email_body(patient_id, results, patient_label, external_match=False)
+        LOG.info('Sending an internal match notification for query patient with ID:{0}. Patient contact: {1}'.format(patient_id, recipient))
 
-    return "Nothing!"
+        kwargs = dict(subject=email_subject, html=email_body, sender=sender, recipients=[recipient])
+        message = Message(**kwargs)
+        # send email using flask_mail
+        try:
+            mail.send(message)
+        except Exception as err:
+            LOG.error('An error occurred while sending an internal match notification: {}'.format(err))
 
+
+    # Loop over the result patients and notify their contact about the matching with query patient
+    for result in match_obj['results']:
+        patient_id = result['patient']['id']
+        patient_label =  result['patient'].get('label')
+        recipient = result['patient']['contact']['href'][7:]
+        email_body = passive_match_email_body(patient_id, patient_label)
+        LOG.info('Sending an internal match notification for match result with ID {}'.format(patient_id))
+
+        kwargs = dict(subject=email_subject, html=email_body, sender=sender, recipients=[recipient])
+        message = Message(**kwargs)
+        # send email using flask_mail
+        try:
+            mail.send(message)
+        except Exception as err:
+            LOG.error('An error occurred while sending an internal match notification: {}'.format(err))
 
 
 def notify_match_external(match_obj, admin_email, mail):
@@ -41,28 +80,17 @@ def notify_match_external(match_obj, admin_email, mail):
     recipient = match_obj['data']['patient']['contact']['href'][7:]
     email_subject = 'MatchMaker Exchange: new patient match available.'
     email_body = active_match_email_body(patient_id, results, patient_label, external_match=True)
-    LOG.info('Sending a match notification to patient contact {}'.format(recipient))
+    LOG.info('Sending an external match notification for query patient with ID {0}. Patient contact: {1}'.format(patient_id, recipient))
 
     kwargs = dict(subject=email_subject, html=email_body, sender=sender, recipients=[recipient])
     message = Message(**kwargs)
     # send email using flask_mail
-    mail.send(message)
+    try:
+        mail.send(message)
+    except Exception as err:
+        LOG.error('An error occurred while sending an external match notification: {}'.format(err))
 
-    """
-    else:
-        # a match request (external or internal) was sent to server and has results.
-        # loop over patient list in results and for each patient notify its contact about it
-        for result in match_obj.get('results'):
-            patient_id = result['patient']['id']
-            patient_label = result['patient'].get('label')
-            recipient = result['patient']['contact']['href'][8:]
-            email_body = notification_body(patient_id, patient_label, external_match)
 
-            kwargs = dict(subject=email_subject, html=email_body, sender=sender, recipients=recipients)
-            message = Message(**kwargs)
-            # send email using flask_mail
-            mail.send(message)
-    """
 
 def active_match_email_body(patient_id, results, patient_label=None, external_match=False):
     """Returns the body message of the notification email when the patient was used as query patient
@@ -85,7 +113,7 @@ def active_match_email_body(patient_id, results, patient_label=None, external_ma
         ***This is an automated message, please do not reply to this email.***<br><br>
         <strong>MatchMaker Exchange patient matching notification:</strong><br><br>
         Patient with ID <strong>{0}</strong>, label <strong>{1}</strong> was recently used in a search {2}.
-        This search returned <strong>{3} potential matches</strong>.<br><br>
+        This search returned <strong>{3} potential matche(s)</strong>.<br><br>
         For security reasons match results and patient contacts are not disclosed in this email.<br>
         Please contact the service provider or connect to the portal you used to submit the data to review these results.
         <br><br>
@@ -117,6 +145,6 @@ def passive_match_email_body(patient_id, patient_label=None):
         <br><br>
         Kind regards,<br>
         The PatienMatcher team
-    """.format(patient_id, label)
+    """.format(patient_id, patient_label)
 
     return html
