@@ -34,6 +34,8 @@ def run_app():
     else:
         LOG.error('Fix config issues before running the app')
 
+    return app
+
 
 if __name__ == '__main__':
     create_app()
