@@ -265,15 +265,6 @@ def test_match_external(test_client, test_node, database, json_patients):
     assert database['matches'].find().count() == 1
 
 
-
-
-
-
-
-
-def test_notify_internal_match():
-    assert 0 == 0
-
 def unauth_headers():
     head = {
         'Content-Type': 'application/vnd.ga4gh.matchmaker.v1.0+json',
