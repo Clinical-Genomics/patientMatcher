@@ -22,8 +22,8 @@ MAX_RESULTS = 5
 
 # Email notification params.
 # Required only if you want to send match notifications to patients contacts
-MAIL_SERVER = smtp_server
-MAIL_PORT = mail_port
-MAIL_USE_SSL = True/False
-MAIL_USERNAME = mail_username
-MAIL_PASSWORD = mail_password
+#MAIL_SERVER = smtp_server
+#MAIL_PORT = mail_port
+#MAIL_USE_SSL = True or False
+#MAIL_USERNAME = mail_username
+#MAIL_PASSWORD = mail_password
