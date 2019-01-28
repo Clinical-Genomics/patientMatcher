@@ -245,7 +245,18 @@ Will be computed using the [Monarch Phenotype Profile Analysis tool](https://mon
 
 - **Disorders**
 OMIM diagnoses, if available, will make up **1/4 of the maximum similarity score**.
+<br>
 
+## Enabling match notifications
+
+Email notification of patient matching can be enabled by editing the email notification parameters
+in the configuration file (config.py).
+Once these parameters are set to valid values an email notification will be sent in the following cases:
+
+ - A patient is added to the database and the add request triggers a search on external nodes producing at least one result (/patient/add endpoint).
+ - An external search is actively performed on connected nodes and returns at least one result (/match/external/<patient_id> endpoint).
+ - The server is interrogated by an external node and returns at least one result match (/match endpoint). In this case a match notification is sent to each contact of the result matches.
+ - An internal search is submitted to the server using a patient from the database (/match endpoint) and this search returns at least one match. In this case contact users of all patients involved will be notified (contact from query patient and contacts from the result patients).
 
 
 [travis-url]: https://travis-ci.org/Clinical-Genomics/patientMatcher
