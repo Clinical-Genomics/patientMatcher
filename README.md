@@ -251,7 +251,7 @@ OMIM diagnoses, if available, will make up **1/4 of the maximum similarity score
 
 Email notification of patient matching can be enabled by editing the email notification parameters
 in the configuration file (config.py).
-Once these parameters are set to valid values an email notification will be sent in the following cases:
+Once these parameters are set to valid values a notification email will be sent in the following cases:
 
  - A patient is added to the database and the add request triggers a search on external nodes producing at least one result (/patient/add endpoint).
  - An external search is actively performed on connected nodes and returns at least one result (/match/external/<patient_id> endpoint).
