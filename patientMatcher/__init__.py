@@ -14,6 +14,7 @@ def create_app():
     app.config.from_pyfile('config.py')
 
     client = MongoClient(app.config['DB_URI'])
+    app.client = client
     app.db = client[app.config['DB_NAME']]
 
     if app.config.get('MAIL_SERVER'):
@@ -22,7 +23,6 @@ def create_app():
 
     app.register_blueprint(server.views.blueprint)
     return app
-
 
 
 def run_app():
