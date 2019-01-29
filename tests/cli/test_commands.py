@@ -17,7 +17,6 @@ def test_appname():
 
 
 def test_cli_testconnect(database):
-
     app.db = database
     runner = app.test_cli_runner()
     result = runner.invoke(cli, ['test', 'connection'])
