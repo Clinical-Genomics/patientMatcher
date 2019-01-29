@@ -22,7 +22,7 @@ def test_cli_testconnect(database):
     database['admin']['command'].insert
     runner = app.test_cli_runner()
     result = runner.invoke(cli, ['test', 'connection'])
-    assert 'Just testing the function!' in result.output
+    assert 'Just testing the function' in result.output
 
 
 def test_sendemail(mock_mail):
