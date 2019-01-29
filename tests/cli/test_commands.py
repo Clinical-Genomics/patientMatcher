@@ -12,7 +12,7 @@ app = create_app()
 
 def test_appname():
     runner = app.test_cli_runner()
-    result = runner.invoke(cli, ['app_name'])
+    result = runner.invoke(cli, ['test', 'name'])
     assert result.output == 'patientMatcher\n'
 
 
@@ -22,7 +22,7 @@ def test_sendemail(mock_mail):
 
     runner = app.test_cli_runner()
     # When invoking the test email command with a recipient paramrter
-    result = runner.invoke(cli, ['test_email', '-recipient', 'test_user@mail.com'])
+    result = runner.invoke(cli, ['test', 'email', '-recipient', 'test_user@mail.com'])
 
     # Make sure that mock mail send method was called and mock email is sent
     assert mock_mail._send_was_called
@@ -33,7 +33,7 @@ def test_sendemail(mock_mail):
 def test_cli_testconnect(database):
     app.db = database
     runner = app.test_cli_runner()
-    result = runner.invoke(cli, ['test_connect'])
+    result = runner.invoke(cli, ['test', 'connection'])
     assert 'Connect test OK' in result.output
 
 

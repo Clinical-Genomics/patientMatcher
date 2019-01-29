@@ -2,7 +2,6 @@
 [![Build Status](https://travis-ci.com/northwestwitch/patientMatcher.svg?branch=master)](https://travis-ci.com/northwestwitch/patientMatcher) [![Coverage Status](https://coveralls.io/repos/github/Clinical-Genomics/patientMatcher/badge.svg?branch=master&kill_cache=1)](https://coveralls.io/github/Clinical-Genomics/patientMatcher?branch=master)
 
 Table of Contents:
-
 1. [ Prerequisites ](#prerequisites)
 2. [ Installation ](#installation)
 3. [ Data types ](#data_types)
@@ -290,7 +289,7 @@ Email notification of patient matching can be enabled by editing the email notif
 in the configuration file (config.py). If you want to test your email configuration without sending real match notifications you could use this command:
 
 ```bash
-pmatcher test_email -recipient your_email@email.com
+pmatcher test email -recipient your_email@email.com
 ```
 
 Once these parameters are set to valid values a notification email will be sent in the following cases:

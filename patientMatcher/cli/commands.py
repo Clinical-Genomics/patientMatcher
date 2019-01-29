@@ -12,16 +12,22 @@ from .remove import remove
 
 cli = FlaskGroup(create_app=create_app)
 
+
+@click.group()
+def test():
+    """Test server using CLI"""
+    pass
+
 @cli.command()
 @with_appcontext
-def app_name():
+def name():
     """Returns the app name, for testing purposes, mostly"""
     click.echo(current_app.name)
     return current_app.name
 
 @cli.command()
 @with_appcontext
-def test_connect():
+def connection():
     """Tests if Mongo client is connected"""
     try:
         current_app.client.admin.command('ismaster')
@@ -33,7 +39,7 @@ def test_connect():
 @cli.command()
 @with_appcontext
 @click.option('-recipient', type=click.STRING, nargs=1, required=True, help="Email address to send the test email to")
-def test_email(recipient):
+def email(recipient):
     """Sends a test email using config settings"""
     click.echo(recipient)
 
@@ -72,8 +78,11 @@ def test_email(recipient):
         current_app.mail.send(message)
         click.echo('Mail correctly sent. Check your inbox!')
     except Exception as err:
-        click.echo('An error occurred while sending test email:"{}"'.format(err))
+        click.echo('An error occurred while sending test email: "{}"'.format(err))
 
-
+test.add_command(name)
+test.add_command(connection)
+test.add_command(email)
+cli.add_command(test)
 cli.add_command(add)
 cli.add_command(remove)
