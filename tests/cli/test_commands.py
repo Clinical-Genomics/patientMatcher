@@ -20,7 +20,7 @@ def test_cli_testconnect(database):
     app.db = database
     runner = app.test_cli_runner()
     result = runner.invoke(cli, ['test', 'connection'])
-    assert 'Error: Mongo client is NOT connected' in result.output
+    assert 'Just testing the function' in result.output
 
 
 def test_sendemail(mock_mail):
