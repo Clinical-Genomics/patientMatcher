@@ -17,12 +17,11 @@ def test_appname():
 
 
 def test_cli_testconnect(database):
-    app.db = database
 
-    database['admin']['command'].insert
+    app.db = database
     runner = app.test_cli_runner()
     result = runner.invoke(cli, ['test', 'connection'])
-    assert 'Just testing the function' in result.output
+    assert 'Error: Mongo client is NOT connected' in result.output
 
 
 def test_sendemail(mock_mail):
