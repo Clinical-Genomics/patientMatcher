@@ -115,7 +115,7 @@ Options:
 POST request aimed at adding or modifying a patient in patientMatcher **should be using a token** from a client present in the database.&nbsp;
 Clients may be from the command line with this command:
 ```bash
-pmatcher remove node -id node_id
+pmatcher remove client -id client_id
 ```
 &nbsp;&nbsp;
 
