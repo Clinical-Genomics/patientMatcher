@@ -58,7 +58,7 @@ For testing purposes you can keep the default configuration values as they are, 
 
 To run the server run this command:
 ```bash
-python run.py
+pmatcher run -h custom_host -p custom_port
 ```
 Please note that the code is NOT guaranteed to be bug-free and it must be adapted to be used in production.
 

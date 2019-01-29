@@ -12,7 +12,6 @@ from .remove import remove
 
 cli = FlaskGroup(create_app=create_app)
 
-
 @click.group()
 def test():
     """Test server using CLI"""
@@ -86,3 +85,7 @@ test.add_command(email)
 cli.add_command(test)
 cli.add_command(add)
 cli.add_command(remove)
+
+
+if __name__ == '__main__':
+    serve()
