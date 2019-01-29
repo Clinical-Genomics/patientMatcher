@@ -24,6 +24,7 @@ def test_sendemail(mock_mail):
     # When invoking the test email command with a recipient paramrter
     result = runner.invoke(cli, ['test_email', '-recipient', 'test_user@mail.com'])
 
+    # Make sure that mock mail send method was called and mock email is sent
     assert mock_mail._send_was_called
     assert mock_mail._message
     assert 'Mail correctly sent. Check your inbox!' in result.output
