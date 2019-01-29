@@ -34,7 +34,7 @@ def connection():
     except ConnectionFailure:
         click.echo("Error: Mongo client is NOT connected!")
     except Exception as err:
-        click.echo('testing connection')
+        click.echo("Error: {}".format(err))
 
 
 @cli.command()

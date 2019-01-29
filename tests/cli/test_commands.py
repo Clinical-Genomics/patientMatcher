@@ -16,6 +16,15 @@ def test_appname():
     assert result.output == 'patientMatcher\n'
 
 
+def test_cli_testconnect(database):
+    app.db = database
+
+    database['admin']['command'].insert
+    runner = app.test_cli_runner()
+    result = runner.invoke(cli, ['test', 'connection'])
+    assert 'sometext' in result.output
+
+
 def test_sendemail(mock_mail):
     app.mail = mock_mail
     app.config['MAIL_USERNAME'] = 'sender@email.com'
@@ -28,13 +37,6 @@ def test_sendemail(mock_mail):
     assert mock_mail._send_was_called
     assert mock_mail._message
     assert 'Mail correctly sent' in result.output
-
-
-def test_cli_testconnect(database):
-    app.db = database
-    runner = app.test_cli_runner()
-    result = runner.invoke(cli, ['test', 'connection'])
-    assert 'Connect test OK: Mongo client is connected' in result.output
 
 
 def test_cli_add_node(database, test_node):
