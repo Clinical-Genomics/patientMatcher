@@ -27,14 +27,14 @@ def test_sendemail(mock_mail):
     # Make sure that mock mail send method was called and mock email is sent
     assert mock_mail._send_was_called
     assert mock_mail._message
-    assert 'Connect test OK' in result.output
+    assert 'Mail correctly sent' in result.output
 
 
 def test_cli_testconnect(database):
     app.db = database
     runner = app.test_cli_runner()
     result = runner.invoke(cli, ['test', 'connection'])
-    assert 'Connect test OK' in result.output
+    assert 'Connect test OK: Mongo client is connected' in result.output
 
 
 def test_cli_add_node(database, test_node):
