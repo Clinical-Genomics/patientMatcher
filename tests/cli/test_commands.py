@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import pymongo
+from flask_mail import Message
+
 from patientMatcher import create_app
 from patientMatcher.cli.commands import cli
 from patientMatcher.utils.add import load_demo
@@ -10,15 +12,29 @@ app = create_app()
 
 def test_appname():
     runner = app.test_cli_runner()
-    result = runner.invoke(cli, ['appname'])
+    result = runner.invoke(cli, ['test', 'name'])
     assert result.output == 'patientMatcher\n'
 
 
 def test_cli_testconnect(database):
     app.db = database
     runner = app.test_cli_runner()
-    result = runner.invoke(cli, ['testconnect'])
-    assert 'Testing connection' in result.output
+    result = runner.invoke(cli, ['test', 'connection'])
+    assert 'Just testing the function' in result.output
+
+
+def test_sendemail(mock_mail):
+    app.mail = mock_mail
+    app.config['MAIL_USERNAME'] = 'sender@email.com'
+
+    runner = app.test_cli_runner()
+    # When invoking the test email command with a recipient paramrter
+    result = runner.invoke(cli, ['test', 'email', '-recipient', 'test_user@mail.com'])
+
+    # Make sure that mock mail send method was called and mock email is sent
+    assert mock_mail._send_was_called
+    assert mock_mail._message
+    assert 'Mail correctly sent' in result.output
 
 
 def test_cli_add_node(database, test_node):

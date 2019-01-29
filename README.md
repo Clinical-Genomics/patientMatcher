@@ -1,6 +1,28 @@
 # patientMatcher
 [![Build Status](https://travis-ci.com/northwestwitch/patientMatcher.svg?branch=master)](https://travis-ci.com/northwestwitch/patientMatcher) [![Coverage Status](https://coveralls.io/repos/github/Clinical-Genomics/patientMatcher/badge.svg?branch=master&kill_cache=1)](https://coveralls.io/github/Clinical-Genomics/patientMatcher?branch=master)
 
+Table of Contents:
+1. [ Prerequisites ](#prerequisites)
+2. [ Installation ](#installation)
+3. [ Data types ](#data_types)
+4. [ Command line interface](#cli)
+    - [ Adding demo data to server](#cli_add_demo)
+    - [ Removing a patient from database ](#cli_remove_patient)
+    - [ Adding a client to database ](#cli_add_client)
+    - [ Adding a new connected node to database ](#cli_add_node)
+5. [ Server endpoints ](#endpoints)
+    - [ Add patient to server (/patient/add) ](#add)
+    - [ Delete patient from server (patient/delete/<patient_id>) ](#delete)
+    - [ Get a list of patients on server (/patient/view) ](#view)
+    - [ Send a match request to server (/match) ](#match)
+    - [ Send a match request to external nodes (/match/external/<patient_id>) ](#match_external)
+    - [ Show all matches for a given patient (/patient/matches/<patient_id>) ](#patient_matches)
+6. [ Patient matching algorithm ](#matching_algorithm)
+    - [ Genotyping matching algorithm ](#geno_matching)
+    - [ Phenotyping matching algorithm ](#pheno_matching)
+7. [ Enabling matching notifications ](#notify)
+
+<a name="prerequisites"></a>
 ## Prerequisites
 To use this server you'll need to have a working instance of **MongoDB**. from the mongo shell you can create a database and an authenticated user to handle connections using this syntax:
 
@@ -19,7 +41,7 @@ After setting up the restricted access to the server you'll just have to launch 
 mongod --auth --dbpath path_to_database_data
 ```
 
-
+<a name="installation"></a>
 ## Installation
 Clone the repository from github using this command:
 ```bash
@@ -36,15 +58,17 @@ For testing purposes you can keep the default configuration values as they are, 
 
 To run the server run this command:
 ```bash
-python run.py
+pmatcher run -h custom_host -p custom_port
 ```
 Please note that the code is NOT guaranteed to be bug-free and it must be adapted to be used in production.
 
+<a name="data_types"></a>
 ## Data types
 This server implements the [Matchmaker Exchange APIs](https://github.com/ga4gh/mme-apis). It accepts and returns patient data validated against the [json schema](https://github.com/MatchmakerExchange/reference-server/blob/master/mme_server/schemas/api.json) defined in the [MME reference-server project](https://github.com/MatchmakerExchange/reference-server).
 
 &nbsp;&nbsp;
 
+<a name="cli"></a>
 ## Command line interface
 A list of available commands can be invoked by running the following command:
 ```bash
@@ -52,6 +76,7 @@ pmatcher
 ```
 &nbsp;&nbsp;
 
+<a name="cli_add_demo"></a>
 ### Adding demo data to server
 For testing purposes you can upload a list of [50 benchmarking patients](https://github.com/ga4gh/mme-apis/tree/master/testing).&nbsp;
 To add these patients to the database run the following command:
@@ -60,6 +85,7 @@ pmatcher add demodata
 ```
 &nbsp;&nbsp;
 
+<a name="cli_remove_patient"></a>
 ### Removing a patient from the database.
 You can remove a patient using the command line interface by invoking this command and providing **either its ID or its label** (or both actually):
 
@@ -72,6 +98,7 @@ Options:
 ```
 &nbsp;&nbsp;
 
+<a name="cli_add_client"></a>
 ### Adding a client to the database
 In order to save patients into patientMatcher you need to create at least one authorized client.&nbsp;
 Use the following command to insert a client object in the database:
@@ -92,6 +119,7 @@ pmatcher remove node -id node_id
 ```
 &nbsp;&nbsp;
 
+<a name="cli_add_node"></a>
 ### Adding a connected node to the database
 To connect to another MME node and submit requests to it you should know the authentication token to the other node.&nbsp;
 You can add a node to the database by running the command:
@@ -112,9 +140,10 @@ pmatcher remove node -id node_id
 ```
 &nbsp;&nbsp;
 
-
+<a name="endpoints"></a>
 ## Server endpoints
 
+<a name="add"></a>
 - **/patient/add**
 To add patients using a **POST** request. Example:
 ```bash
@@ -136,6 +165,7 @@ If there are no connected nodes in the database or you are uploading demo data n
 
 &nbsp;&nbsp;
 
+<a name="delete"></a>
 - **patient/delete/<patient_id>**
 You can delete a patient from the database by sending a **DELETE** request with its ID to the server. Example:
 ```bash
@@ -148,6 +178,7 @@ Matching results where the removed patient is instead listed among the matching 
 
 &nbsp;&nbsp;
 
+<a name="view"></a>
 - **/patient/view**
 Use this endpoint to **get** a list of all patients in the database. Example:
 ```bash
@@ -157,6 +188,7 @@ curl -X GET \
 ```
 &nbsp;&nbsp;
 
+<a name="match"></a>
 - **/match**
 **POST** a request with a query patient to patientMatcher and get a response with the patients in the server which are most similar to your query. Example:
 ```bash
@@ -175,7 +207,7 @@ The **maximum number of patients returned by the server** is a parameter which c
 Patient matches are returned in order or descending similarity with the query patient (The most similar patients are higher in the list of results).
 
 &nbsp;&nbsp;
-
+<a name="match_external"></a>
 - **/match/external/<patient_id>**
 Trigger a search in external nodes for patients similar to the one specified by the ID. Example:
 ```bash
@@ -185,6 +217,7 @@ curl -X POST \
 ```
 &nbsp;&nbsp;
 
+<a name="patient_matches"></a>
 - **/patient/matches/<patient_id>**
 Return all matches (internal and external) with positive results for a patient specified by an ID. Example:
 ```bash
@@ -194,6 +227,7 @@ curl -X GET \
 ```
 &nbsp;&nbsp;
 
+<a name="matching_algorithm"></a>
 ## Patient matching algorithm, used both for internal and external searches
 Each patient query submitted to the server triggers a matching algorithm which will search and return those patients on the server that are most similar to the queried one.
 Patient similarity is measured by the a **similarity score** that may span **from 0 (no matching) to 1 (exact matching)**.
@@ -202,7 +236,7 @@ Similarity score computation is taking into account **genomic similarity** and *
 
 The relative weight of the GTscore and the PhenoScore can be customised by the database administrator by changing the values of the parameters "MAX_GT_SCORE" and "MAX_PHENO_SCORE" in the configuration file (instance/config.py). Default values are MAX_GT_SCORE: 0.5, MAX_PHENO_SCORE : 0.5.
 
-
+<a name="geno_matching"></a>
 ### Genotyping matching algorithm
 GTscore is computed by evaluating the list of genomic features of the queried patient and the patients available on the MME server.
 
@@ -234,6 +268,7 @@ Note that the algorithm will evaluate and assign a score of 0.1666 (max relative
 This way patients will be evaluated for genetic similarity even if the variants lay outside genes.
 
 
+<a name="pheno_matching"></a>
 ### Phenotype matching algorithm
 Phenotype similarity is calculated by taking into account **features, disorders and computed phenotypes** of a patient
 
@@ -245,18 +280,28 @@ Will be computed using the [Monarch Phenotype Profile Analysis tool](https://mon
 
 - **Disorders**
 OMIM diagnoses, if available, will make up **1/4 of the maximum similarity score**.
-<br>
+&nbsp;
 
+<a name="notify"></a>
 ## Enabling match notifications
 
 Email notification of patient matching can be enabled by editing the email notification parameters
-in the configuration file (config.py).
+in the configuration file (config.py). If you want to test your email configuration without sending real match notifications you could use this command:
+
+```bash
+pmatcher test email -recipient your_email@email.com
+```
+
 Once these parameters are set to valid values a notification email will be sent in the following cases:
 
  - A patient is added to the database and the add request triggers a search on external nodes producing at least one result (/patient/add endpoint).
  - An external search is actively performed on connected nodes and returns at least one result (/match/external/<patient_id> endpoint).
  - The server is interrogated by an external node and returns at least one result match (/match endpoint). In this case a match notification is sent to each contact of the result matches.
  - An internal search is submitted to the server using a patient from the database (/match endpoint) and this search returns at least one match. In this case contact users of all patients involved will be notified (contact from query patient and contacts from the result patients).
+
+ You can stop server notification any time by commenting the MAIL_SERVER parameter in config file and rebooting the server.
+
+
 
 
 [travis-url]: https://travis-ci.org/Clinical-Genomics/patientMatcher

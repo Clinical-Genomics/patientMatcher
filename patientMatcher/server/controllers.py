@@ -32,7 +32,9 @@ def match_external(database, query_patient):
     # trigger the matching and save the matching id to variable
     matching_obj = external_matcher(database, query_patient)
     # save matching object to database
-    database['matches'].insert_one(matching_obj)
+
+    if matching_obj:
+        database['matches'].insert_one(matching_obj)
 
     return matching_obj
 

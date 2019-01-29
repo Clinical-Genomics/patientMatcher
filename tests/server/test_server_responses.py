@@ -232,7 +232,6 @@ def test_match_external(test_client, test_node, database, json_patients):
     # add an authorized client to database
     ok_token = test_client['auth_token']
     add_node(mongo_db=app.db, obj=test_client, is_client=True) # required to trigger external matches
-    add_node(mongo_db=app.db, obj=test_node, is_client=False) # required for external matches
 
     a_patient = json_patients[0]
     parsed_patient = mme_patient(a_patient)
@@ -258,7 +257,17 @@ def test_match_external(test_client, test_node, database, json_patients):
     # there are no matches in mock database
     assert database['matches'].find().count() == 0
     # after sending an authorized request with a patient ID that exists on database
+
+    # Check that external matching doesn't work if there are no connected nodes:
     response = app.test_client().post(''.join(['/match/external/', inserted_id]), headers = auth_headers(ok_token))
+    assert response.status_code == 200
+    data = json.loads(response.data)
+    assert data == 'Could not find any other node connected to this MatchMaker server'
+
+    # insert a connected node
+    add_node(mongo_db=app.db, obj=test_node, is_client=False) # required for external matches
+    response = app.test_client().post(''.join(['/match/external/', inserted_id]), headers = auth_headers(ok_token))
+
     # Response should be valid
     assert response.status_code == 200
     # And a new match should be created in matches collection

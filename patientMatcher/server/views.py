@@ -127,6 +127,13 @@ def match_external(patient_id):
         return resp
 
     matching_obj = controllers.match_external(current_app.db, query_patient)
+
+    if not matching_obj:
+        message = "Could not find any other node connected to this MatchMaker server"
+        resp = jsonify(message)
+        resp.status_code = 200
+        return resp
+
     results = matching_obj.get('results')
 
     # if patient is matching any other patient on other nodes

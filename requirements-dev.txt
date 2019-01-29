@@ -4,7 +4,8 @@ pytest
 mongomock<=3.12
 
 # server-related stuff
- requests
+requests
+Flask-Mail
 
 # database connection
 pymongo<3.7
