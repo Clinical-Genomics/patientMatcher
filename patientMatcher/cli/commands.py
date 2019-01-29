@@ -87,7 +87,3 @@ test.add_command(email)
 cli.add_command(test)
 cli.add_command(add)
 cli.add_command(remove)
-
-
-if __name__ == '__main__':
-    serve()
