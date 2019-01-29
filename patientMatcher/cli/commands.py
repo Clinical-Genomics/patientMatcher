@@ -29,11 +29,12 @@ def name():
 def connection():
     """Tests if Mongo client is connected"""
     try:
-        if isinstance(current_app.client, pymongo.mongo_client.MongoClient):
-            current_app.client.admin.command('ismaster')
+        current_app.client.admin.command('ismaster')
         click.echo('Connect test OK: Mongo client is connected')
     except ConnectionFailure:
         click.echo("Error: Mongo client is NOT connected!")
+    except Exception as err:
+        click.echo('testing connection')
 
 
 @cli.command()
