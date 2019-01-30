@@ -14,17 +14,19 @@ def add():
     pass
 
 @add.command()
-@click.option('-id', type=click.STRING, nargs=1, required=True, help="Server/Client ID")
+@click.option('-id', type=click.STRING, nargs=1, required=True, help="Server ID")
+@click.option('-label', type=click.STRING, nargs=1, required=True, help="Server Description")
 @click.option('-token', type=click.STRING, nargs=1, required=True, help="Authorization token")
 @click.option('-matching_url', type=click.STRING, nargs=1, required=True, help="URL to send match requests to")
 @click.option('-accepted_content', type=click.STRING, nargs=1, required=True, help="Accepted Content-Type", default="application/vnd.ga4gh.matchmaker.v1.0+json")
 @click.option('-contact', type=click.STRING, nargs=1, required=False, help="An email address")
 @with_appcontext
-def node(id, token, matching_url, accepted_content, contact=None):
+def node(id, label, token, matching_url, accepted_content, contact=None):
     """Adds a new server to database"""
     click.echo("Adding a new MatchMaker node to database")
     node_obj = {
         '_id' : id,
+        'label' : label,
         'created' : datetime.datetime.now(),
         'auth_token' : token,
         'matching_url' : matching_url,

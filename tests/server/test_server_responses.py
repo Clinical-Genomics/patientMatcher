@@ -17,7 +17,7 @@ def test_add_patient(database, json_patients, test_client, test_node):
     app.db = database
 
     patient_data = json_patients[0]
-    # try to add a patient withou being authorized
+    # try to add a patient without being authorized
     response = app.test_client().post('patient/add', data=json.dumps(patient_data), headers=unauth_headers())
     assert response.status_code == 401
 
@@ -93,6 +93,39 @@ def test_patient_view(database, test_client):
     # if a valid token is provided the server should return a status code 200 (success)
     auth_response = app.test_client().get('patient/view', headers = auth_headers(ok_token))
     assert auth_response.status_code == 200
+
+
+def test_nodes_view(database, test_node, test_client):
+    """testing viewing the list of connected nodes as an authenticated client"""
+
+    app.db = database
+
+    # insert a test client in database
+    add_node(mongo_db=database, obj=test_client, is_client=True)
+    ok_token = test_client['auth_token']
+
+    # If you try to see nodes without being authorized
+    response = app.test_client().get('nodes')
+    # You should get a not authorized code from server
+    assert response.status_code == 401
+
+    # since there are no connected nodes in database
+    assert database['nodes'].find().count() == 0
+    # When you send an authorized request
+    response = app.test_client().get('nodes', headers = auth_headers(ok_token))
+    data = json.loads(response.data)
+    # you shoud get an empty list
+    assert data == []
+
+    # insert a test node in database
+    add_node(mongo_db=database, obj=test_node, is_client=False)
+    # When you send an authorized request
+    response = app.test_client().get('nodes', headers = auth_headers(ok_token))
+    data = json.loads(response.data)
+    # this time you should get a list with one element
+    assert len(data) == 1
+    # and the id of the element is the id of the node
+    assert data[0]['id'] == test_node['_id']
 
 
 def test_delete_patient(database, demo_data_path, test_client, match_objs):

@@ -31,7 +31,6 @@ def pymongo_client(request):
     request.addfinalizer(teardown)
     return mock_client
 
-
 @pytest.fixture(scope='function')
 def database(request, pymongo_client):
     """Get an adapter connected to mongo database"""
@@ -63,6 +62,7 @@ def test_node():
     """Returns a test client object"""
     node = {
         '_id' : 'node_1',
+        'label' : 'Test node description',
         'auth_token' : 'superSecretToken',
         'matching_url' : 'http://test_node/match/',
         'accepted_content' : 'application/vnd.ga4gh.matchmaker.v1.0+json',

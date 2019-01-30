@@ -18,6 +18,15 @@ def get_patients(database, patient_ids=None):
     return json_like_patients
 
 
+def get_nodes(database):
+    """Get all connected nodes as a list of objects with node_id and node_label as elements"""
+    results = list(database['nodes'].find())
+    nodes = []
+    for node in results:
+        nodes.append( { 'id': node['_id'], 'description': node['label']} )
+    return nodes
+
+
 def patient(database, patient_id):
     """Return a mme-like patient from database by providing its ID"""
     query_patient = None
