@@ -235,6 +235,7 @@ curl -X POST \
   localhost:9020/match/external/patient_id?node=specific_node_id
 ```
 Read [here](#node_list) how to get a list with the ID of the connected nodes.
+
 &nbsp;&nbsp;
 
 <a name="patient_matches"></a>
