@@ -88,11 +88,17 @@ def view():
 def nodes():
     """Get a list of all nodes connected to this MME server"""
     resp = None
-    if authorize(current_app.db, request):
-        LOG.info('Authorized client requests all connected nodes..')
-        results = controllers.get_nodes(database=current_app.db)
+    if not authorize(current_app.db, request):
+        message = STATUS_CODES[401]['message']
+        resp = jsonify(message)
+        resp.status_code = 401
+        return resp
 
-
+    LOG.info('Authorized client requests list of connected nodes..')
+    results = controllers.get_nodes(database=current_app.db)
+    resp = jsonify(results)
+    resp.status_code = 200
+    return resp
 
 
 @blueprint.route('/matches/<patient_id>', methods=['GET'])
