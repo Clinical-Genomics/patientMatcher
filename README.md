@@ -197,7 +197,7 @@ curl -X GET \
   -H 'X-Auth-Token: custom_token' \
   localhost:9020/nodes
 ```
-The response will return a list like this : [ { 'id' : node_1_id, 'description' : node1_description}, .. ] or an empty list if the server is not connected to external nodes.
+The response will return a list like this : [ { 'id' : node_1_id, 'description' : node1_description }, .. ] or an empty list if the server is not connected to external nodes.
 
 &nbsp;&nbsp;
 
