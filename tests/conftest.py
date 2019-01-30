@@ -31,7 +31,6 @@ def pymongo_client(request):
     request.addfinalizer(teardown)
     return mock_client
 
-
 @pytest.fixture(scope='function')
 def database(request, pymongo_client):
     """Get an adapter connected to mongo database"""
