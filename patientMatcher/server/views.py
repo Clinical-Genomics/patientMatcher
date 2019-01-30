@@ -143,7 +143,17 @@ def match_external(patient_id):
         resp.status_code = 200
         return resp
 
-    matching_obj = controllers.match_external(current_app.db, query_patient)
+    node = request.args.get('node')
+
+    # if search should be performed on a specific node, make sure node is in database
+    if node and not current_app.db['nodes'].find({'_id':node}).count():
+        LOG.info('ERROR, theres no node with id "{}" in database'.format(request.args['node']))
+        message = 'ERROR. Could not find any connected node with id {} in database'.format(request.args['node'])
+        resp = jsonify(message)
+        resp.status_code = 200
+        return resp
+
+    matching_obj = controllers.match_external(current_app.db, query_patient, node)
 
     if not matching_obj:
         message = "Could not find any other node connected to this MatchMaker server"

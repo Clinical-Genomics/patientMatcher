@@ -119,17 +119,20 @@ def internal_matcher(database, patient_obj, max_pheno_score, max_geno_score, max
     return internal_match
 
 
-def external_matcher(database, patient):
+def external_matcher(database, patient, node=None):
     """Handles a query patient matching against all connected MME nodes
 
     Args:
         database(pymongo.database.Database)
         patient(dict) : a MME patient entity
+        node(str): id of the node to search in
 
     Returns:
         external_match(dict): a matching object containing a list of results in 'results' field
     """
-
+    query = {}
+    if node:
+        query['_id'] = node
     connected_nodes = list(database['nodes'].find()) #get all connected nodes
     if len(connected_nodes) == 0:
         LOG.error("Could't find any connected MME nodes. Aborting external matching.")
@@ -146,16 +149,18 @@ def external_matcher(database, patient):
         'data' : data, # description of the patient submitted
         'results' : [],
         'errors' : [],
-        'match_type' : 'external'
+        'match_type' : 'external',
+        'searched_nodes' : []
     }
 
-    LOG.info("Matching patient against {} nodes..".format(len(connected_nodes)))
+    LOG.info("Matching patient against {} node(s)..".format(len(connected_nodes)))
     for node in connected_nodes:
 
         server_name = node['_id']
         node_url = node['matching_url']
         token = node['auth_token']
         request_content_type = node['accepted_content']
+        external_match['searched_nodes'].append( { 'id': node['_id'], 'label' : node['label'] } )
 
         headers = {'Content-Type': request_content_type, 'Accept': 'application/vnd.ga4gh.matchmaker.v1.0+json', "X-Auth-Token": token}
         LOG.info('sending HTTP request to server: "{}"'.format(server_name))

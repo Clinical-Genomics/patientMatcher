@@ -197,7 +197,7 @@ curl -X GET \
   -H 'X-Auth-Token: custom_token' \
   localhost:9020/nodes
 ```
-The response will return a list like this : [ { 'id' : node_1_id, 'description' : node1_description}, .. ] or an empty list if the server is not connected to external nodes.
+The response will return a list like this : [ { 'id' : node_1_id, 'description' : node1_description }, .. ] or an empty list if the server is not connected to external nodes.
 
 &nbsp;&nbsp;
 
@@ -228,6 +228,14 @@ curl -X POST \
   -H 'X-Auth-Token: custom_token' \
   localhost:9020/match/external/patient_id
 ```
+It is possible to search for matching patients on a specific node. To do so specify the node id in the request args. Example:
+```bash
+curl -X POST \
+  -H 'X-Auth-Token: custom_token' \
+  localhost:9020/match/external/patient_id?node=specific_node_id
+```
+Read [here](#node_list) how to get a list with the ID of the connected nodes.
+
 &nbsp;&nbsp;
 
 <a name="patient_matches"></a>
