@@ -84,6 +84,17 @@ def view():
     return resp
 
 
+@blueprint.route('/nodes', methods=['GET'])
+def nodes():
+    """Get a list of all nodes connected to this MME server"""
+    resp = None
+    if authorize(current_app.db, request):
+        LOG.info('Authorized client requests all connected nodes..')
+        results = controllers.get_nodes(database=current_app.db)
+
+
+
+
 @blueprint.route('/matches/<patient_id>', methods=['GET'])
 def matches(patient_id):
     """Get all matches (external and internal) for a patient ID"""

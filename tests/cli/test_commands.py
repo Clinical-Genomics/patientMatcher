@@ -16,13 +16,6 @@ def test_appname():
     assert result.output == 'patientMatcher\n'
 
 
-def test_cli_testconnect(database):
-    app.db = database
-    runner = app.test_cli_runner()
-    result = runner.invoke(cli, ['test', 'connection'])
-    assert 'Just testing the function' in result.output
-
-
 def test_sendemail(mock_mail):
     app.mail = mock_mail
     app.config['MAIL_USERNAME'] = 'sender@email.com'
@@ -46,8 +39,9 @@ def test_cli_add_node(database, test_node):
     # test add a server using the app cli
     runner = app.test_cli_runner()
     result =  runner.invoke(cli, ['add', 'node', '-id', test_node['_id'],
-        '-token', test_node['auth_token'], '-matching_url', test_node['matching_url'],
-        '-accepted_content', test_node['accepted_content']])
+        '-label', 'This is a test node', '-token', test_node['auth_token'],
+        '-matching_url', test_node['matching_url'],'-accepted_content',
+        test_node['accepted_content']])
     assert result.exit_code == 0
 
     # check that the server was added to the "nodes" collection
@@ -100,8 +94,9 @@ def test_cli_remove_node(database, test_node):
     # Add a node to database
     runner = app.test_cli_runner()
     result =  runner.invoke(cli, ['add', 'node', '-id', test_node['_id'],
-        '-token', test_node['auth_token'], '-matching_url', test_node['matching_url'],
-        '-accepted_content', test_node['accepted_content']])
+        '-label', 'This is a test node', '-token', test_node['auth_token'],
+        '-matching_url', test_node['matching_url'],'-accepted_content',
+        test_node['accepted_content']])
     assert result.exit_code == 0
 
     # check that the server was added to the "nodes" collection

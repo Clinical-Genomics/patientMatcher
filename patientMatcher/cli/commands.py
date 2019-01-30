@@ -26,19 +26,6 @@ def name():
 
 @cli.command()
 @with_appcontext
-def connection():
-    """Tests if Mongo client is connected"""
-    try:
-        current_app.client.admin.command('ismaster')
-        click.echo('Connect test OK: Mongo client is connected')
-    except ConnectionFailure:
-        click.echo("Error: Mongo client is NOT connected!")
-    except Exception as err:
-        click.echo("Just testing the function")
-
-
-@cli.command()
-@with_appcontext
 @click.option('-recipient', type=click.STRING, nargs=1, required=True, help="Email address to send the test email to")
 def email(recipient):
     """Sends a test email using config settings"""
@@ -82,7 +69,6 @@ def email(recipient):
         click.echo('An error occurred while sending test email: "{}"'.format(err))
 
 test.add_command(name)
-test.add_command(connection)
 test.add_command(email)
 cli.add_command(test)
 cli.add_command(add)
