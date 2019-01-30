@@ -297,14 +297,30 @@ def test_match_external(test_client, test_node, database, json_patients):
     data = json.loads(response.data)
     assert data == 'Could not find any other node connected to this MatchMaker server'
 
+    # Try to send a request for a match on a node that does not exist
+    response = app.test_client().post(''.join(['/match/external/', inserted_id, '?node=meh']), headers = auth_headers(ok_token))
+    assert response.status_code == 200
+    data = json.loads(response.data)
+    # And check that node not found is in response message
+    assert data == 'ERROR. Could not find any connected node with id meh in database'
+
     # insert a connected node
     add_node(mongo_db=app.db, obj=test_node, is_client=False) # required for external matches
+    # send a request to match patients against all nodes
     response = app.test_client().post(''.join(['/match/external/', inserted_id]), headers = auth_headers(ok_token))
 
     # Response should be valid
     assert response.status_code == 200
     # And a new match should be created in matches collection
     assert database['matches'].find().count() == 1
+
+    # send a request to match patients against the specific existing node:
+    response = app.test_client().post(''.join(['/match/external/', inserted_id, '?node=', test_node['_id']]), headers = auth_headers(ok_token))
+    # Response should be valid
+    assert response.status_code == 200
+
+    # And a new match should be created in matches collection. So total matches are 2
+    assert database['matches'].find().count() == 2
 
 
 def unauth_headers():

@@ -132,7 +132,7 @@ def external_matcher(database, patient, node=None):
     """
     query = {}
     if node:
-        query['_id' : node]
+        query['_id'] = node
     connected_nodes = list(database['nodes'].find()) #get all connected nodes
     if len(connected_nodes) == 0:
         LOG.error("Could't find any connected MME nodes. Aborting external matching.")
