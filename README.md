@@ -294,10 +294,10 @@ pmatcher test email -recipient your_email@email.com
 
 Once these parameters are set to valid values a notification email will be sent in the following cases:
 
- - A patient is added to the database and the add request triggers a search on external nodes producing at least one result (/patient/add endpoint).
+ - A patient is added to the database and the add request triggers a search on external nodes. There is at least one returned result (/patient/add endpoint).
  - An external search is actively performed on connected nodes and returns at least one result (/match/external/<patient_id> endpoint).
- - The server is interrogated by an external node and returns at least one result match (/match endpoint). In this case a match notification is sent to each contact of the result matches.
- - An internal search is submitted to the server using a patient from the database (/match endpoint) and this search returns at least one match. In this case contact users of all patients involved will be notified (contact from query patient and contacts from the result patients).
+ - The server is interrogated by an external node and returns at least one match (/match endpoint). In this case a match notification is sent to each contact of the matches (patients in results).
+ - An internal search is submitted to the server using a patient from the database (/match endpoint) and this search returns at least one match. In this case contact users of all patients involved will be notified (contact from query patient and contacts from the result list of patients).
 
  You can stop server notification any time by commenting the MAIL_SERVER parameter in config file and rebooting the server.
 
