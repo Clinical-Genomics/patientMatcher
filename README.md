@@ -57,7 +57,7 @@ pip install -e .
 To customize the server configuration you'll need to edit the **config.py** file under the /instance folder. &nbsp;
 For testing purposes you can keep the default configuration values as they are, but keep in mind that you should adjust these numbers when in production.
 
-To run the server run this command:
+To start the server run this command:
 ```bash
 pmatcher run -h custom_host -p custom_port
 ```
