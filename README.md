@@ -144,7 +144,7 @@ pmatcher remove node -id node_id
 ## Server endpoints
 
 <a name="add"></a>
-- **/patient/add**
+- **/patient/add**&nbsp;
 To add patients using a **POST** request. Example:
 ```bash
 curl -X POST \
@@ -166,7 +166,7 @@ If there are no connected nodes in the database or you are uploading demo data n
 &nbsp;&nbsp;
 
 <a name="delete"></a>
-- **patient/delete/<patient_id>**
+- **patient/delete/<patient_id>**&nbsp;
 You can delete a patient from the database by sending a **DELETE** request with its ID to the server. Example:
 ```bash
 curl -X DELETE \
@@ -179,7 +179,7 @@ Matching results where the removed patient is instead listed among the matching 
 &nbsp;&nbsp;
 
 <a name="view"></a>
-- **/patient/view**
+- **/patient/view**&nbsp;
 Use this endpoint to **get** a list of all patients in the database. Example:
 ```bash
 curl -X GET \
@@ -189,7 +189,7 @@ curl -X GET \
 &nbsp;&nbsp;
 
 <a name="match"></a>
-- **/match**
+- **/match**&nbsp;
 **POST** a request with a query patient to patientMatcher and get a response with the patients in the server which are most similar to your query. Example:
 ```bash
 curl -X POST \
@@ -208,7 +208,7 @@ Patient matches are returned in order or descending similarity with the query pa
 
 &nbsp;&nbsp;
 <a name="match_external"></a>
-- **/match/external/<patient_id>**
+- **/match/external/<patient_id>**&nbsp;
 Trigger a search in external nodes for patients similar to the one specified by the ID. Example:
 ```bash
 curl -X POST \
@@ -218,7 +218,7 @@ curl -X POST \
 &nbsp;&nbsp;
 
 <a name="patient_matches"></a>
-- **/patient/matches/<patient_id>**
+- **/patient/matches/<patient_id>**&nbsp;
 Return all matches (internal and external) with positive results for a patient specified by an ID. Example:
 ```bash
 curl -X GET \
