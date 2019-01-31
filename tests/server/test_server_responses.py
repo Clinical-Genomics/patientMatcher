@@ -153,7 +153,7 @@ def test_delete_patient(database, demo_data_path, test_client, match_objs):
     assert response.status_code == 200
     data = json.loads(response.data)
     # but server returns error
-    assert data == 'ERROR. Could not delete a patient with ID not_a_valid_ID from database'
+    assert data['message'] == 'ERROR. Could not delete a patient with ID not_a_valid_ID from database'
 
     assert database['matches'].find().count() == 0 # no matches in database
     # insert into database some mock matching objects
@@ -200,7 +200,7 @@ def test_patient_matches(database, match_objs, test_client):
     assert response.status_code == 200
     data = json.loads(response.data)
     # but the patient is not found by server
-    assert data == 'Could not find any matches in database for patient ID unknown_patient'
+    assert data['message'] == 'Could not find any matches in database for patient ID unknown_patient'
 
     # Try with authenticates request and valid patient
     response = app.test_client().get('matches/P0000079', headers = auth_headers(ok_token))
@@ -285,7 +285,7 @@ def test_match_external(test_client, test_node, database, json_patients):
     assert response.status_code == 200
     data = json.loads(response.data)
     # but server returns error
-    assert data == 'ERROR. Could not find any patient with ID not_a_valid_ID in database'
+    assert data['message'] == 'ERROR. Could not find any patient with ID not_a_valid_ID in database'
 
     # there are no matches in mock database
     assert database['matches'].find().count() == 0
@@ -295,14 +295,14 @@ def test_match_external(test_client, test_node, database, json_patients):
     response = app.test_client().post(''.join(['/match/external/', inserted_id]), headers = auth_headers(ok_token))
     assert response.status_code == 200
     data = json.loads(response.data)
-    assert data == 'Could not find any other node connected to this MatchMaker server'
+    assert data['message'] == 'Could not find any other node connected to this MatchMaker server'
 
     # Try to send a request for a match on a node that does not exist
     response = app.test_client().post(''.join(['/match/external/', inserted_id, '?node=meh']), headers = auth_headers(ok_token))
     assert response.status_code == 200
     data = json.loads(response.data)
     # And check that node not found is in response message
-    assert data == 'ERROR. Could not find any connected node with id meh in database'
+    assert data['message'] == 'ERROR. Could not find any connected node with id meh in database'
 
     # insert a connected node
     add_node(mongo_db=app.db, obj=test_node, is_client=False) # required for external matches
