@@ -31,14 +31,14 @@ def add():
 
     # else import patient to database
     modified, inserted, matching_obj= backend_add_patient(mongo_db=current_app.db, patient=formatted_patient, match_external=True)
-    message = ''
+    message = {}
 
     if modified:
-        message = 'Patient was successfully updated.'
+        message['message'] = 'Patient was successfully updated.'
     elif inserted:
-        message = 'Patient was successfully inserted into database.'
+        message['message'] = 'Patient was successfully inserted into database.'
     else:
-        message = 'Database content is unchanged.'
+        message['message'] = 'Database content is unchanged.'
 
     # if patient is matching any other patient on other nodes
     # and match notifications are on
@@ -105,7 +105,7 @@ def nodes():
 def matches(patient_id):
     """Get all matches (external and internal) for a patient ID"""
     resp = None
-    message = None
+    message = {}
     if not authorize(current_app.db, request): # not authorized, return a 401 status code
         message = STATUS_CODES[401]['message']
         resp = jsonify(message)
@@ -117,7 +117,7 @@ def matches(patient_id):
     if results:
         message = json.loads(json_util.dumps({'results' : results}))
     else:
-        message = "Could not find any matches in database for patient ID {}".format(patient_id)
+        message['message'] = "Could not find any matches in database for patient ID {}".format(patient_id)
     resp = jsonify(message)
     resp.status_code = 200
     return resp
@@ -127,8 +127,9 @@ def matches(patient_id):
 def match_external(patient_id):
     """Trigger a patient matching on external nodes by providing a patient ID"""
     resp = None
+    message = {}
     if not authorize(current_app.db, request): # not authorized, return a 401 status code
-        message = STATUS_CODES[401]['message']
+        message['message'] = STATUS_CODES[401]['message']
         resp = jsonify(message)
         resp.status_code = 401
         return resp
@@ -138,7 +139,7 @@ def match_external(patient_id):
 
     if not query_patient:
         LOG.error('ERROR. Could not find any patient with ID {} in database'.format(patient_id))
-        message = "ERROR. Could not find any patient with ID {} in database".format(patient_id)
+        message['message'] = "ERROR. Could not find any patient with ID {} in database".format(patient_id)
         resp = jsonify(message)
         resp.status_code = 200
         return resp
@@ -148,7 +149,7 @@ def match_external(patient_id):
     # if search should be performed on a specific node, make sure node is in database
     if node and not current_app.db['nodes'].find({'_id':node}).count():
         LOG.info('ERROR, theres no node with id "{}" in database'.format(request.args['node']))
-        message = 'ERROR. Could not find any connected node with id {} in database'.format(request.args['node'])
+        message['message'] = 'ERROR. Could not find any connected node with id {} in database'.format(request.args['node'])
         resp = jsonify(message)
         resp.status_code = 200
         return resp
@@ -156,7 +157,7 @@ def match_external(patient_id):
     matching_obj = controllers.match_external(current_app.db, query_patient, node)
 
     if not matching_obj:
-        message = "Could not find any other node connected to this MatchMaker server"
+        message['message'] = "Could not find any other node connected to this MatchMaker server"
         resp = jsonify(message)
         resp.status_code = 200
         return resp

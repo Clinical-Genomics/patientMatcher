@@ -105,8 +105,9 @@ def delete_patient(database, patient_id):
 
     query = {'_id' : patient_id}
     deleted = delete_by_query(query, database, 'patients')
+    message = {}
     if deleted == 1:
-        message = 'Patient and its matches were successfully deleted from database'
+        message['message'] = 'Patient and its matches were successfully deleted from database'
     else:
-        message = 'ERROR. Could not delete a patient with ID {} from database'.format(patient_id)
+        message['message'] = 'ERROR. Could not delete a patient with ID {} from database'.format(patient_id)
     return message
