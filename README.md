@@ -12,7 +12,7 @@ Table of Contents:
     - [ Adding a new connected node to database ](#cli_add_node)
 5. [ Server endpoints ](#endpoints)
     - [ Add patient to server (/patient/add) ](#add)
-    - [ Delete patient from server (patient/delete/<patient_id>) ](#delete)
+    - [ Delete patient from server (/patient/delete/<patient_id>) ](#delete)
     - [ Get a list of patients on server (/patient/view) ](#view)
     - [ Get the list of connected nodes (/nodes) ](#node_list)
     - [ Send a match request to server (/match) ](#match)
