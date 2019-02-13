@@ -25,6 +25,7 @@ def mme_patient(json_patient, compute_phenotypes=False):
     mme_patient = {
         '_id' : json_patient['id'],
         'label' : json_patient.get('label'),
+        'sex' : json_patient.get('sex'),
         'contact' : json_patient['contact'],
         'features' : json_patient['features'],
         'genomicFeatures' : json_patient.get('genomicFeatures'),

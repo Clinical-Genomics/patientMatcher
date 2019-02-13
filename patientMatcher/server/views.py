@@ -104,6 +104,7 @@ def nodes():
 @blueprint.route('/matches/<patient_id>', methods=['GET'])
 def matches(patient_id):
     """Get all matches (external and internal) for a patient ID"""
+    LOG.info('getting all matches for patient {}'.format(patient_id))
     resp = None
     message = {}
     if not authorize(current_app.db, request): # not authorized, return a 401 status code
@@ -115,7 +116,7 @@ def matches(patient_id):
     # return only matches with at least one result
     results = patient_matches(current_app.db, patient_id)
     if results:
-        message = json.loads(json_util.dumps({'results' : results}))
+        message = json.loads(json_util.dumps({'matches' : results}))
     else:
         message['message'] = "Could not find any matches in database for patient ID {}".format(patient_id)
     resp = jsonify(message)
