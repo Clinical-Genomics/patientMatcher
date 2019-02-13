@@ -279,11 +279,11 @@ Let's assume the variants in MATCH are:
 - gene W variant E (3)
 
 The evaluation of the matching features is always performed on the QUERY variants, in this way:
-- gene X variant A ---> gene match with (1). No variant match. Assigned score: 0.5/4 (gene match only will be arbitrarily assigned a fourth of the relative weight of the variant)
+- gene X variant A ---> gene match with (1). No variant match. Assigned score: 0.1666/4 (gene match only will be arbitrarily assigned a fourth of the relative weight of the variant)
 - gene Y variant B ---> exact matching of variant and gene with (2). Assigned score: 0.1666 (max relative weight of the variant)
 - gene Z variant C ---> No match, assigned score: 0.
 
-GTscore assigned to the MATCH patients will then be: 0.5/4 + 0.1666 + 0.
+GTscore assigned to the MATCH patients will then be: 0.1666/4 + 0.1666 + 0.
 
 Note that the algorithm will evaluate and assign a score of 0.1666 (max relative weight of the variant) also to matching variants outside genes.
 This way patients will be evaluated for genetic similarity even if the variants lay outside genes.
