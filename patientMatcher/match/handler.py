@@ -185,6 +185,7 @@ def external_matcher(database, patient, node=None):
             results = json_response['results']
             if len(results):
                 external_match['has_matches'] = True
-                external_match['results'].append(results)
+                for result in results:
+                    external_match['results'].append(result)
 
     return external_match
