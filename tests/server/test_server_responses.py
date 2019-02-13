@@ -208,7 +208,7 @@ def test_patient_matches(database, match_objs, test_client):
     assert response.status_code == 200
     data = json.loads(response.data)
     # and there are matches in it
-    assert len(data['results']) == 2 # 2 matches returned because endpoint returns only matches with results
+    assert len(data['matches']) == 2 # 2 matches returned because endpoint returns only matches with results
 
     # Test that there are actually 3 matches by calling directly the function returning matches
     matches = patient_matches(database=database, patient_id='P0000079', type=None, with_results=False)

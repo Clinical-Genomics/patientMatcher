@@ -17,7 +17,7 @@ Table of Contents:
     - [ Get the list of connected nodes (/nodes) ](#node_list)
     - [ Send a match request to server (/match) ](#match)
     - [ Send a match request to external nodes (/match/external/<patient_id>) ](#match_external)
-    - [ Show all matches for a given patient (/patient/matches/<patient_id>) ](#patient_matches)
+    - [ Show all matches for a given patient (/matches/<patient_id>) ](#patient_matches)
 6. [ Patient matching algorithm ](#matching_algorithm)
     - [ Genotyping matching algorithm ](#geno_matching)
     - [ Phenotyping matching algorithm ](#pheno_matching)
@@ -239,7 +239,7 @@ Read [here](#node_list) how to get a list with the ID of the connected nodes.
 &nbsp;&nbsp;
 
 <a name="patient_matches"></a>
-- **/patient/matches/<patient_id>**.
+- **/matches/<patient_id>**.
 &nbsp;Return all matches (internal and external) with positive results for a patient specified by an ID. Example:
 ```bash
 curl -X GET \
