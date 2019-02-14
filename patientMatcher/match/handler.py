@@ -28,7 +28,7 @@ def patient_matches(database, patient_id, type=None, with_results=True):
     query = {
         '$or' : [
             {'data.patient.id' : patient_id }, # collect matches triggered by patient
-            {'results.patient.id' : patient_id} # and matches where patient is among results
+            {'results.patients.patient.id' : patient_id} # and matches where patient is among results
         ]}
     if type:
         query['match_type'] = type
@@ -111,7 +111,10 @@ def internal_matcher(database, patient_obj, max_pheno_score, max_geno_score, max
         'created' : datetime.datetime.now(),
         'has_matches' : has_matches,
         'data' : {'patient' : json_pat}, # description of the patient submitted
-        'results' : sorted_matches[:max_results],
+        'results' : [{
+            'node' : { 'id': 'patientMatcher', 'label': 'patientMatcher server'},
+            'patients' : sorted_matches[:max_results]
+        }],
         'match_type' : 'internal'
     }
 

@@ -198,7 +198,7 @@ def match_internal():
     match_obj = internal_matcher(current_app.db, query_patient, max_pheno_score, max_geno_score, max_results)
     # save matching object to database
     current_app.db['matches'].insert_one(match_obj)
-    matches = match_obj['results']
+    matches = match_obj['results'][0]['patients'] #results[0] because there is just one node (internal match)
 
     # if notifications are on and there are matching results
     if current_app.config.get('MAIL_SERVER') and len(matches):
