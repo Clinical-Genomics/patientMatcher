@@ -28,7 +28,7 @@ def patient_matches(database, patient_id, type=None, with_results=True):
     query = {
         '$or' : [
             {'data.patient.id' : patient_id }, # collect matches triggered by patient
-            {'results.patient.id' : patient_id} # and matches where patient is among results
+            {'results.patients.patient.id' : patient_id} # and matches where patient is among results
         ]}
     if type:
         query['match_type'] = type
@@ -111,7 +111,10 @@ def internal_matcher(database, patient_obj, max_pheno_score, max_geno_score, max
         'created' : datetime.datetime.now(),
         'has_matches' : has_matches,
         'data' : {'patient' : json_pat}, # description of the patient submitted
-        'results' : sorted_matches[:max_results],
+        'results' : [{
+            'node' : { 'id': 'patientMatcher', 'label': 'patientMatcher server'},
+            'patients' : sorted_matches[:max_results]
+        }],
         'match_type' : 'internal'
     }
 
@@ -150,7 +153,6 @@ def external_matcher(database, patient, node=None):
         'results' : [],
         'errors' : [],
         'match_type' : 'external',
-        'searched_nodes' : []
     }
 
     LOG.info("Matching patient against {} node(s)..".format(len(connected_nodes)))
@@ -160,7 +162,6 @@ def external_matcher(database, patient, node=None):
         node_url = node['matching_url']
         token = node['auth_token']
         request_content_type = node['accepted_content']
-        external_match['searched_nodes'].append( { 'id': node['_id'], 'label' : node['label'] } )
 
         headers = {'Content-Type': request_content_type, 'Accept': 'application/vnd.ga4gh.matchmaker.v1.0+json', "X-Auth-Token": token}
         LOG.info('sending HTTP request to server: "{}"'.format(server_name))
@@ -178,14 +179,26 @@ def external_matcher(database, patient, node=None):
         except Exception as json_exp:
             error = json_exp
             LOG.error('Server returned error:{}'.format(error))
-            external_match['errors'].append(str(type(error)))
+
+            error_obj = {
+                'node' : { 'id': node['_id'], 'label' : node['label'] },
+                'error' : str(error)
+            }
+            external_match['errors'].append(error_obj)
 
         if json_response:
             LOG.info('server returns the following response: {}'.format(json_response))
+
+            result_obj = {
+                'node' : { 'id': node['_id'], 'label' : node['label'] },
+                'patients' : []
+            }
             results = json_response['results']
             if len(results):
                 external_match['has_matches'] = True
                 for result in results:
-                    external_match['results'].append(result)
+                    result_obj['patients'].append(result)
+
+                external_match['results'].append(result_obj)
 
     return external_match

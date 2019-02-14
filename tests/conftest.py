@@ -87,8 +87,19 @@ def match_objs():
                 }
             },
             'results' : [
-                {'patient' : { 'patient_data' : 'test_stuff'}},
-                {'patient' : { 'patient_data2' : 'test_stuff2'}},
+                {
+                    'node' : {'id' : 'test_node1', 'label': 'Test Node 1'},
+                    'patients' : [
+                        {'patient' : { 'patient_data1' : 'test_stuff1'}},
+                        {'patient' : { 'patient_data2' : 'test_stuff2'}}
+                    ]
+                },
+                {
+                    'node' : {'id' : 'test_node2', 'label': 'Test Node 2'},
+                    'patients' : [
+                        {'patient' : { 'patient_data3' : 'test_stuff3'}}
+                    ]
+                }
             ],
             'match_type' : 'external'
         },
@@ -103,7 +114,14 @@ def match_objs():
                     'href' : 'mailto:test_contact@email.com'
                 }
             },
-            'results' : [],
+            'results' : [
+                {
+                    'node': {'id' : 'patientMatcher', 'label' : 'patientMatcher server'},
+                    'patients' : [
+                        {'patient' : { 'int_pat1' : 'test_stuff'}}
+                    ]
+                }
+            ],
             'match_type' : 'internal'
         },
         {    #  Internal match where test_patient is among results
@@ -118,12 +136,17 @@ def match_objs():
                 }
             },
             'results' : [
-                {'patient' : {
-                    'id' : 'P0000079',
-                    'contact' : {
-                        'href' : 'mailto:test_contact2@email.com'
-                    }
-                }},
+                {
+                    'node' : {'id' : 'test_node1', 'label': 'Test Node 1'},
+                    'patients' : [
+                        {'patient' : {
+                            'id' : 'P0000079',
+                            'contact' : {
+                                'href' : 'mailto:test_contact2@email.com'
+                            }
+                        }}
+                    ]
+                }
             ],
             'match_type' : 'internal'
         },

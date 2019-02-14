@@ -33,9 +33,8 @@ def notify_match_internal(database, match_obj, admin_email, mail):
         #If patient used for the search is on patientMatcher database, notify querier as well:
         patient_id = match_obj['data']['patient']['id']
         patient_label = match_obj['data']['patient'].get('label')
-        results = match_obj['results']
         recipient = match_obj['data']['patient']['contact']['href'][7:]
-        email_body = active_match_email_body(patient_id, results, patient_label, external_match=False)
+        email_body = active_match_email_body(patient_id, patient_label, external_match=False)
         LOG.info('Sending an internal match notification for query patient with ID:{0}. Patient contact: {1}'.format(patient_id, recipient))
 
         kwargs = dict(subject=email_subject, html=email_body, sender=sender, recipients=[recipient])
@@ -46,9 +45,9 @@ def notify_match_internal(database, match_obj, admin_email, mail):
         except Exception as err:
             LOG.error('An error occurred while sending an internal match notification: {}'.format(err))
 
-
     # Loop over the result patients and notify their contact about the matching with query patient
-    for result in match_obj['results']:
+
+    for result in match_obj['results'][0]['patients']: #this list has only one element since there is only one internal node
 
         patient_id = result['patient']['id']
 
@@ -82,10 +81,9 @@ def notify_match_external(match_obj, admin_email, mail):
     sender = admin_email
     patient_id = match_obj['data']['patient']['id']
     patient_label = match_obj['data']['patient'].get('label')
-    results = match_obj['results']
     recipient = match_obj['data']['patient']['contact']['href'][7:]
     email_subject = 'MatchMaker Exchange: new patient match available.'
-    email_body = active_match_email_body(patient_id, results, patient_label, external_match=True)
+    email_body = active_match_email_body(patient_id, patient_label, external_match=True)
     LOG.info('Sending an external match notification for query patient with ID {0}. Patient contact: {1}'.format(patient_id, recipient))
 
     kwargs = dict(subject=email_subject, html=email_body, sender=sender, recipients=[recipient])
@@ -98,7 +96,7 @@ def notify_match_external(match_obj, admin_email, mail):
 
 
 
-def active_match_email_body(patient_id, results, patient_label=None, external_match=False):
+def active_match_email_body(patient_id, patient_label=None, external_match=False):
     """Returns the body message of the notification email when the patient was used as query patient
 
     Args:
@@ -119,13 +117,13 @@ def active_match_email_body(patient_id, results, patient_label=None, external_ma
         ***This is an automated message, please do not reply to this email.***<br><br>
         <strong>MatchMaker Exchange patient matching notification:</strong><br><br>
         Patient with ID <strong>{0}</strong>, label <strong>{1}</strong> was recently used in a search {2}.
-        This search returned <strong>{3} potential matche(s)</strong>.<br><br>
+        This search returned potential matche(s)</strong>.<br><br>
         For security reasons match results and patient contacts are not disclosed in this email.<br>
         Please contact the service provider or connect to the portal you used to submit the data to review these results.
         <br><br>
         Kind regards,<br>
         The PatienMatcher team
-    """.format(patient_id, patient_label, search_type, len(results))
+    """.format(patient_id, patient_label, search_type)
 
     return html
 
