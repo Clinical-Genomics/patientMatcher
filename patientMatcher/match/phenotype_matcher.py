@@ -83,7 +83,7 @@ def evaluate_pheno_similariy(hpo_terms, disorders, monarch_phtypes, pheno_matchi
 
     # Compute similarity of HPO terms:
     max_hpo_score = max_similarity/2 # half of the phenotype score will depend on HPO terms matching
-    db_patient_hpo_terms = features_to_hpo(pheno_matching_patient['features']) # HPO terms of the matching patient
+    db_patient_hpo_terms = features_to_hpo(pheno_matching_patient.get('features')) # HPO terms of the matching patient
     hpo_score = evaluate_subcategories(hpo_terms, db_patient_hpo_terms, max_hpo_score)
 
     max_omim_score = 0
@@ -95,8 +95,9 @@ def evaluate_pheno_similariy(hpo_terms, disorders, monarch_phtypes, pheno_matchi
         max_monarch_score = max_similarity/4 # 25% of the phenotype score will depend on computed phenotypes from Monarch
 
         # Compute similarity of OMIM terms:
-        db_patient_omim_terms = disorders_to_omim(pheno_matching_patient['disorders'])
-        omim_score = evaluate_subcategories(disorders, db_patient_omim_terms, max_omim_score)
+        if pheno_matching_patient.get('disorders'):
+            db_patient_omim_terms = disorders_to_omim(pheno_matching_patient.get('disorders'))
+            omim_score = evaluate_subcategories(disorders, db_patient_omim_terms, max_omim_score)
 
     # Compute similarity of Monarch-computed diagnoses:
     db_patient_monarch_terms = monarch_hit_ids(pheno_matching_patient.get('monarch_phenotypes',[]))
