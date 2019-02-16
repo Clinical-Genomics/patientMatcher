@@ -90,8 +90,8 @@ def internal_matcher(database, patient_obj, max_pheno_score, max_geno_score, max
         p_score = pheno_score + geno_score
         score = {
             'patient' : p_score,
-            'genotype' : geno_score,
-            'phenotype' : pheno_score
+            '_genotype' : geno_score,
+            '_phenotype' : pheno_score
         }
         match = {
             'patient' : json_patient(patient_obj),
