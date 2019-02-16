@@ -84,7 +84,8 @@ def evaluate_pheno_similariy(hpo_terms, disorders, monarch_phtypes, pheno_matchi
     # Compute similarity of HPO terms:
     max_hpo_score = max_similarity/2 # half of the phenotype score will depend on HPO terms matching
     db_patient_hpo_terms = features_to_hpo(pheno_matching_patient.get('features')) # HPO terms of the matching patient
-    hpo_score = evaluate_subcategories(hpo_terms, db_patient_hpo_terms, max_hpo_score)
+    if db_patient_hpo_terms:    
+        hpo_score = evaluate_subcategories(hpo_terms, db_patient_hpo_terms, max_hpo_score)
 
     max_omim_score = 0
     max_monarch_score = 0
