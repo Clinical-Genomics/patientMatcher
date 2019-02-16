@@ -171,7 +171,7 @@ def match_external(patient_id):
         # send an email to patient's contact:
         notify_match_external(match_obj=matching_obj, admin_email=current_app.config.get('MAIL_USERNAME'), mail=current_app.mail)
 
-    resp = jsonify(results)
+    resp = jsonify({'results':results})
     resp.status_code = 200
     return resp
 
