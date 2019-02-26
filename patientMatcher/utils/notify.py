@@ -164,14 +164,14 @@ def html_format(obj, indent=0):
     if isinstance(obj, list):
         htmls = []
         for k in obj:
-            htmls.append(_html_format(k,indent+1))
+            htmls.append(html_format(k,indent+1))
 
         return '[<div style="margin-left: %dem">%s</div>]' % (indent, ',<br>'.join(htmls))
 
     if isinstance(obj, dict):
         htmls = []
         for k,v in obj.items():
-            htmls.append("<span style='font-style: italic; color: #888'>%s</span>: %s" % (k,_html_format(v,indent+1)))
+            htmls.append("<span style='font-style: italic; color: #888'>%s</span>: %s" % (k,html_format(v,indent+1)))
 
         return '{<div style="margin-left: %dem">%s</div>}' % (indent, ',<br>'.join(htmls))
 

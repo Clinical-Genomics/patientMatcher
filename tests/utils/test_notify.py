@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import pymongo
-from patientMatcher.utils.notify import notify_match_external, notify_match_internal
+from patientMatcher.utils.notify import notify_match_external, notify_match_internal, html_format
 
 def test_notify_match_external(match_objs, mock_sender, mock_mail):
 
@@ -29,6 +29,10 @@ def test_notify_match_internal(database, match_objs, mock_sender, mock_mail):
 
     # When calling the function that sends internal match notifications
     notify_match_internal(database, match_obj, mock_sender, mock_mail)
+
+    # Test the function that formats the matching results to HTML:
+    formatted_results = html_format(match_obj['results'])
+    assert '<div style="margin-left: 0em">' in formatted_results
 
     # make sure send method was called
     assert mock_mail._send_was_called
