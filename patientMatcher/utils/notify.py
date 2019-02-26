@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import pprint
 import logging
 from flask_mail import Message
 
@@ -57,7 +57,7 @@ def notify_match_internal(database, match_obj, admin_email, mail):
 
         patient_label =  result['patient'].get('label')
         recipient = result['patient']['contact']['href'][7:]
-        email_body = passive_match_email_body(patient_id, patient_label)
+        email_body = passive_match_email_body(patient_id, match_obj['data']['patient'], patient_label)
         LOG.info('Sending an internal match notification for match result with ID {}'.format(patient_id))
 
         kwargs = dict(subject=email_subject, html=email_body, sender=sender, recipients=[recipient])
@@ -117,7 +117,7 @@ def active_match_email_body(patient_id, patient_label=None, external_match=False
         ***This is an automated message, please do not reply to this email.***<br><br>
         <strong>MatchMaker Exchange patient matching notification:</strong><br><br>
         Patient with ID <strong>{0}</strong>, label <strong>{1}</strong> was recently used in a search {2}.
-        This search returned potential matche(s)</strong>.<br><br>
+        This search returned potential matches</strong>.<br><br>
         For security reasons match results and patient contacts are not disclosed in this email.<br>
         Please contact the service provider or connect to the portal you used to submit the data to review these results.
         <br><br>
@@ -128,11 +128,11 @@ def active_match_email_body(patient_id, patient_label=None, external_match=False
     return html
 
 
-def passive_match_email_body(patient_id, patient_label=None):
+def passive_match_email_body(patient_id, matched_patient, patient_label=None,):
     """Returns the body message of the notification email when the patient was used as query patient
 
     Args:
-        patient_id(str): the ID of the patient submitted by the  MME user which will be notified
+        patient_id(str): the ID of the patient submitted by the MME user which will be notified
         patient_label(str): the label of the patient submitted by the  MME user which will be notified (not mandatory field)
 
     Returns:
@@ -143,12 +143,13 @@ def passive_match_email_body(patient_id, patient_label=None):
         ***This is an automated message, please do not reply.***<br>
         <strong>MatchMaker Exchange patient matching notification:</strong><br><br>
         Patient with <strong>ID {0}</strong>,<strong> label {1}</strong> was recently returned as a match result
-        in a search performed using a patient stored in the same MatchMaker node.
-        For security reasons match results and patient contacts are not disclosed in this email.<br>
-        Please contact the service provider or connect to the portal you used to submit the data to review these results.
+        in a search performed using a patient with these charateristics:<br>
+        <strong>{2}</strong>
+        You might directly contact the matching part using the address specified in patient's data or review matching
+        results in the portal you used to submit your patient.
         <br><br>
         Kind regards,<br>
         The PatienMatcher team
-    """.format(patient_id, patient_label)
+    """.format(patient_id, patient_label, ''.join( ['<pre>', pprint.pformat(matched_patient), '</pre>']) )
 
     return html
