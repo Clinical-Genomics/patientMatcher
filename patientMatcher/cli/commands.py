@@ -58,7 +58,7 @@ def email(recipient):
         config file and rebooting the server.
         <br><br>
         Kind regards,<br>
-        The PatienMatcher team
+        The PatientMatcher team
     """
     kwargs = dict(subject=subj, html=body, sender=current_app.config.get('MAIL_USERNAME'), recipients=[recipient])
     message = Message(**kwargs)

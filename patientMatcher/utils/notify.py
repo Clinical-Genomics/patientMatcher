@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import pprint
+import json
 import logging
 from flask_mail import Message
 
@@ -34,7 +34,7 @@ def notify_match_internal(database, match_obj, admin_email, mail):
         patient_id = match_obj['data']['patient']['id']
         patient_label = match_obj['data']['patient'].get('label')
         recipient = match_obj['data']['patient']['contact']['href'][7:]
-        email_body = active_match_email_body(patient_id, patient_label, external_match=False)
+        email_body = active_match_email_body(patient_id=patient_id, match_results=match_obj['results'], patient_label=patient_label, external_match=False)
         LOG.info('Sending an internal match notification for query patient with ID:{0}. Patient contact: {1}'.format(patient_id, recipient))
 
         kwargs = dict(subject=email_subject, html=email_body, sender=sender, recipients=[recipient])
@@ -83,7 +83,7 @@ def notify_match_external(match_obj, admin_email, mail):
     patient_label = match_obj['data']['patient'].get('label')
     recipient = match_obj['data']['patient']['contact']['href'][7:]
     email_subject = 'MatchMaker Exchange: new patient match available.'
-    email_body = active_match_email_body(patient_id, patient_label, external_match=True)
+    email_body = active_match_email_body(patient_id=patient_id, match_results=match_obj['results'], patient_label=patient_label, external_match=True)
     LOG.info('Sending an external match notification for query patient with ID {0}. Patient contact: {1}'.format(patient_id, recipient))
 
     kwargs = dict(subject=email_subject, html=email_body, sender=sender, recipients=[recipient])
@@ -95,14 +95,13 @@ def notify_match_external(match_obj, admin_email, mail):
         LOG.error('An error occurred while sending an external match notification: {}'.format(err))
 
 
-
-def active_match_email_body(patient_id, patient_label=None, external_match=False):
+def active_match_email_body(patient_id, match_results, patient_label=None, external_match=False):
     """Returns the body message of the notification email when the patient was used as query patient
 
     Args:
         patient_id(str): the ID of the patient submitted by the  MME user which will be notified
+        match_results(list): a list of patients which match with the patient whose contact is going to be notified
         external_match(bool): True == match in connected nodes, False == match with other patients in database
-        results(list): a list of patients which match with the patient whose contact is going to be notified
         patient_label(str): the label of the patient submitted by the  MME user which will be notified (not mandatory field)
 
 
@@ -116,14 +115,15 @@ def active_match_email_body(patient_id, patient_label=None, external_match=False
     html = """
         ***This is an automated message, please do not reply to this email.***<br><br>
         <strong>MatchMaker Exchange patient matching notification:</strong><br><br>
-        Patient with ID <strong>{0}</strong>, label <strong>{1}</strong> was recently used in a search {2}.
-        This search returned potential matches</strong>.<br><br>
-        For security reasons match results and patient contacts are not disclosed in this email.<br>
-        Please contact the service provider or connect to the portal you used to submit the data to review these results.
+        Patient with ID <strong>{0}</strong>, label <strong>{1}</strong>.
+        This search returned these potential matches</strong>:<br>
+        <strong>{2}</strong>
+        You might directly contact the matching part using the address specified in patient's data or review matching
+        results in the portal you used to submit your patient.
         <br><br>
         Kind regards,<br>
-        The PatienMatcher team
-    """.format(patient_id, patient_label, search_type)
+        The PatientMatcher team
+    """.format(patient_id, patient_label, _html_format(match_results))
 
     return html
 
@@ -133,6 +133,7 @@ def passive_match_email_body(patient_id, matched_patient, patient_label=None,):
 
     Args:
         patient_id(str): the ID of the patient submitted by the MME user which will be notified
+        matched_patient(dict): a patient object
         patient_label(str): the label of the patient submitted by the  MME user which will be notified (not mandatory field)
 
     Returns:
@@ -144,12 +145,35 @@ def passive_match_email_body(patient_id, matched_patient, patient_label=None,):
         <strong>MatchMaker Exchange patient matching notification:</strong><br><br>
         Patient with <strong>ID {0}</strong>,<strong> label {1}</strong> was recently returned as a match result
         in a search performed using a patient with these charateristics:<br>
-        <strong>{2}</strong>
+        <strong>{2}</strong><br>
         You might directly contact the matching part using the address specified in patient's data or review matching
         results in the portal you used to submit your patient.
         <br><br>
         Kind regards,<br>
-        The PatienMatcher team
-    """.format(patient_id, patient_label, ''.join( ['<pre>', pprint.pformat(matched_patient), '</pre>']) )
+        The PatientMatcher team
+    """.format(patient_id, patient_label, _html_format(matched_patient))
 
     return html
+
+
+def _html_format(obj, indent=0):
+    """Formats one or more patient objects to a nice html string
+
+    Args:
+        obj(list): a list of patient objects or a patient object
+    """
+    if isinstance(obj, list):
+        htmls = []
+        for k in obj:
+            htmls.append(_html_format(k,indent+1))
+
+        return '[<div style="margin-left: %dem">%s</div>]' % (indent, ',<br>'.join(htmls))
+
+    if isinstance(obj, dict):
+        htmls = []
+        for k,v in obj.items():
+            htmls.append("<span style='font-style: italic; color: #888'>%s</span>: %s" % (k,_html_format(v,indent+1)))
+
+        return '{<div style="margin-left: %dem">%s</div>}' % (indent, ',<br>'.join(htmls))
+
+    return str(obj)
