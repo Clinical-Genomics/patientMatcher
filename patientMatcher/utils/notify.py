@@ -122,7 +122,7 @@ def active_match_email_body(patient_id, match_results, patient_label=None, exter
         <br><br>
         Kind regards,<br>
         The PatientMatcher team
-    """.format(patient_id, patient_label, _html_format(match_results))
+    """.format(patient_id, patient_label, html_format(match_results))
 
     return html
 
@@ -150,12 +150,12 @@ def passive_match_email_body(patient_id, matched_patient, patient_label=None,):
         <br><br>
         Kind regards,<br>
         The PatientMatcher team
-    """.format(patient_id, patient_label, _html_format(matched_patient))
+    """.format(patient_id, patient_label, html_format(matched_patient))
 
     return html
 
 
-def _html_format(obj, indent=0):
+def html_format(obj, indent=0):
     """Formats one or more patient objects to a nice html string
 
     Args:
