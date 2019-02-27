@@ -111,6 +111,8 @@ def test_metrics(database, test_client, demo_data_path, match_objs):
     assert metrics['numberOfGenes'] > metrics['numberOfUniqueGenes']
     assert metrics['numberOfVariants'] > metrics['numberOfUniqueVariants']
     assert metrics['numberOfFeatures'] > metrics['numberOfUniqueFeatures']
+    assert metrics['numberOfCasesWithDiagnosis'] >0
+    assert metrics['numberOfUniqueGenesMatched'] == 0 # no gene was provided in match_obj results
     assert metrics['numberOfRequestsReceived'] == 2 # Sent 2 requests
     assert metrics['numberOfPotentialMatchesSent'] == 1 # Just one has returned results
 
