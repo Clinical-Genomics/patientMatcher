@@ -13,7 +13,7 @@ Table of Contents:
 5. [ Server endpoints ](#endpoints)
     - [ Add patient to server (/patient/add) ](#add)
     - [ Delete patient from server (/patient/delete/<patient_id>) ](#delete)
-    - [ Get a list of patients on server (/patient/view) ](#view)
+    - [ Get server stats (/metrics) ](#metrics)
     - [ Get the list of connected nodes (/nodes) ](#node_list)
     - [ Send a match request to server (/match) ](#match)
     - [ Send a match request to external nodes (/match/external/<patient_id>) ](#match_external)
@@ -179,13 +179,15 @@ Matching results where the removed patient is instead listed among the matching 
 
 &nbsp;&nbsp;
 
-<a name="view"></a>
-- **/patient/view**.
-&nbsp;Use this endpoint to **get** a list of all patients in the database. Example:
+<a name="metrics"></a>
+- **/metrics**.
+&nbsp;Use this endpoint to **get** database metrics.<br>
+Stats which could be retrieved by a MME service are described [here](https://github.com/ga4gh/mme-apis/blob/master/metrics-api.md)<br>
+Example:
 ```bash
 curl -X GET \
   -H 'X-Auth-Token: custom_token' \
-  localhost:9020/patient/view
+  localhost:9020/metrics
 ```
 &nbsp;&nbsp;
 

@@ -68,14 +68,14 @@ def delete(patient_id):
     return resp
 
 
-@blueprint.route('/patient/view', methods=['GET'])
-def view():
-    """Get all patients in database"""
+@blueprint.route('/metrics', methods=['GET'])
+def metrics():
+    """Get database metrics"""
     resp = None
     if authorize(current_app.db, request):
-        LOG.info('Authorized client requests all patients..')
-        results = controllers.get_patients(database=current_app.db)
-        resp = jsonify(results)
+        LOG.info('Authorized client requests metrics..')
+        results = controllers.metrics(database=current_app.db)
+        resp = jsonify({'metrics' : results, 'disclaimer' : current_app.config.get('DISCLAIMER')})
         resp.status_code = 200
 
     else: # not authorized, return a 401 status code
