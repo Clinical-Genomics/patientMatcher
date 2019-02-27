@@ -57,14 +57,14 @@ def general_metrics(db):
     unique_gene_matches = db.matches.distinct('results.patients.patient.genomicFeatures.gene', match_type)
 
     metrics = {
-        'numberOfCases' : db.patients.count(),
-        'numberOfSubmitters' : len(db.patients.distinct('contact')),
+        'numberOfCases' : db.patients.find().count(),
+        'numberOfSubmitters' : len(db.patients.distinct('contact.href')),
         'numberOfGenes' : n_genes,
         'numberOfUniqueGenes': len(db.patients.distinct('genomicFeatures.gene')),
         'numberOfVariants' : n_vars,
         'numberOfUniqueVariants' : len(db.patients.distinct('genomicFeatures.variant')),
         'numberOfFeatures' : n_feat,
-        'numberOfUniqueFeatures' : len(db.patients.distinct('features')),
+        'numberOfUniqueFeatures' : len(db.patients.distinct('features.id')),
         'numberOfUniqueGenesMatched' : len(unique_gene_matches),
         'numberOfCasesWithDiagnosis' : db.patients.find({'disorders': {'$exists': True, '$ne' : []} }).count(),
         'numberOfRequestsReceived' : db.matches.find({'match_type':'internal'}).count(),
