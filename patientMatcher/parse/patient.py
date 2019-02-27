@@ -27,7 +27,7 @@ def mme_patient(json_patient, compute_phenotypes=False):
         'label' : json_patient.get('label'),
         'sex' : json_patient.get('sex'),
         'contact' : json_patient['contact'],
-        'features' : json_patient['features'],
+        'features' : json_patient.get('features'),
         'genomicFeatures' : json_patient.get('genomicFeatures'),
         'disorders' : json_patient.get('disorders'),
         'species' : json_patient.get('species'),
@@ -35,7 +35,7 @@ def mme_patient(json_patient, compute_phenotypes=False):
         'inheritanceMode' : json_patient.get('inheritanceMode')
     }
 
-    if compute_phenotypes: # build Monarch phenotypes from patients' HPO terms
+    if mme_patient['features'] and compute_phenotypes: # build Monarch phenotypes from patients' HPO terms
         hpo_terms = features_to_hpo(json_patient['features'])
         computed_phenotypes = monarch_phenotypes(hpo_terms)
         mme_patient['monarch_phenotypes'] = computed_phenotypes

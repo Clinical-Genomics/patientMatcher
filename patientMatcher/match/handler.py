@@ -55,22 +55,24 @@ def internal_matcher(database, patient_obj, max_pheno_score, max_geno_score, max
     """
     json_pat = json_patient(patient_obj)
     pheno_matches = []
+    pheno_m_keys = []
     geno_matches = []
+    geno_m_keys = []
     matches = []
 
     # phenotype score can be obtained if patient has an associated phenotype (HPO or OMIM terms)
-    if len(patient_obj['features']) or len(patient_obj['disorders']) > 0:
+    if patient_obj.get('features') or patient_obj.get('disorders'):
         LOG.info('Matching phenotypes against database patients..')
         pheno_matches = phenomatch(database, max_pheno_score, patient_obj.get('features',[]), patient_obj.get('disorders',[]))
+        pheno_m_keys = list(pheno_matches.keys())
 
     # genomic score can be obtained if patient has at least one genomic feature
     if len(patient_obj['genomicFeatures']) > 0:
         LOG.info('Matching variants/genes against database patients..')
         geno_matches = genomatch(database, patient_obj['genomicFeatures'], max_geno_score)
+        geno_m_keys = list(geno_matches.keys())
 
     # obtain unique list of all patient IDs returned by the 2 algorithms:
-    pheno_m_keys = list(pheno_matches.keys())
-    geno_m_keys = list(geno_matches.keys())
     unique_patients = list(set(pheno_m_keys + geno_m_keys))
 
     # create matching result objects with combined score from the 2 algorithms
