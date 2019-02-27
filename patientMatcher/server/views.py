@@ -73,9 +73,9 @@ def metrics():
     """Get database metrics"""
     resp = None
     if authorize(current_app.db, request):
-        LOG.info('Authorized client requests all patients..')
+        LOG.info('Authorized client requests metrics..')
         results = controllers.metrics(database=current_app.db)
-        resp = jsonify(results)
+        resp = jsonify({'metrics' : results, 'disclaimer' : current_app.config.get('DISCLAIMER')})
         resp.status_code = 200
 
     else: # not authorized, return a 401 status code
