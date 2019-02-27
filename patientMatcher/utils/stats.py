@@ -52,7 +52,7 @@ def general_metrics(db):
     for feat in feat_occurr:
         n_feat += feat.get('count')
 
-    # include in unique_gene_matches only matches axtively returned by the server (internal)
+    # include in unique_gene_matches only matches actively returned by the server (internal)
     match_type = {'match_type':'internal'}
     unique_gene_matches = db.matches.distinct('results.patients.patient.genomicFeatures.gene', match_type)
 
