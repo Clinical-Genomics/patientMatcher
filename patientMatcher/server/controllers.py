@@ -9,8 +9,23 @@ from patientMatcher.utils.patient import patients
 from patientMatcher.parse.patient import json_patient, validate_api, mme_patient
 from patientMatcher.auth.auth import authorize
 from patientMatcher.match.handler import external_matcher
+from patientMatcher.__version__ import __version__
 
 LOG = logging.getLogger(__name__)
+
+def heartbeat(disclaimer):
+    """Return a heartbeat as defined here:https://github.com/ga4gh/mme-apis/blob/master/heartbeat-api.md"""
+
+    hbeat = {
+        "heartbeat": {
+            "production": True,
+            "version": __version__,
+            "accept": ["application/vnd.ga4gh.matchmaker.v1.0+json", "application/vnd.ga4gh.matchmaker.v1.1+json"]
+        },
+        "disclaimer": disclaimer,
+    }
+    return hbeat
+
 
 def metrics(database):
     """return database metrics"""
