@@ -155,7 +155,8 @@ def match_external(patient_id):
         resp.status_code = 200
         return resp
 
-    matching_obj = controllers.match_external(current_app.db, query_patient, node)
+    host = current_app.config.get('MME_HOST') # Introduce yourself in request
+    matching_obj = controllers.match_external(current_app.db, host, query_patient, node)
 
     if not matching_obj:
         message['message'] = "Could not find any other node connected to this MatchMaker server"
@@ -213,6 +214,7 @@ def match_internal():
     LOG.info('Found {} matching patients in database'.format(len(matches)))
 
     # return response with results
+    validate_response["disclaimer"] = current_app.config.get('DISCLAIMER')
     resp = jsonify(validate_response)
     resp.status_code = 200
     return resp
