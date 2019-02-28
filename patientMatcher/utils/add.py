@@ -11,13 +11,14 @@ from patientMatcher.match.handler import external_matcher
 
 LOG = logging.getLogger(__name__)
 
-def load_demo(path_to_json_data, mongo_db, compute_phenotypes=False):
+def load_demo(path_to_json_data, mongo_db, host, compute_phenotypes=False):
     """Inserts demo patient data into database
         Demo data consists of a set of 50 patients from this paper: http://onlinelibrary.wiley.com/doi/10.1002/humu.22850
 
         Args:
             path_to_demo_data(str): absolute path to json file containing the demo patients.
             mongo_db(pymongo.database.Database)
+            host(str): MME_HOST parameter in config file
             compute_phenotypes(bool) : if True most likely phenotypes will be computed using Monarch
 
         Returns:
@@ -38,7 +39,7 @@ def load_demo(path_to_json_data, mongo_db, compute_phenotypes=False):
                 #parse patient into format accepted by database
                 patient = mme_patient(json_patient, compute_phenotypes)
 
-                inserted_id = backend_add_patient(mongo_db, patient)[1]
+                inserted_id = backend_add_patient(mongo_db=mongo_db, host=host, patient=patient)[1]
                 if inserted_id:
                     inserted_ids.append(inserted_id)
                 pbar.update()
@@ -49,12 +50,13 @@ def load_demo(path_to_json_data, mongo_db, compute_phenotypes=False):
     return inserted_ids
 
 
-def backend_add_patient(mongo_db, patient, match_external=False):
+def backend_add_patient(mongo_db, host, patient, match_external=False):
     """
         Insert or update a patient in patientMatcher database
 
         Args:
             mongo_db(pymongo.database.Database)
+            host(str): MME_HOST parameter in config file
             patient(dict) : a MME patient entity
 
         Returns:
@@ -76,7 +78,7 @@ def backend_add_patient(mongo_db, patient, match_external=False):
     # and if there is a change in patients' collections (new patient or updated patient)
     # Matching is not triggered by inserting demo data into database
     if match_external and (modified or upserted):
-        matching_obj = external_matcher(mongo_db, patient)
+        matching_obj = external_matcher(mongo_db, host, patient)
         #save matching object to database
         mongo_db['matches'].insert_one(matching_obj)
 

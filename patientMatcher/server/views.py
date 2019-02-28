@@ -30,7 +30,8 @@ def add():
         return controllers.bad_request(formatted_patient)
 
     # else import patient to database
-    modified, inserted, matching_obj= backend_add_patient(mongo_db=current_app.db, patient=formatted_patient, match_external=True)
+    modified, inserted, matching_obj= backend_add_patient(mongo_db=current_app.db, patient=formatted_patient,
+        match_external=True, host=current_app.config.get('MME_HOST'))
     message = {}
 
     if modified:

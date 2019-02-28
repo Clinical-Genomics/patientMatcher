@@ -25,7 +25,7 @@ def test_phenotype_matching(json_patients, database, demo_data_path):
     """test the algorithm that compares the phenotype of a query patient against the database"""
 
     # insert demo patients into test database
-    inserted_ids = load_demo(demo_data_path, database)
+    inserted_ids = load_demo(demo_data_path, database, 'patientMatcher.host.se')
     assert len(inserted_ids) == 50 # 50 test cases should be loaded
 
     query_patient = json_patients[0]
