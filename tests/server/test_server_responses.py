@@ -91,7 +91,7 @@ def test_metrics(database, test_client, demo_data_path, match_objs):
     assert clients > 0
 
     # load demo data of 50 test patients
-    inserted_ids = load_demo(demo_data_path, database)
+    inserted_ids = load_demo(demo_data_path, database, app.config.get('MME_HOST'))
     assert len(inserted_ids) == 50 # 50 test cases should be loaded
 
     # load mock matches into database
@@ -155,7 +155,7 @@ def test_delete_patient(database, demo_data_path, test_client, match_objs):
 
     app.db = database
     # load demo data to mock database using function located under utils/load
-    inserted_ids = load_demo(demo_data_path, database)
+    inserted_ids = load_demo(demo_data_path, database, app.config.get('MME_HOST'))
     assert len(inserted_ids) == 50 # 50 test cases should be loaded
 
     # 50 cases present on patients collection
@@ -256,7 +256,7 @@ def test_match(json_patients, test_client, demo_data_path, database):
     query_patient = {'patient' : json_patients[0]}
 
     # load demo data in mock database
-    inserted_ids = load_demo(demo_data_path, database, False)
+    inserted_ids = load_demo(demo_data_path, database, app.config.get('MME_HOST'))
 
     # test the API response validator with non valid patient data:
     malformed_match_results = {'results': 'fakey_results'}
