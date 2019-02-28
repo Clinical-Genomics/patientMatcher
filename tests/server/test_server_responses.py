@@ -9,8 +9,33 @@ from patientMatcher.auth.auth import authorize
 from patientMatcher.server.controllers import validate_response
 from patientMatcher.parse.patient import mme_patient
 from patientMatcher.match.handler import patient_matches
+from patientMatcher.__version__ import __version__
 
 app = create_app()
+
+def test_heartbeat(database, test_client):
+    # Test sending a GET request to see if app has a heartbeat
+    app.db = database
+    # send a get request without being authorized
+    response = app.test_client().get('heartbeat')
+    assert response.status_code == 401
+
+    # add an authorized client to database
+    ok_token = test_client['auth_token']
+    add_node(mongo_db=app.db, obj=test_client, is_client=True)
+
+    # make sure that the request using its token is valid
+    response = app.test_client().get('heartbeat', headers = auth_headers(ok_token))
+    assert response.status_code == 200
+
+    # Make sure that all important info is returned
+    data = json.loads(response.data)
+    assert data['disclaimer'] == app.config.get('DISCLAIMER')
+    assert data['heartbeat']['version'] == __version__
+    assert isinstance(data['heartbeat']['production'], bool)
+    assert isinstance(data['heartbeat']['accept'], list)
+    assert len(data['heartbeat']['accept']) > 0
+
 
 def test_add_patient(database, json_patients, test_client, test_node):
     #Test sending a POST request to server to add a patient

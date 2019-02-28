@@ -69,6 +69,24 @@ def delete(patient_id):
     return resp
 
 
+@blueprint.route('/heartbeat', methods=['GET'])
+def heartbeat():
+    """Get the server specs"""
+    resp = None
+    if authorize(current_app.db, request):
+        LOG.info('Authorized client requests heartbeat..')
+        LOG.info('current_app is {}'.format(current_app))
+        disclaimer = current_app.config.get('DISCLAIMER')
+        result = controllers.heartbeat(disclaimer)
+        resp = jsonify(result)
+        resp.status_code = 200
+
+    else: # not authorized, return a 401 status code
+        return controllers.bad_request(401)
+
+    return resp
+
+
 @blueprint.route('/metrics', methods=['GET'])
 def metrics():
     """Get database metrics"""
