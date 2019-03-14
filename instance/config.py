@@ -24,12 +24,12 @@ MME_HOST = 'https://www.scilifelab.se/facilities/clinical-genomics-stockholm'
 
 # Email notification params.
 # Required only if you want to send match notifications to patients contacts
-MAIL_SERVER = # mail_port
-MAIL_PORT = # email_port
-MAIL_USE_SSL = # True or False
-MAIL_USERNAME = 'user_email@mail.se'
-MAIL_PASSWORD = 'mail_password'
+#MAIL_SERVER = mail_port
+#MAIL_PORT = email_port
+#MAIL_USE_SSL = True or False
+#MAIL_USERNAME = 'user_email@mail.se'
+#MAIL_PASSWORD = 'mail_password'
 
 # Set NOTIFY_COMPLETE to False if you don't want to notify variants and phenotypes by email
 # This way only contact info and matching patients ID will be notified in email body
-NOTIFY_COMPLETE = True
+#NOTIFY_COMPLETE = True
