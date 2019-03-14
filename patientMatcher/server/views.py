@@ -45,7 +45,8 @@ def add():
     # and match notifications are on
     if current_app.config.get('MAIL_SERVER') and matching_obj and len(matching_obj.get('results')):
         # send an email to patient's contact:
-        notify_match_external(match_obj=matching_obj, admin_email=current_app.config.get('MAIL_USERNAME'), mail=current_app.mail)
+        notify_match_external(match_obj=matching_obj, admin_email=current_app.config.get('MAIL_USERNAME'),
+            mail=current_app.mail, notify_complete=current_app.config.get('NOTIFY_COMPLETE'))
 
     resp = jsonify(message)
     resp.status_code = 200
@@ -189,7 +190,8 @@ def match_external(patient_id):
     # and match notifications are on
     if current_app.config.get('MAIL_SERVER') and matching_obj and len(results):
         # send an email to patient's contact:
-        notify_match_external(match_obj=matching_obj, admin_email=current_app.config.get('MAIL_USERNAME'), mail=current_app.mail)
+        notify_match_external(match_obj=matching_obj, admin_email=current_app.config.get('MAIL_USERNAME'),
+            mail=current_app.mail, notify_complete=current_app.config.get('NOTIFY_COMPLETE'))
 
     resp = jsonify({'results':results})
     resp.status_code = 200
@@ -223,7 +225,8 @@ def match_internal():
     # if notifications are on and there are matching results
     if current_app.config.get('MAIL_SERVER') and len(matches):
         notify_match_internal(database=current_app.db, match_obj=match_obj,
-            admin_email=current_app.config.get('MAIL_USERNAME'), mail=current_app.mail)
+            admin_email=current_app.config.get('MAIL_USERNAME'), mail=current_app.mail,
+            notify_complete=current_app.config.get('NOTIFY_COMPLETE'))
 
 
     validate_response = controllers.validate_response({'results': matches})

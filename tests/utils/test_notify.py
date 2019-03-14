@@ -8,7 +8,8 @@ def test_notify_match_external(match_objs, mock_sender, mock_mail):
     assert match_obj['match_type'] == 'external'
 
     # When calling the function that sends external match notifications
-    notify_match_external(match_obj, mock_sender, mock_mail)
+    notify_complete = True # test notification of complete patient data by email
+    notify_match_external(match_obj, mock_sender, mock_mail, notify_complete)
 
     # make sure send method was called
     assert mock_mail._send_was_called
@@ -28,7 +29,8 @@ def test_notify_match_internal(database, match_objs, mock_sender, mock_mail):
     assert database['patients'].find().count() == 1
 
     # When calling the function that sends internal match notifications
-    notify_match_internal(database, match_obj, mock_sender, mock_mail)
+    notify_complete = False # test notification of partial patient data by email
+    notify_match_internal(database, match_obj, mock_sender, mock_mail, notify_complete)
 
     # Test the function that formats the matching results to HTML:
     formatted_results = html_format(match_obj['results'])
