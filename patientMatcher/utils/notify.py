@@ -117,7 +117,7 @@ def active_match_email_body(patient_id, match_results, patient_label=None, exter
         <strong>MatchMaker Exchange patient matching notification:</strong><br><br>
         Patient with ID <strong>{0}</strong>, label <strong>{1}</strong>.
         This search returned these potential matches</strong>:<br>
-        <strong>{2}</strong>
+        <strong>{2}</strong><br>
         You might directly contact the matching part using the address specified in patient's data or review matching
         results in the portal you used to submit your patient.
         <br><br>
