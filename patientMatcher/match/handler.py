@@ -67,7 +67,7 @@ def internal_matcher(database, patient_obj, max_pheno_score, max_geno_score, max
         pheno_m_keys = list(pheno_matches.keys())
 
     # genomic score can be obtained if patient has at least one genomic feature
-    if len(patient_obj['genomicFeatures']) > 0:
+    if patient_obj.get('genomicFeatures') and len(patient_obj['genomicFeatures']) > 0:
         LOG.info('Matching variants/genes against database patients..')
         geno_matches = genomatch(database, patient_obj['genomicFeatures'], max_geno_score)
         geno_m_keys = list(geno_matches.keys())
