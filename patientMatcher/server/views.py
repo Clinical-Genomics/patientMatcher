@@ -31,7 +31,7 @@ def add():
 
     match_external = False
     if controllers.get_nodes(database=current_app.db):
-        match_external = true
+        match_external = True
 
     # else import patient to database
     modified, inserted, matching_obj= backend_add_patient(mongo_db=current_app.db, patient=formatted_patient,
