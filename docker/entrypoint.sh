@@ -2,7 +2,7 @@
 
 if [[ -z $(which python) ]]; then
     . /opt/conda/etc/profile.d/conda.sh
-    conda activate base
+    conda activate patientMatcher
     python -V
 fi
 

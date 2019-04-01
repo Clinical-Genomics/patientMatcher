@@ -35,8 +35,9 @@ COPY . /opt/patientMatcher
 WORKDIR /opt/patientMatcher
 
 RUN source /opt/conda/etc/profile.d/conda.sh && \
-    conda activate base && \
+    conda activate patientMatcher && \
     pip install -U pip setuptools && \
+    pip install -r requirements.txt -r requirements-dev.txt && \
     pip install -e .
 
 ENTRYPOINT [ "docker/entrypoint.sh" ]
