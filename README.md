@@ -4,6 +4,7 @@
 Table of Contents:
 1. [ Prerequisites ](#prerequisites)
 2. [ Installation ](#installation)
+    - [ Using docker ](#installation-docker)
 3. [ Data types ](#data_types)
 4. [ Command line interface](#cli)
     - [ Adding demo data to server](#cli_add_demo)
@@ -62,6 +63,38 @@ To start the server run this command:
 pmatcher run -h custom_host -p custom_port
 ```
 Please note that the code is NOT guaranteed to be bug-free and it must be adapted to be used in production.
+
+<a name="installation-docker"></a>
+### Using Docker
+A simple Dockerfile has been included for testing purposes. It uses the sample `instance/config.py` and
+should not be used in production.
+
+#### Build the image
+From the repo directory:
+
+```bash
+# note: docker does not allow upper case in image tags
+$ docker build -t local/patientmatcher .
+```
+
+#### Running the image
+To run the image in the foreground use:
+```bash
+$ docker run -p 5000 --name patientMatcher local/patientmatcher
+```
+
+You can then `curl localhost:5000/...` to the appropriate resources from another terminal. The database is
+initialized with a test token (`test_token`) that can be used. e.g.,
+
+```bash
+$ curl -H 'x-auth-token: test_token' localhost:5000/metrics
+```
+
+To run with your own settings, mount an `instance` directory containing a `config.py`:
+
+```bash
+$ docker run -p 5000 -v /some/local/path/instance:/opt/patientMatcher/instance local/patientmatcher
+```
 
 <a name="data_types"></a>
 ## Data types
