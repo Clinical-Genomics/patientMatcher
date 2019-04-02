@@ -2,7 +2,7 @@ FROM mongo:4.0.7-xenial
 
 SHELL ["/bin/bash", "-c"]
 
-ENV PYTHON_VERSION 3.7.1
+ENV PYTHON_VERSION 3.6
 ENV MONGO_PIDFILE /opt/patientMatcher/mongod.pid
 ENV MONGO_LOGPATH /opt/patientMatcher/mongod.log
 
