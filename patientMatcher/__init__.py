@@ -17,7 +17,6 @@ def create_app():
         app.config.from_envvar('PMATCHER_CONFIG')
     except:
         LOG.warning('Environment variable settings not found, configuring from instance file.')
-        LOG.info('Configuring app from instance conf file')
         app = Flask(__name__, instance_relative_config=True)
         app.config.from_pyfile('config.py')
 
