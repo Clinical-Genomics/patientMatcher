@@ -2,6 +2,8 @@ FROM mongo:4.0.7-xenial
 
 SHELL ["/bin/bash", "-c"]
 
+ENV LC_ALL C.UTF-8
+ENV LANG C.UTF-8
 ENV PYTHON_VERSION 3.6
 ENV MONGO_PIDFILE /opt/patientMatcher/mongod.pid
 ENV MONGO_LOGPATH /opt/patientMatcher/mongod.log
@@ -42,4 +44,4 @@ RUN source /opt/conda/etc/profile.d/conda.sh && \
     pip install -e .
 
 ENTRYPOINT [ "docker/entrypoint.sh" ]
-CMD [ "pmatcher", "run" ]
+CMD [ "pmatcher", "run", "-h", "0.0.0.0" ]
