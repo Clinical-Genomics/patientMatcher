@@ -209,3 +209,43 @@ def external_matcher(database, host, patient, node=None):
                 external_match['results'].append(result_obj)
 
     return external_match
+
+
+def async_match(database, response_data):
+    """Creates a match object from data received from an asyc server
+
+    Args:
+        database(pymongo.database.Database)
+        response_data(dict): data provided by async server in follow up request
+
+    Returns:
+        async_match(dict): a match object
+    """
+    # get query id you received from async server when you sent your request
+    query_id = response_data['query_id'] # can't be None, checked upstream
+    # collect data saved in database when you first received the async response
+    async_response = database['async_responses'].find_one({'query_id':query_id})
+    if not async_response:
+        LOG.error("Couldn't find an asynchronous response with that id in database")
+        return
+    patient_id = async_response.get('query_patient_id')
+    patient_obj = database['patients'].find_one({'_id':patient_id})
+    node = async_response.get('node')
+    if not patient_obj or not node:
+        LOG.error("Query patient or external node info missing from async response.")
+        return
+
+    results = response_data.get('results') # this could be an empty list
+
+    async_match = {
+        'created' : datetime.datetime.now(),
+        'has_matches' : True if len(results)>0 else False,
+        'data' : {'patient' : patient_obj},
+        'node' : node,
+        'errors' : [], # This can be modified if I know that async server returns error
+        'match_type' : 'external',
+        'async' : True,
+        'results' : results
+    }
+
+    return async_match
