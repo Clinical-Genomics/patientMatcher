@@ -113,7 +113,7 @@ def test_match_async(database, async_response_obj, json_patients, test_node):
         data=json.dumps(data), headers = unauth_headers())
     # server should return status 422 (Patient data does not conform to API)
     assert response.status_code == 422
-    
+
 
 def test_heartbeat(database, test_client):
     # Test sending a GET request to see if app has a heartbeat
