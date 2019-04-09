@@ -228,7 +228,7 @@ def asynch_match_response():
         current_app.db['async_responses'].delete_one({'query_id':data['query_id']})
     else:
         message = "Error: could not create a valid match object from request data"
-        resp = jsonify('message' : message)
+        resp = jsonify({'message' : message})
         resp.status_code = 200
         return resp
 
