@@ -13,6 +13,102 @@ from patientMatcher.__version__ import __version__
 
 app = create_app()
 
+def test_match_async(database, async_response_obj, json_patients, test_node):
+    # test receiving an asynchronous POST request with results from a server
+    app.db = database
+
+    # send a POST request with no data to the async endpoint
+    response = app.test_client().post('/async_response', headers = unauth_headers())
+    # server should return a request data is not valid code == 400
+    assert response.status_code == 400
+
+    # provide data object not containing a query id key
+    data = { 'key1' : 'value1' }
+    response = app.test_client().post('/async_response',
+        data=json.dumps(data), headers = unauth_headers())
+    # server should return a not authorized response (401)
+    assert response.status_code == 401
+
+    # provide data object with query id not previously saved in database
+    data = {
+        'query_id' : async_response_obj['query_id'],
+        'source' : 'fakey node',
+        'response' : {
+            "results" : [
+                {
+                  "score" : {
+                    "patient" : 0.8
+                  },
+                  "patient" : json_patients[1],
+                }
+              ]
+        }
+    }
+
+    response = app.test_client().post('/async_response',
+        data=json.dumps(data), headers = unauth_headers())
+    # server should again return a not authorized response (401)
+    assert response.status_code == 401
+
+    # save async_response_obj into database
+    app.db['async_responses'].insert_one(async_response_obj)
+    assert app.db['async_responses'].find().count() == 1
+
+    # convert json test patient in mongodb patient object
+    test_patient = mme_patient(json_patients[0])
+
+    # save test patient in database
+    app.db['patients'].insert_one(test_patient)
+    assert app.db['patients'].find().count() == 1
+
+    # save async node in database
+    app.db['nodes'].insert_one(test_node)
+    assert app.db['nodes'].find().count() == 1
+
+    # There should be no match object in database
+    assert app.db['matches'].find().count() == 0
+
+    # provide data object with query id that now is in database
+    response = app.test_client().post('/async_response',
+        data=json.dumps(data), headers = unauth_headers())
+
+    assert response.status_code == 200
+    resp_data = json.loads(response.data)
+    assert resp_data['message'] == 'results received, many thanks!'
+
+    # make sure the async response entry was removed from database
+    assert app.db['async_responses'].find({'query_id':async_response_obj['query_id']}).count() == 0
+
+    # and that match result was saved to server
+    assert app.db['matches'].find().count() == 1
+
+    # re-introduce async response in database for further testing
+    app.db['async_responses'].insert_one(async_response_obj)
+    # test the enpoint by providing a request with no 'response' key
+    data = {
+        'query_id' : async_response_obj['query_id'],
+        'source' : 'fakey node',
+    }
+    response = app.test_client().post('/async_response',
+        data=json.dumps(data), headers = unauth_headers())
+    # server should return code 400 (data is not valid)
+    assert response.status_code == 400
+
+    # test the enpoint by providing a request with 'response' key containing
+    # results not conforming to the API
+    data = {
+        'query_id' : async_response_obj['query_id'],
+        'source' : 'fakey node',
+        'response' : {
+            'results' : ['malformed_result1', 'malformed_result2']
+        }
+    }
+    response = app.test_client().post('/async_response',
+        data=json.dumps(data), headers = unauth_headers())
+    # server should return status 422 (Patient data does not conform to API)
+    assert response.status_code == 422
+
+
 def test_heartbeat(database, test_client):
     # Test sending a GET request to see if app has a heartbeat
     app.db = database
@@ -218,7 +314,6 @@ def test_delete_patient(database, demo_data_path, test_client, match_objs):
 
     # make sure that patient matches are also gone
     assert database['matches'].find().count() == 1
-
 
 
 def test_patient_matches(database, match_objs, test_client):

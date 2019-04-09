@@ -111,13 +111,15 @@ def check_async_request(database, request):
         LOG.error('Async request not authorized. Abort')
         return 401
 
-    results = data.get('results')
-    if results: # If results are provided in request, validate their format
-        try: # validate json data against MME API
-            validate_api(json_obj=results, is_request=True)
-        except Exception as err:
-            LOG.info("Patient data does not conform to API:{}".format(err))
-            return 422
+    resp = data.get('response')
+    if resp is None:
+        LOG.error("Async server did not provide any 'response' object")
+        return 400
+    try: # validate json response (results)
+        validate_api(json_obj=resp, is_request=False)
+    except Exception as err:
+        LOG.info("Patient data does not conform to API:{}".format(err))
+        return 422
 
     return data
 

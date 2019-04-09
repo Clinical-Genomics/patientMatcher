@@ -226,26 +226,35 @@ def async_match(database, response_data):
     # collect data saved in database when you first received the async response
     async_response = database['async_responses'].find_one({'query_id':query_id})
     if not async_response:
-        LOG.error("Couldn't find an asynchronous response with that id in database")
+        LOG.error("Couldn't find any asynchronous response with that id in database")
         return
     patient_id = async_response.get('query_patient_id')
     patient_obj = database['patients'].find_one({'_id':patient_id})
     node = async_response.get('node')
-    if not patient_obj or not node:
-        LOG.error("Query patient or external node info missing from async response.")
+    if not patient_obj:
+        LOG.error("Couldn't find a patient with id '{} in database.".format(patient_id))
+        return
+    if not node:
+        LOG.error("Couldn't find node '{}' in database ".format(node.get('label')))
+        return
+    resp = response_data.get('response')
+    if not resp:
+        LOG.error("Async server did not provide any 'response' object")
         return
 
-    results = response_data.get('results') # this could be an empty list
+    results_obj = {
+        'node' : node,
+        'patients' : resp.get('results')
+    }
 
     async_match = {
         'created' : datetime.datetime.now(),
-        'has_matches' : True if len(results)>0 else False,
+        'has_matches' : True if len(results_obj.get('patients'))>0 else False,
         'data' : {'patient' : patient_obj},
-        'node' : node,
         'errors' : [], # This can be modified if I know that async server returns error
         'match_type' : 'external',
         'async' : True,
-        'results' : results
+        'results' : [results_obj]
     }
 
     return async_match
