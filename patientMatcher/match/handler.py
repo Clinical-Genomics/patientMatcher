@@ -225,9 +225,6 @@ def async_match(database, response_data):
     query_id = response_data['query_id'] # can't be None, checked upstream
     # collect data saved in database when you first received the async response
     async_response = database['async_responses'].find_one({'query_id':query_id})
-    if not async_response:
-        LOG.error("Couldn't find any asynchronous response with that id in database")
-        return
     patient_id = async_response.get('query_patient_id')
     patient_obj = database['patients'].find_one({'_id':patient_id})
     node = async_response.get('node')
@@ -237,11 +234,8 @@ def async_match(database, response_data):
     if not node:
         LOG.error("Couldn't find node '{}' in database ".format(node.get('label')))
         return
+    # response key is not None, checked upstream
     resp = response_data.get('response')
-    if not resp:
-        LOG.error("Async server did not provide any 'response' object")
-        return
-
     results_obj = {
         'node' : node,
         'patients' : resp.get('results')

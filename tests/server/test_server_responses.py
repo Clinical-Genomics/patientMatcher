@@ -54,6 +54,15 @@ def test_match_async(database, async_response_obj, json_patients, test_node):
     app.db['async_responses'].insert_one(async_response_obj)
     assert app.db['async_responses'].find().count() == 1
 
+    # send a response with valid data but query patient is not in database
+    response = app.test_client().post('/async_response',
+        data=json.dumps(data), headers = unauth_headers())
+
+    # server should return ok code and an error message
+    assert response.status_code == 200
+    resp_data = json.loads(response.data)
+    assert resp_data['message'] == 'Error: could not create a valid match object from request data'
+
     # convert json test patient in mongodb patient object
     test_patient = mme_patient(json_patients[0])
 
@@ -61,14 +70,11 @@ def test_match_async(database, async_response_obj, json_patients, test_node):
     app.db['patients'].insert_one(test_patient)
     assert app.db['patients'].find().count() == 1
 
-    # save async node in database
-    app.db['nodes'].insert_one(test_node)
-    assert app.db['nodes'].find().count() == 1
-
     # There should be no match object in database
     assert app.db['matches'].find().count() == 0
 
-    # provide data object with query id that now is in database
+    # send a response with valid data
+    # patient object is in database
     response = app.test_client().post('/async_response',
         data=json.dumps(data), headers = unauth_headers())
 
@@ -107,7 +113,7 @@ def test_match_async(database, async_response_obj, json_patients, test_node):
         data=json.dumps(data), headers = unauth_headers())
     # server should return status 422 (Patient data does not conform to API)
     assert response.status_code == 422
-
+    
 
 def test_heartbeat(database, test_client):
     # Test sending a GET request to see if app has a heartbeat
