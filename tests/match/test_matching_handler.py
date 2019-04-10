@@ -2,7 +2,7 @@
 
 from patientMatcher.utils.add import load_demo
 from patientMatcher.parse.patient import mme_patient
-from patientMatcher.match.handler import internal_matcher as dbmatcher
+from patientMatcher.match.handler import internal_matcher, save_async_response
 
 def test_internal_matching(demo_data_path, database, json_patients):
     """Testing the combined matching algorithm"""
@@ -17,7 +17,7 @@ def test_internal_matching(demo_data_path, database, json_patients):
     a_patient = test_mme_patients[0]
     assert a_patient
 
-    match_obj = dbmatcher(database, a_patient, 0.5, 0.5)
+    match_obj = internal_matcher(database, a_patient, 0.5, 0.5)
     matches = match_obj['results'][0]['patients']
     assert len(matches) > 0
 
@@ -25,3 +25,21 @@ def test_internal_matching(demo_data_path, database, json_patients):
     lowest_scored_patient = matches[-1]
 
     assert higest_scored_patient['score']['patient'] > lowest_scored_patient['score']['patient']
+
+
+def test_save_async_response(database, test_node):
+    """Testing the function that saves an async response object to database"""
+
+    # Test database should not contain async responses
+    assert database['async_responses'].find().count() == 0
+
+    # Save an async response using the matching handler
+    save_async_response(database=database, node_obj=test_node,
+        query_id='test', query_patient_id='test_patient')
+
+    # async_responses database collection should now contain one object
+    async_response = database['async_responses'].find_one()
+    assert async_response['query_id'] == 'test'
+    assert async_response['query_patient_id'] == 'test_patient'
+    assert async_response['node']['id'] == test_node['_id']
+    assert async_response['node']['label'] == test_node['label']

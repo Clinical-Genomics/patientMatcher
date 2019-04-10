@@ -13,8 +13,9 @@ from patientMatcher.__version__ import __version__
 
 app = create_app()
 
-def test_match_async(database, async_response_obj, json_patients, test_node):
-    # test receiving an asynchronous POST request with results from a server
+def test_match_async_request(database, async_response_obj, json_patients, test_node):
+    """This function tests the situation when this server is receiving a request containing
+    results from an asynchronous server"""
     app.db = database
 
     # send a POST request with no data to the async endpoint
@@ -116,7 +117,7 @@ def test_match_async(database, async_response_obj, json_patients, test_node):
 
 
 def test_heartbeat(database, test_client):
-    # Test sending a GET request to see if app has a heartbeat
+    """Test sending a GET request to see if app has a heartbeat"""
     app.db = database
     # send a get request without being authorized
     response = app.test_client().get('heartbeat')
@@ -140,7 +141,7 @@ def test_heartbeat(database, test_client):
 
 
 def test_add_patient(database, json_patients, test_client, test_node):
-    #Test sending a POST request to server to add a patient
+    """Test sending a POST request to server to add a patient"""
     app.db = database
 
     patient_data = json_patients[0]
