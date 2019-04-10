@@ -149,9 +149,6 @@ def external_matcher(database, host, patient, node=None):
     headers = Headers()
     data = {'patient': json_patient(patient)} # convert into something that follows the API specs
 
-    LOG.info('patient data is:{}'.format(data))
-
-
     # this is saved to server, regardless of the results returned by the nodes
     external_match = {
         'created' : datetime.datetime.now(),
@@ -219,9 +216,10 @@ def external_matcher(database, host, patient, node=None):
                 #  query id must be saved in database because the node will be sending
                 # a delayed request with results and this query_id as identifier
                 LOG.info('Node {} is sending an async response, saving query id to server'.format(server_name))
+                save_async_response(database=database, node_obj=node, query_id=json_response['query_id'],
+                    query_patient_id=patient['_id'])
             else:
                 LOG.error('JSON response from server was:{}'.format(json_response))
-
 
     return external_match
 
@@ -265,5 +263,31 @@ def async_match(database, response_data):
         'async' : True,
         'results' : [results_obj]
     }
-
     return async_match
+
+
+def save_async_response(database, node_obj, query_id, query_patient_id):
+    """Creates an async response object in the async_responses collection.
+    This object stores info about the query patient sent to an async server and the
+    query_id received from it. Async server does provide match results in a
+    subsequent request, along with the same query_id string, to trace it back to the
+    original request initiated by patienrMatcher.
+
+    Args:
+        database(pymongo.database.Database)
+        node_obj(dict): an async node object
+        query_id(str): an id returned by async server in its response
+        query_patient_id(str): id of internal patient matched against patients
+            in async server
+    """
+    async_response = {
+        'query_id' : query_id,
+        'query_patient_id' : query_patient_id,
+        'node' : {
+            'id' : node_obj['_id'],
+            'label' : node_obj.get('label')
+        },
+        'created' : datetime.datetime.now()
+    }
+    database['async_responses'].insert_one(async_response
+    return
