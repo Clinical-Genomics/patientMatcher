@@ -139,7 +139,8 @@ def external_matcher(database, host, patient, node=None):
     query = {}
     if node:
         query['_id'] = node
-    connected_nodes = list(database['nodes'].find()) #get all connected nodes
+    #get all connected nodes or ther one specified by user
+    connected_nodes = list(database['nodes'].find(query))
     if len(connected_nodes) == 0:
         LOG.error("Could't find any connected MME nodes. Aborting external matching.")
         return None
@@ -200,12 +201,92 @@ def external_matcher(database, host, patient, node=None):
                 'node' : { 'id': node['_id'], 'label' : node['label'] },
                 'patients' : []
             }
-            results = json_response['results']
-            if len(results):
-                external_match['has_matches'] = True
-                for result in results:
-                    result_obj['patients'].append(result)
 
-                external_match['results'].append(result_obj)
+            # node returned results
+            if 'results' in json_response:
+                results = json_response['results']
+                if len(results):
+                    external_match['has_matches'] = True
+                    for result in results:
+                        result_obj['patients'].append(result)
+
+                    external_match['results'].append(result_obj)
+
+            elif 'query_id' in json_response: # node is sending a query id (asynchronous response)
+                #  query id must be saved in database because the node will be sending
+                # a delayed request with results and this query_id as identifier
+                LOG.info('Node {} is sending an async response, saving query id to server'.format(server_name))
+                save_async_response(database=database, node_obj=node, query_id=json_response['query_id'],
+                    query_patient_id=patient['_id'])
+            else:
+                LOG.error('JSON response from server was:{}'.format(json_response))
 
     return external_match
+
+
+def async_match(database, response_data):
+    """Creates a match object from data received from an asyc server
+
+    Args:
+        database(pymongo.database.Database)
+        response_data(dict): data provided by async server in follow up request
+
+    Returns:
+        async_match(dict): a match object
+    """
+    # get query id you received from async server when you sent your request
+    query_id = response_data['query_id'] # can't be None, checked upstream
+    # collect data saved in database when you first received the async response
+    async_response = database['async_responses'].find_one({'query_id':query_id})
+    patient_id = async_response.get('query_patient_id')
+    patient_obj = database['patients'].find_one({'_id':patient_id})
+    node = async_response.get('node')
+    if not patient_obj:
+        LOG.error("Couldn't find a patient with id '{} in database.".format(patient_id))
+        return
+    if not node:
+        LOG.error("Couldn't find node '{}' in database ".format(node.get('label')))
+        return
+    # response key is not None, checked upstream
+    resp = response_data.get('response')
+    results_obj = {
+        'node' : node,
+        'patients' : resp.get('results')
+    }
+
+    async_match = {
+        'created' : datetime.datetime.now(),
+        'has_matches' : True if len(results_obj.get('patients'))>0 else False,
+        'data' : {'patient' : patient_obj},
+        'errors' : [], # This can be modified if I know that async server returns error
+        'match_type' : 'external',
+        'async' : True,
+        'results' : [results_obj]
+    }
+    return async_match
+
+
+def save_async_response(database, node_obj, query_id, query_patient_id):
+    """Creates an async response object in the async_responses collection.
+    This object stores info about the query patient sent to an async server and the
+    query_id received from it. Async server does provide match results in a
+    subsequent request, along with the same query_id string, to trace it back to the
+    original request initiated by patienrMatcher.
+
+    Args:
+        database(pymongo.database.Database)
+        node_obj(dict): an async node object
+        query_id(str): an id returned by async server in its response
+        query_patient_id(str): id of internal patient matched against patients
+            in async server
+    """
+    async_response = {
+        'query_id' : query_id,
+        'query_patient_id' : query_patient_id,
+        'node' : {
+            'id' : node_obj['_id'],
+            'label' : node_obj.get('label')
+        },
+        'created' : datetime.datetime.now()
+    }
+    database['async_responses'].insert_one(async_response)

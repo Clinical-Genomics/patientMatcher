@@ -269,3 +269,20 @@ def json_patients():
         "label": "Patient number 2"
     }]
     return fakey_patients
+
+
+@pytest.fixture(scope='function')
+def async_response_obj(test_node, json_patients):
+    """Returns the object written to database when sending a match request to
+    an async server"""
+
+    async_response = {
+        '_id' : 'async_obj_id',
+        'query_id' : 'test_query_id',
+        'node' : {
+            'id' : test_node['_id'],
+            'label' : test_node['label']
+        },
+        'query_patient_id' : json_patients[0]['id'],
+    }
+    return async_response

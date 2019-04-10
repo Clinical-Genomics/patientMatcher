@@ -56,7 +56,6 @@ def match_external(database, host, query_patient, node=None):
     # trigger the matching and save the matching id to variable
     matching_obj = external_matcher(database, host, query_patient, node)
     # save matching object to database
-
     if matching_obj:
         database['matches'].insert_one(matching_obj)
     return matching_obj
@@ -87,6 +86,41 @@ def check_request(database, request):
 
     formatted_patient = mme_patient(json_patient=request_json['patient'], compute_phenotypes=True)
     return formatted_patient
+
+
+def check_async_request(database, request):
+    """Check if an asynchronous request is valid.
+    Basically json data must be valid and the query ID should be
+    already present in async responses database collection"""
+
+    data = None
+    try: # Check if request contains valid data
+        data = request.json
+        LOG.info('Request data looks valid. Source is {}'.format(data.get('source')))
+    except:
+        LOG.error('Request data is not valid. Abort')
+        return 400
+
+    # check if query ID was previously saved into async responses collection
+    query_id = data.get('query_id')
+    if query_id:
+        async_response = database['async_responses'].find_one({'query_id':query_id})
+        LOG.info('Async response is {}'.format(async_response))
+    if query_id is None or async_response is None:
+        LOG.error('Async request not authorized. Abort')
+        return 401
+
+    resp = data.get('response')
+    if resp is None:
+        LOG.error("Async server did not provide any 'response' object")
+        return 400
+    try: # validate json response (results)
+        validate_api(json_obj=resp, is_request=False)
+    except Exception as err:
+        LOG.info("Patient data does not conform to API:{}".format(err))
+        return 422
+
+    return data
 
 
 def validate_response(matches):
