@@ -289,5 +289,4 @@ def save_async_response(database, node_obj, query_id, query_patient_id):
         },
         'created' : datetime.datetime.now()
     }
-    database['async_responses'].insert_one(async_response
-    return
+    database['async_responses'].insert_one(async_response)
