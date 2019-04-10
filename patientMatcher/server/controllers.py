@@ -56,7 +56,6 @@ def match_external(database, host, query_patient, node=None):
     # trigger the matching and save the matching id to variable
     matching_obj = external_matcher(database, host, query_patient, node)
     # save matching object to database
-
     if matching_obj:
         database['matches'].insert_one(matching_obj)
     return matching_obj

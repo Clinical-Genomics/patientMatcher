@@ -139,7 +139,8 @@ def external_matcher(database, host, patient, node=None):
     query = {}
     if node:
         query['_id'] = node
-    connected_nodes = list(database['nodes'].find()) #get all connected nodes
+    #get all connected nodes or ther one specified by user
+    connected_nodes = list(database['nodes'].find(query))
     if len(connected_nodes) == 0:
         LOG.error("Could't find any connected MME nodes. Aborting external matching.")
         return None
@@ -147,6 +148,9 @@ def external_matcher(database, host, patient, node=None):
     # create request headers
     headers = Headers()
     data = {'patient': json_patient(patient)} # convert into something that follows the API specs
+
+    LOG.info('patient data is:{}'.format(data))
+
 
     # this is saved to server, regardless of the results returned by the nodes
     external_match = {
@@ -200,13 +204,24 @@ def external_matcher(database, host, patient, node=None):
                 'node' : { 'id': node['_id'], 'label' : node['label'] },
                 'patients' : []
             }
-            results = json_response['results']
-            if len(results):
-                external_match['has_matches'] = True
-                for result in results:
-                    result_obj['patients'].append(result)
 
-                external_match['results'].append(result_obj)
+            # node returned results
+            if 'results' in json_response:
+                results = json_response['results']
+                if len(results):
+                    external_match['has_matches'] = True
+                    for result in results:
+                        result_obj['patients'].append(result)
+
+                    external_match['results'].append(result_obj)
+
+            elif 'query_id' in json_response: # node is sending a query id (asynchronous response)
+                #  query id must be saved in database because the node will be sending
+                # a delayed request with results and this query_id as identifier
+                LOG.info('Node {} is sending an async response, saving query id to server'.format(server_name))
+            else:
+                LOG.error('JSON response from server was:{}'.format(json_response))
+
 
     return external_match
 
