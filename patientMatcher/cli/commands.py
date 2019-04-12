@@ -6,7 +6,7 @@ import pymongo
 from pymongo.errors import ConnectionFailure
 from flask.cli import FlaskGroup, with_appcontext, current_app
 from flask_mail import Message
-from patientMatcher import create_app
+from patientMatcher.server import create_app
 from .add import add
 from .remove import remove
 
@@ -21,8 +21,9 @@ def test():
 @with_appcontext
 def name():
     """Returns the app name, for testing purposes, mostly"""
-    click.echo(current_app.name)
-    return current_app.name
+    app_name = current_app.name.split('.')[0]
+    click.echo(app_name)
+    return app_name
 
 @cli.command()
 @with_appcontext

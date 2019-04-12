@@ -69,7 +69,9 @@ def client(id, token, url, contact=None):
 def demodata(monarch_phenotypes):
     """Adds a set of 50 demo patients to database"""
     click.echo('Adding 50 test patients to database..')
-    path_to_json_patients = os.path.abspath(os.path.join(current_app.root_path, 'resources', 'benchmark_patients.json'))
+    app_root=os.path.abspath(__file__).split('patientMatcher')[0]
+    path_to_json_patients = os.path.abspath(os.path.join(app_root, 'patientMatcher',
+        'patientMatcher', 'resources', 'benchmark_patients.json'))
     inserted_ids = load_demo(path_to_json_data=path_to_json_patients, mongo_db=current_app.db,
         host=current_app.config.get('MME_HOST') ,compute_phenotypes=monarch_phenotypes)
     click.echo('inserted {} patients into db'.format(len(inserted_ids)))

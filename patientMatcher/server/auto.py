@@ -1,6 +1,6 @@
 from werkzeug.contrib.fixers import ProxyFix
 
-from patientMatcher import create_app
+from patientMatcher.server import create_app
 
 app = create_app()
 
