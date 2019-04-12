@@ -105,7 +105,7 @@ setup(
     url=DOWNLOAD_URL,
     download_url = DOWNLOAD_URL,
     keywords = KEYWORDS,
-    packages=find_packages(exclude=('tests',)),
+    packages=find_packages(),
     install_requires=REQUIRED,
     include_package_data=True,
     license=LICENSE,

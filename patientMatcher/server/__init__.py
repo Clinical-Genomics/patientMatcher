@@ -19,6 +19,7 @@ def create_app():
     except:
         LOG.warning('Environment variable settings not found, configuring from instance file.')
         app_root=os.path.abspath(__file__).split('patientMatcher')[0]
+        LOG.info('app root is: {}'.format(app_root))
         app = Flask(__name__, instance_path=os.path.join(app_root, 'patientMatcher', 'instance'), instance_relative_config=True)
         app.config.from_pyfile('config.py')
 
