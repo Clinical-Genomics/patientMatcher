@@ -3,7 +3,7 @@ import requests
 import json
 import pymongo
 from werkzeug.datastructures import Headers
-from patientMatcher import create_app
+from patientMatcher.server import create_app
 from patientMatcher.utils.add import add_node, load_demo
 from patientMatcher.auth.auth import authorize
 from patientMatcher.server.controllers import validate_response
