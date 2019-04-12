@@ -205,7 +205,7 @@ def test_add_patient(database, json_patients, test_client, test_node):
     assert database['patients'].find({'label' : 'modified patient label'}).count() == 1
 
     # make sure that the POST request to add modify patient triggers the matching request to an external node again
-    assert database['matches'].find().count()==2
+    assert database['matches'].find().count()==3
 
 
 def test_metrics(database, test_client, demo_data_path, match_objs):
