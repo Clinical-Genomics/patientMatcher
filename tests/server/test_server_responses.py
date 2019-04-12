@@ -184,6 +184,13 @@ def test_add_patient(database, json_patients, test_client, test_node):
     # the patient in database has label "Patient number 2"
     assert database['patients'].find({'label' : 'Patient number 1'}).count() == 1
 
+    # Add same patient again and see that label is unchanged and there is still one patient in database:
+    patient_obj = {'patient' : patient_data} # this is a valid patient object
+    response = app.test_client().post('patient/add', data=json.dumps(patient_obj), headers = auth_headers(ok_token))
+    assert response.status_code == 200
+    assert database['patients'].find().count() == 1
+    assert database['patients'].find({'label' : 'Patient number 1'}).count() == 1
+
     # modify patient label and check the update command (add a patient with the same id) works
     patient_data['label'] = 'modified patient label'
     patient_obj = {'patient' : patient_data}
@@ -198,7 +205,7 @@ def test_add_patient(database, json_patients, test_client, test_node):
     assert database['patients'].find({'label' : 'modified patient label'}).count() == 1
 
     # make sure that the POST request to add modify patient triggers the matching request to an external node again
-    assert database['matches'].find().count()==2
+    assert database['matches'].find().count()==3
 
 
 def test_metrics(database, test_client, demo_data_path, match_objs):
