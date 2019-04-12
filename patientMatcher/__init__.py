@@ -17,7 +17,7 @@ def create_app():
         app.config.from_envvar('PMATCHER_CONFIG')
     except:
         LOG.warning('Environment variable settings not found, configuring from instance file.')
-        app = Flask(__name__, instance_relative_config=True)
+        app = Flask(__name__, instance_path=os.path.join(os.path.abspath(os.curdir), 'instance'), instance_relative_config=True)
         app.config.from_pyfile('config.py')
 
     client = MongoClient(app.config['DB_URI'])
