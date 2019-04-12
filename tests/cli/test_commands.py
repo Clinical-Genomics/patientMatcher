@@ -4,7 +4,7 @@
 import pymongo
 from flask_mail import Message
 
-from patientMatcher import create_app
+from patientMatcher.server import create_app
 from patientMatcher.cli.commands import cli
 from patientMatcher.utils.add import load_demo
 

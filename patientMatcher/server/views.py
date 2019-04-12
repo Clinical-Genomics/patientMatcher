@@ -6,7 +6,6 @@ import json
 from flask import Blueprint, request, current_app, jsonify
 from flask_negotiate import consumes, produces
 
-from patientMatcher import create_app
 from patientMatcher.utils.add import backend_add_patient
 from patientMatcher.utils.notify import notify_match_external, notify_match_internal
 from patientMatcher.auth.auth import authorize
