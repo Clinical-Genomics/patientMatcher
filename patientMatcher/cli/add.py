@@ -71,6 +71,8 @@ def demodata(monarch_phenotypes):
     click.echo('Adding 50 test patients to database..')
     app_root=os.path.abspath(__file__).split('patientMatcher')[0]
     path_to_json_patients = os.path.abspath(os.path.join(app_root, 'patientMatcher', 'resources', 'benchmark_patients.json'))
+    if not os.path.isfile(path_to_json_patients): # running command from tests folder
+        path_to_json_patients = os.path.abspath(os.path.join(app_root, 'patientMatcher', 'patientMatcher', 'resources', 'benchmark_patients.json'))
     inserted_ids = load_demo(path_to_json_data=path_to_json_patients, mongo_db=current_app.db,
         host=current_app.config.get('MME_HOST') ,compute_phenotypes=monarch_phenotypes)
     click.echo('inserted {} patients into db'.format(len(inserted_ids)))

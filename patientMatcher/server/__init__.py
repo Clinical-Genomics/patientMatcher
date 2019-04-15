@@ -19,8 +19,13 @@ def create_app():
     except:
         LOG.warning('Environment variable settings not found, configuring from instance file.')
         app_root=os.path.abspath(__file__).split('patientMatcher')[0]
-        LOG.info('app root is: {}'.format(app_root))
-        app = Flask(__name__, instance_path=os.path.join(app_root, 'patientMatcher', 'instance'), instance_relative_config=True)
+
+        # check if config file exists under ../instance:
+        instance_path = os.path.join(app_root,'patientMatcher', 'instance')
+        if not os.path.isfile(os.path.join(instance_path,'config.py')): # running app from tests
+            instance_path = os.path.join(app_root,'patientMatcher','patientMatcher','instance')
+
+        app = Flask(__name__, instance_path=instance_path, instance_relative_config=True)
         app.config.from_pyfile('config.py')
 
     client = MongoClient(app.config['DB_URI'])
