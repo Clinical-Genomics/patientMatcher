@@ -1,1 +1,2 @@
 include patientMatcher/resources/*
+include tests/*
