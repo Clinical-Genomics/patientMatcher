@@ -99,7 +99,8 @@ def internal_matcher(database, patient_obj, max_pheno_score, max_geno_score, max
             'patient' : json_patient(patient_obj),
             'score' : score
         }
-        matches.append(match)
+        if score['patient']>0:
+            matches.append(match)
 
     # sort patient matches by patient (combined) score
     sorted_matches = sorted(matches, key=lambda k : k['score']['patient'], reverse=True)
