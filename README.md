@@ -1,5 +1,5 @@
 # patientMatcher
-[![Build Status](https://travis-ci.com/Clinical-Genomics/patientMatcher.svg?branch=master)](https://travis-ci.com/Clinical-Genomics/patientMatcher) [![Coverage Status](https://coveralls.io/repos/github/Clinical-Genomics/patientMatcher/badge.png?branch=master&kill_cache=1)](https://coveralls.io/github/Clinical-Genomics/patientMatcher?branch=master)
+[![Build Status](https://travis-ci.com/Clinical-Genomics/patientMatcher.svg?branch=master)](https://travis-ci.com/Clinical-Genomics/patientMatcher) [![Coverage Status](https://coveralls.io/repos/github/Clinical-Genomics/patientMatcher/badge.svg?branch=master&kill_cache=1)](https://coveralls.io/github/Clinical-Genomics/patientMatcher?branch=master)
 
 Table of Contents:
 1. [ Prerequisites ](#prerequisites)
