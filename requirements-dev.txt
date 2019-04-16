@@ -3,6 +3,8 @@ click
 pytest
 mongomock<=3.12
 python-coveralls
+pytest-cov
+coveralls
 
 # server-related stuff
 requests
