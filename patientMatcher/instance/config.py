@@ -14,8 +14,8 @@ DB_URI = "mongodb://{}:{}@{}:{}/{}".format(DB_USERNAME, DB_PASSWORD, DB_HOST, DB
 
 # Matching Algorithms scores
 # sum of MAX_GT_SCORE and MAX_PHENO_SCORE should be 1
-MAX_GT_SCORE = 0.5
-MAX_PHENO_SCORE = 0.5
+MAX_GT_SCORE = 0.75
+MAX_PHENO_SCORE = 0.25
 
 # Max results matches returned by server.
 MAX_RESULTS = 5
