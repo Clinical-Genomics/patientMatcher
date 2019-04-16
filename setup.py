@@ -45,6 +45,11 @@ def parse_reqs(req_path='./requirements.txt'):
 # What packages are required for this module to be executed?
 REQUIRED = parse_reqs()
 
+# Add github repositories which are not in pypy
+PEP_508_REQUIREMENTS = [
+    'patient-similarity @ git+https://github.com/buske/patient-similarity'
+]
+
 # The rest you shouldn't have to touch too much :)
 # ------------------------------------------------
 # Except, perhaps the License and Trove Classifiers!
@@ -106,7 +111,7 @@ setup(
     download_url = DOWNLOAD_URL,
     keywords = KEYWORDS,
     packages=find_packages(),
-    install_requires=REQUIRED,
+    install_requires=REQUIRED + PEP_508_REQUIREMENTS,
     include_package_data=True,
     license=LICENSE,
     classifiers=[
