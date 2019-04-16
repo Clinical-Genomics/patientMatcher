@@ -4,19 +4,17 @@ import json
 from jsonschema import validate, RefResolver, FormatChecker
 from pkgutil import get_data
 import logging
-from patientMatcher.utils.phenotype import monarch_phenotypes
 
 LOG = logging.getLogger(__name__)
 SCHEMA_FILE = 'api.json'
 
-def mme_patient(json_patient, compute_phenotypes=False):
+def mme_patient(json_patient):
     """
         Accepts a json patient and converts it to a MME patient,
         formatted as required by patientMatcher database
 
         Args:
             patient_obj(dict): a patient object as in https://github.com/ga4gh/mme-apis
-            compute_phenotypes(bool) : if True most likely phenotypes will be computed using Monarch
 
         Returns:
             mme_patient(dict) : a mme patient entity
@@ -35,11 +33,6 @@ def mme_patient(json_patient, compute_phenotypes=False):
         'inheritanceMode' : json_patient.get('inheritanceMode')
     }
 
-    if mme_patient['features'] and compute_phenotypes: # build Monarch phenotypes from patients' HPO terms
-        hpo_terms = features_to_hpo(json_patient['features'])
-        computed_phenotypes = monarch_phenotypes(hpo_terms)
-        mme_patient['monarch_phenotypes'] = computed_phenotypes
-
     # remove keys with empty values from mme_patient object
     mme_patient = {k:v for k,v in mme_patient.items() if v is not None}
 
@@ -56,8 +49,6 @@ def json_patient(mme_patient):
             json_patient(dict): a patient object conforming to MME API
     """
     json_patient = mme_patient
-    if 'monarch_phenotypes' in json_patient:
-        json_patient.pop('monarch_phenotypes')
     if '_id' in json_patient:
         json_patient['id'] = json_patient['_id']
         json_patient.pop('_id')
@@ -93,20 +84,6 @@ def disorders_to_omim(disorders):
 
     omim_terms = [disorder.get('id') for disorder in disorders if disorder.get('id')]
     return omim_terms
-
-
-def monarch_hit_ids(monarch_phenotypes):
-    """Extracts monarch hit ids from a list of monarch phenotype objects
-
-        Args:
-            monarch_phenotypes(list) example:[{'combined_score': 79, 'hit_label': 'Rienhoff syndrome', 'hit_id': 'MONDO:0014262'}, ..]
-
-        Returns:
-            monarch_terms(list) example: [ 'MONDO:0014262' ..]
-    """
-
-    monarch_terms = [pheno.get('hit_id') for pheno in monarch_phenotypes if pheno.get('hit_id')]
-    return monarch_terms
 
 
 def gtfeatures_to_genes(gtfeatures):

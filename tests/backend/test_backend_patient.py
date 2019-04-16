@@ -30,7 +30,7 @@ def test_backend_remove_patient(json_patients, database):
     """ Test adding 2 test patients and then removing them using label or ID """
 
     # test conversion to format required for the database:
-    test_mme_patients = [ mme_patient(json_patient=patient, compute_phenotypes=True) for patient in json_patients]
+    test_mme_patients = [ mme_patient(json_patient=patient) for patient in json_patients]
 
     # make sure 2 json patient are correctly parsed
     assert len(test_mme_patients) == 2
@@ -42,7 +42,7 @@ def test_backend_remove_patient(json_patients, database):
     # make sure that inserted patients contain computed phenotypes from Monarch
     a_patient = database['patients'].find_one()
     assert a_patient
-    
+
     # test removing a patient by ID:
     remove_query = {'_id' : 'patient_1'}
     deleted = delete_by_query(remove_query, database, 'patients')

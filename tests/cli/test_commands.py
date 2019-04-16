@@ -120,7 +120,7 @@ def test_cli_add_demo_data(database):
     assert database['patients'].find().count() == 0
 
     # run the load demo command without the -compute_phenotypes flag
-    result =  runner.invoke(cli, ['add', 'demodata', '-no_monarch_phenotypes'])
+    result =  runner.invoke(cli, ['add', 'demodata'])
     assert result.exit_code == 0
 
     # check that the 50 demo patients where inserted into database
