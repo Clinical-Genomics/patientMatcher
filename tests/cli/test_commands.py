@@ -38,23 +38,45 @@ def test_cli_add_node(mock_app, database, test_node):
         '-matching_url', test_node['matching_url'],'-accepted_content',
         test_node['accepted_content']])
     assert result.exit_code == 0
+    assert 'Inserted node' in result.output
 
     # check that the server was added to the "nodes" collection
     assert database['nodes'].find().count() == 1
 
+    # Try adding the node again
+    result =  runner.invoke(cli, ['add', 'node', '-id', test_node['_id'],
+        '-label', 'This is a test node', '-token', test_node['auth_token'],
+        '-matching_url', test_node['matching_url'],'-accepted_content',
+        test_node['accepted_content']])
+    assert result.exit_code == 0
+    # And you should get an abort message
+    assert 'Aborted' in result.output
+    # And number of nodes in database should stay the same
+    assert database['nodes'].find().count() == 1
 
 def test_cli_add_client(mock_app, database, test_client):
 
-    # make sure that "nodes" collection is empty
+    # make sure that "clients" collection is empty
     assert database['client'].find().count() == 0
 
     # test add a server using the app cli
     runner = mock_app.test_cli_runner()
     result =  runner.invoke(cli, ['add', 'client', '-id', test_client['_id'],
         '-token', test_client['auth_token'], '-url', test_client['base_url']])
+
     assert result.exit_code == 0
+    assert 'Inserted client' in result.output
 
     # check that the server was added to the "nodes" collection
+    assert database['clients'].find().count() == 1
+
+    # Try adding the client again
+    result =  runner.invoke(cli, ['add', 'client', '-id', test_client['_id'],
+        '-token', test_client['auth_token'], '-url', test_client['base_url']])
+    assert result.exit_code == 0
+    # And you should get an abort message
+    assert 'Aborted' in result.output
+    # And number of clients in database should stay the same
     assert database['clients'].find().count() == 1
 
 
