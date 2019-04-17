@@ -3,6 +3,8 @@ import os
 import pytest
 import mongomock
 from pathlib import Path
+from patientMatcher.server import create_app
+from patientMatcher.resources import path_to_benchmark_patients
 
 DATABASE = 'testdb'
 
@@ -13,6 +15,13 @@ class MockMail:
     def send(self, message):
         self._send_was_called = True
         self._message = message
+
+@pytest.fixture
+def mock_app(database, pymongo_client):
+    app = create_app()
+    app.db = database
+    app.client = pymongo_client
+    return app
 
 @pytest.fixture
 def mock_mail():
@@ -41,8 +50,7 @@ def database(request, pymongo_client):
 
 @pytest.fixture(scope='function')
 def demo_data_path():
-    root_dir = Path(__file__).resolve().parents[1]
-    return os.path.join(root_dir, 'patientMatcher', 'resources', 'benchmark_patients.json')
+    return path_to_benchmark_patients
 
 
 @pytest.fixture(scope='function')
