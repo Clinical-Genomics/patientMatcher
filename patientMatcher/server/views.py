@@ -256,8 +256,8 @@ def match_internal():
 
     LOG.info('Matching a query patient against database')
 
-    max_pheno_score = current_app.config.get('MAX_PHENO_SCORE', 0.5) # get max pheno score from app settings, if available
-    max_geno_score = current_app.config.get('MAX_GT_SCORE', 0.5) # get max genotyping score from app settings, if available
+    max_pheno_score = current_app.config.get('MAX_PHENO_SCORE', 0.25) # get max pheno score from app settings, if available
+    max_geno_score = current_app.config.get('MAX_GT_SCORE', 0.75) # get max genotyping score from app settings, if available
     max_results = current_app.config.get('MAX_RESULTS')
 
     # get a list of matching patients ordered by score
