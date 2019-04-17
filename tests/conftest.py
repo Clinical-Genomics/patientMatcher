@@ -3,6 +3,7 @@ import os
 import pytest
 import mongomock
 from pathlib import Path
+from patientMatcher.resources import path_to_benchmark_patients
 
 DATABASE = 'testdb'
 
@@ -41,8 +42,7 @@ def database(request, pymongo_client):
 
 @pytest.fixture(scope='function')
 def demo_data_path():
-    root_dir = Path(__file__).resolve().parents[1]
-    return os.path.join(root_dir, 'patientMatcher', 'resources', 'benchmark_patients.json')
+    return path_to_benchmark_patients
 
 
 @pytest.fixture(scope='function')
