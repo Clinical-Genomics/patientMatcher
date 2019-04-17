@@ -326,16 +326,17 @@ This way patients will be evaluated for genetic similarity even if the variants 
 
 <a name="pheno_matching"></a>
 ### Phenotype matching algorithm
-Phenotype similarity is calculated by taking into account **features, disorders and computed phenotypes** of a patient
+Phenotype similarity is calculated by taking into account **features and disorders** of a patient
 
 - **Patient features**
-Are specified by the eventual HPO terms provided for the query patient. **Similarity between HPO features will make up half of the maximum similarity score** between two patients.
+Are specified by the eventual HPO terms provided for the query patient. **Similarity between HPO features will be equal the maximum similarity score** between two patients if no disorders (OMIM terms) are not provided for one or both patients.   
+Alternatively feature similarity score will make up 1/2 of the maximum similarity score.
 
-- **Monarch phenotypes**
-Will be computed using the [Monarch Phenotype Profile Analysis tool](https://monarchinitiative.org/analyze/phenotypes). The 5 highest scored computed phenotypes obtained by submitting a patient's HPO terms to Monarch will be used for patient matching. The similarity between computed phenotypes **will make up 1/4 of the of the maximum similarity score between two patient. For patients with no OMIM diagnosis (empty disorders field) the Monarch phenotypes will count for half of the maximum similarity score between two patient**
+Feature similarity is calculated as the simgic score obtained by comparing HPO terms of a query patient with those from a matching patient using the [patient-similarity software package](https://github.com/buske/patient-similarity).
+You can find more information on semantic similarity comparison algorithms in [this paper](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-9-S5-S4)
 
 - **Disorders**
-OMIM diagnoses, if available, will make up **1/4 of the maximum similarity score**.
+OMIM diagnoses, if available, will make up **1/2 of the maximum similarity score**. OMIM score is calculated by pairwise comparison of the available OMIM terms for the patients.
 &nbsp;
 
 <a name="notify"></a>
