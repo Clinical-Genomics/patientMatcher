@@ -326,11 +326,11 @@ This way patients will be evaluated for genetic similarity even if the variants 
 
 <a name="pheno_matching"></a>
 ### Phenotype matching algorithm
-Phenotype similarity is calculated by taking into account **features and disorders** of a patient
+Phenotype similarity is calculated by taking into account **features and disorders** of a patient.
 
 - **Patient features**
-Are specified by the eventual HPO terms provided for the query patient. **Similarity between HPO features will be equal the maximum similarity score** between two patients if no disorders (OMIM terms) are not provided for one or both patients.   
-Alternatively feature similarity score will make up 1/2 of the maximum similarity score.
+Are specified by the eventual HPO terms provided for the query patient. **Similarity between HPO features will be equal the maximum similarity score** between two patients **if no disorders (OMIM terms) are provided** for one or both patients.   
+**Alternatively feature similarity score will make up 1/2 of the maximum similarity score**.
 Feature similarity is calculated as the simgic score obtained by comparing HPO terms of a query patient with those from a matching patient using the [patient-similarity software package](https://github.com/buske/patient-similarity).
 You can find more information on semantic similarity comparison algorithms in [this paper](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-9-S5-S4)
 
