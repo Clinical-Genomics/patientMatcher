@@ -8,13 +8,13 @@ import io
 import os
 import sys
 from shutil import rmtree
-
+from patientMatcher import __version__ as version
 from setuptools import find_packages, setup, Command
 
 # Package meta-data.
 NAME = 'patientMatcher'
 DESCRIPTION = 'a python-based Matchmaker Exchange server'
-DOWNLOAD_URL = 'https://github.com/Clinical-Genomics/patientMatcher'
+URL = 'https://github.com/Clinical-Genomics/patientMatcher'
 EMAIL = 'chiara.rasi@scilifelab.se'
 AUTHOR = 'Chiara Rasi'
 KEYWORDS = ['matchmaker exchange', 'genes', 'matchmaker', 'rare diseases', 'genomics', 'genotype', 'phenotype', 'patients', 'genetic disease']
@@ -102,13 +102,13 @@ class UploadCommand(Command):
 # Where the magic happens:
 setup(
     name=NAME,
-    version='0.0.1',
+    version=version,
     description=DESCRIPTION,
     long_description=long_description,
     author=AUTHOR,
     author_email=EMAIL,
-    url=DOWNLOAD_URL,
-    download_url = DOWNLOAD_URL,
+    url=URL,
+    download_url = '/'.join([URL,'tarball',version]),
     keywords = KEYWORDS,
     packages=find_packages(),
     install_requires=REQUIRED + PEP_508_REQUIREMENTS,
