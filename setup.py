@@ -47,7 +47,7 @@ REQUIRED = parse_reqs()
 
 # Add github repositories which are not in pypy
 PEP_508_REQUIREMENTS = [
-    'patient-similarity @ git+https://github.com/buske/patient-similarity'
+    'patient-similarity @ git+https://github.com/Clinical-Genomics/patient-similarity'
 ]
 
 # The rest you shouldn't have to touch too much :)
