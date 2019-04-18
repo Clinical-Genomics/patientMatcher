@@ -1,2 +1,18 @@
-include patientMatcher/resources/*
-include tests/*
+# including
+include CHANGELOG.md
+include LICENSE
+include README.md
+include requirements.txt
+include requirements-dev.txt
+
+# server
+recursive-include patientMatcher *
+
+# tests
+recursive-include tests *
+
+# static files
+recursive-include patientMatcher/resources *
+
+# excluding
+recursive-exclude * .DS_Store
