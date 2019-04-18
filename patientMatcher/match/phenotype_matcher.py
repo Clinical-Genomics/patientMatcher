@@ -121,10 +121,9 @@ def evaluate_pheno_similariy(hpoic, hpo, hpo_terms, disorders, pheno_matching_pa
     if max_omim_score: # OMIM terms can be compared
         omim_score = evaluate_subcategories(disorders, matching_omim_terms, max_omim_score)
 
-    LOG.info('HPO similarity:{}'.format(hpo_score))
-    LOG.info('OMIM similarity:{}'.format(omim_score))
-    
     patient_similarity = hpo_score + omim_score
+    LOG.info('patient phenotype score: {0} (OMIM:{1}, HPO:{2})'.format(patient_similarity,
+        omim_score, hpo_score))
     return patient_similarity
 
 
@@ -163,7 +162,8 @@ def similarity_wrapper(hpoic, hpo, max_hpo_score, hpo_terms_q, hpo_terms_m):
     score_obj = compare_patients(hpoic=hpoic, patient1=query_patient,
         patient2=match_patient, scores=['simgic'])
     simgic_score = score_obj.get('simgic')
-    relative_simgic_score = simgic_score/max_hpo_score
+    LOG.info('patient-similarity module returned a simgic score of {}'.format(simgic_score))
+    relative_simgic_score = simgic_score * max_hpo_score
     return relative_simgic_score
 
 
