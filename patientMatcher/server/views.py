@@ -277,7 +277,7 @@ def match_internal():
     if isinstance(validate_response, int): # some error must have occurred during validation
         return controllers.bad_request(validate_response)
 
-    LOG.info('Found {} matching patients in database'.format(len(matches)))
+    LOG.info('Returning {} matching patients from database'.format(len(matches)))
 
     # return response with results
     validate_response["disclaimer"] = current_app.config.get('DISCLAIMER')
