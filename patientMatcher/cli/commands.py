@@ -9,7 +9,7 @@ from flask_mail import Message
 from patientMatcher.server import create_app
 from .add import add
 from .remove import remove
-
+from .update import update
 cli = FlaskGroup(create_app=create_app)
 
 @click.group()
@@ -73,4 +73,5 @@ test.add_command(name)
 test.add_command(email)
 cli.add_command(test)
 cli.add_command(add)
+cli.add_command(update)
 cli.add_command(remove)
