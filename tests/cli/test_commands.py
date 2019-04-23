@@ -6,7 +6,10 @@ from flask_mail import Message
 
 from patientMatcher.cli.commands import cli
 from patientMatcher.utils.add import load_demo
+<<<<<<< HEAD
 from patientMatcher.constants import PHENOTYPE_TERMS
+=======
+>>>>>>> d75ab84617bfd485f3d31a2b69638fe5ed112505
 
 def test_appname(mock_app):
     runner = mock_app.test_cli_runner()
