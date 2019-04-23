@@ -33,7 +33,7 @@ def resources(test):
         if test: # read file and get its size
             files[key] = total_length # create an object for each downloadable file and save its length
             if total_length:
-                LOG.info.('file {} found at the requested URL'.format(key))
+                LOG.info('file {} found at the requested URL'.format(key))
             continue
         with open(destination, 'wb') as f: #overwrite file
             for chunk in progress.bar(r.iter_content(chunk_size=1024), expected_size=(total_length/1024) + 1):
