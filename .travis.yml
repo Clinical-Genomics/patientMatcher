@@ -12,6 +12,7 @@ services:
 
 install:
     - pip install --upgrade pip
+    - pip install git+https://github.com/Clinical-Genomics/patient-similarity
     - pip install -r requirements.txt -r requirements-dev.txt .
 
 script:
