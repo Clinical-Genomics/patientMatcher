@@ -50,7 +50,7 @@ The phenotype scoring algorithm of patientMatcher is dependent on [patient-simil
 ```bash
 pip install git+https://github.com/Clinical-Genomics/patient-similarity
 ```
-After installing patient-similaritym you can clone patientMatcher repository from github using this command:
+After installing patient-similarity, clone patientMatcher repository from github using this command:
 
 ```bash
 git clone https://github.com/Clinical-Genomics/patientMatcher.git
