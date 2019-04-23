@@ -6,7 +6,6 @@ from flask_mail import Message
 
 from patientMatcher.cli.commands import cli
 from patientMatcher.utils.add import load_demo
-from patientMatcher.constants import PHENOTYPE_TERMS
 
 def test_appname(mock_app):
     runner = mock_app.test_cli_runner()
@@ -132,7 +131,7 @@ def test_cli_update_resources(mock_app):
     # run resources update command with --test flag:
     result =  runner.invoke(cli, ['update', 'resources'])
     assert result.exit_code == 0
-    assert PHENOTYPE_TERMS['hpo_ontology'] in result.output
+    assert 'hpo_ontology' in result.output
 
 
 def test_cli_add_demo_data(mock_app, database):
