@@ -45,7 +45,13 @@ mongod --auth --dbpath path_to_database_data
 
 <a name="installation"></a>
 ## Installation
-Clone the repository from github using this command:
+The phenotype scoring algorithm of patientMatcher is dependent on [patient-similarity](https://github.com/buske/patient-similarity), which should be installed using this script:
+
+```bash
+pip install git+https://github.com/Clinical-Genomics/patient-similarity
+```
+After installing patient-similarity, clone patientMatcher repository from github using this command:
+
 ```bash
 git clone https://github.com/Clinical-Genomics/patientMatcher.git
 ```
