@@ -37,4 +37,3 @@ def resources(test):
                 if chunk:
                     f.write(chunk)
                     f.flush()
-    return files
