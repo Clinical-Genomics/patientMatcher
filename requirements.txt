@@ -1,7 +1,7 @@
 ## server
 Flask
 Flask-Mail
-flask_negotiate
+Flask-Negotiate
 requests
 jsonschema
 
