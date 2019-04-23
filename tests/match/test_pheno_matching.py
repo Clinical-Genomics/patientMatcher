@@ -34,7 +34,8 @@ def test_patient_similarity_wrapper():
     # test wrapper by providing almost the same terms for query patient and match patient:
     related_pheno_score = similarity_wrapper(hpoic=hpoic, hpo=hpo, max_hpo_score=1.0, hpo_terms_q=query_p_terms, hpo_terms_m=match_p_terms)
     # similarity score should be lower, but still around 1
-    assert round(related_pheno_score,2) == 0.8
+    assert round(related_pheno_score,2) < score
+    assert related_pheno_score > 0.8
 
     # provide completely different HPO terms for matching patient
     match_p_terms = ['HP:0003002', 'HP:0000218'] # breast cancer and high palate phenotypes
