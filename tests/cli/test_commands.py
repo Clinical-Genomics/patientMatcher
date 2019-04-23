@@ -124,6 +124,15 @@ def test_cli_remove_node(mock_app, database, test_node):
     assert database['nodes'].find().count() == 0
 
 
+def test_cli_update_resources(mock_app):
+
+    runner = mock_app.test_cli_runner()
+
+    # run resources update command with --test flag:
+    result =  runner.invoke(cli, ['update', 'resources'])
+    assert result.exit_code == 0
+
+
 def test_cli_add_demo_data(mock_app, database):
 
     runner = mock_app.test_cli_runner()
