@@ -31,6 +31,7 @@ def create_app():
     client = MongoClient(app.config['DB_URI'])
     app.client = client
     app.db = client[app.config['DB_NAME']]
+    LOG.info('database connection info:{}'.format(app.db))
 
     if app.config.get('MAIL_SERVER'):
         mail = Mail(app)
