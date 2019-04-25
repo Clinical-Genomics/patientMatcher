@@ -9,7 +9,7 @@ from patient_similarity import HPO, Diseases, HPOIC, Patient
 from patient_similarity.__main__ import compare_patients
 
 LOG = logging.getLogger(__name__)
-PHENOTYPE_ROOT = 'HP:0000118'
+PHENOTYPE_ROOT = 'HP:0000001'
 
 def match(database, max_score, features, disorders):
     """Handles phenotype matching algorithm
@@ -36,7 +36,8 @@ def match(database, max_score, features, disorders):
 
     if features: # at least one HPO term is specified
         hpo_terms = features_to_hpo(features)
-        query_fields.append({'features.id': {"$in" : hpo_terms}})
+        # compare against all cases which also have features (HPO terms)
+        query_fields.append({'features': {'$exists': True, '$ne': []}})
 
         # Create the information-content functionality for the HPO
         LOG.info('Creating HPO information content')
