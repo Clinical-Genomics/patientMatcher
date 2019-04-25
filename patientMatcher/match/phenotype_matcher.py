@@ -9,7 +9,7 @@ from patient_similarity import HPO, Diseases, HPOIC, Patient
 from patient_similarity.__main__ import compare_patients
 
 LOG = logging.getLogger(__name__)
-PHENOTYPE_ROOT = 'HP:0000118'
+PHENOTYPE_ROOT = 'HP:0000001'
 
 def match(database, max_score, features, disorders):
     """Handles phenotype matching algorithm
