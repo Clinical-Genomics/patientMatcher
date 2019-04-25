@@ -65,7 +65,8 @@ def features_to_hpo(features):
         Returns:
             hpo_terms(list): a list of HPO terms. Example : ['HP:0100026', 'HP:0009882', 'HP:0001285']
     """
-
+    if features is None:
+        return []
     hpo_terms = [feature.get('_id') for feature in features if feature.get('_id')]
     if len(hpo_terms) == 0:
         hpo_terms = [feature.get('id') for feature in features if feature.get('id')]
@@ -81,7 +82,8 @@ def disorders_to_omim(disorders):
         Returns:
             omim_terms(list): a list of OMIM terms. Example : ['MIM:616007', 'MIM:614665']
     """
-
+    if disorders is None:
+        return []
     omim_terms = [disorder.get('id') for disorder in disorders if disorder.get('id')]
     return omim_terms
 
