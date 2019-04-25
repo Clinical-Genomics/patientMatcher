@@ -25,11 +25,8 @@ WORKDIR /root
 RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
         /bin/bash ~/miniconda.sh -b -p /opt/conda && \
         rm ~/miniconda.sh && \
-        /opt/conda/bin/conda clean -tipsy && \
         ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
         echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
-        source /opt/conda/etc/profile.d/conda.sh && \
-        conda create --name patientMatcher python=${PYTHON_VERSION} && \
         echo "conda activate patientMatcher" >> ~/.bashrc
 
 COPY . /opt/patientMatcher
@@ -37,11 +34,11 @@ COPY . /opt/patientMatcher
 WORKDIR /opt/patientMatcher
 
 RUN source /opt/conda/etc/profile.d/conda.sh && \
+    conda install -y conda=4.6.* && \
+    conda env create -f /opt/patientMatcher/docker/conda_env.yml && \
+    conda clean -tipsy && \
     conda activate patientMatcher && \
-    pip install git+https://github.com/Clinical-Genomics/patient-similarity \
-    pip install -U pip setuptools && \
-    pip install -r requirements.txt -r requirements-dev.txt && \
-    pip install pytest-cov coveralls && \
+    pip install git+https://github.com/Clinical-Genomics/patient-similarity && \
     pip install -e .
 
 ENTRYPOINT [ "docker/entrypoint.sh" ]
