@@ -272,8 +272,8 @@ def match_internal():
             admin_email=current_app.config.get('MAIL_USERNAME'), mail=current_app.mail,
             notify_complete=current_app.config.get('NOTIFY_COMPLETE'))
 
-
-    validate_response = controllers.validate_response({'results': matches})
+    #validate_response = controllers.validate_response({'results': matches})
+    validate_response = {'results': matches}
     if isinstance(validate_response, int): # some error must have occurred during validation
         return controllers.bad_request(validate_response)
 
