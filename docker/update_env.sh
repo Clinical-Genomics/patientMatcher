@@ -6,7 +6,12 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # the OS/container environment matches what it will be run in.
 
 if [[ -z $INSIDE_THE_CONTAINER ]]; then
-    docker run -e INSIDE_THE_CONTAINER=1 -v $DIR/..:/opt/patientMatcher --rm -it --entrypoint /opt/patientMatcher/docker/update_env.sh local/patientmatcher
+    docker run -e INSIDE_THE_CONTAINER=1 \
+        -v $DIR/..:/opt/patientMatcher \
+        --rm \
+        -it \
+        --entrypoint /opt/patientMatcher/docker/update_env.sh \
+        local/patientmatcher
 else
     export DOCKER_CONDA_PREFIX=/opt/conda/envs/patientMatcher
     export DOCKER_ENV_NAME=patientMatcher
