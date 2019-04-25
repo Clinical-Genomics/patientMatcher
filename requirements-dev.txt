@@ -2,7 +2,7 @@
 click
 pytest
 mongomock<=3.12
-pytest-cov==2.6.0
+pytest-cov==2.6.1
 python-coveralls
 
 # server-related stuff
