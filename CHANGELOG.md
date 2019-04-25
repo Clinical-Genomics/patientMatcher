@@ -1,3 +1,9 @@
+## [1.1.1] - 2019-04-25
+
+### Modified
+-  Fixed bug in phenotype matching when no OMIM or no HPO terms are available
+
+
 ## [1.1.0] - 2019-04-25
 
 ### Modified
