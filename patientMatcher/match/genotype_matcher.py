@@ -51,6 +51,7 @@ def match(database, gt_features, max_score):
             # assign a genetic similarity score to each of these patients
             for patient in matching_patients:
                 gt_similarity = evaluate_GT_similarity(gt_features, patient['genomicFeatures'], max_feature_similarity)
+                LOG.info('GT similarity score is {}'.format(gt_similarity))
                 match = {
                     'patient_obj' : patient,
                     'geno_score' : gt_similarity,
@@ -67,7 +68,7 @@ def evaluate_GT_similarity(query_features, db_patient_features, max_feature_simi
         Args:
             query_patient(list of dictionaries): genomic features of the query patient
             db_patient_features(list of dictionaries): genomic features of a patient in patientMatcher database
-            max_similarity(float): a floating point number representing the highest value allowed for a feature
+            max_feature_similarity(float): a floating point number representing the highest value allowed for a single feature
 
                 ## Explanation: for a query patient with one feature max_similarity will be equal to MAX_GT_SCORE
                    For a patient with 2 features max_similarity will be MAX_GT_SCORE/2 and so on.
@@ -81,8 +82,7 @@ def evaluate_GT_similarity(query_features, db_patient_features, max_feature_simi
 
     # loop over the query patient's features
     for feature in query_features:
-
-        matched_features.append(0)
+        matched_features.append(0) # score for matching of every feature is initially 0
         q_gene = feature['gene'] # query feature's gene id
         q_variant = feature.get('variant', None) # query feature's variant. Not mandatory.
 
@@ -91,13 +91,16 @@ def evaluate_GT_similarity(query_features, db_patient_features, max_feature_simi
             m_gene = matching_feature['gene'] # matching feature's gene id
             m_variant = matching_feature.get('variant') # matching feature's variant. Not mandatory.
 
-            if q_variant and m_variant: # compare only if they have a value. They don't have to be in genes!
-                if q_variant == m_variant:
+            # variant in same gene in both patients, variant specified in both patient
+            if q_gene == m_gene and q_variant and m_variant:
+                if q_variant == m_variant: # variants are matching
                     matched_features[n_feature] = max_feature_similarity
 
-            elif q_gene and m_gene and matched_features[n_feature] == 0: # Genes not null and no previous variant matching
-                if q_gene == m_gene: # matching genes, at least
+                else: # matching genes, at least
                     matched_features[n_feature] =  max_feature_similarity/4 #(0.25 of the max_feature_similarity)
+
+            elif q_gene == m_gene:
+                matched_features[n_feature] =  max_feature_similarity/4 #(0.25 of the max_feature_similarity)
 
         n_feature += 1
 
