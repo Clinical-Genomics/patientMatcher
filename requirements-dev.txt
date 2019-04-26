@@ -1,8 +1,8 @@
 # testing:
 click
-pytest
+pytest==4.4.1
 mongomock<=3.12
-pytest-cov==2.6.0
+pytest-cov==2.6.1
 python-coveralls
 
 # server-related stuff
