@@ -186,6 +186,13 @@ def match_external(patient_id):
         resp = jsonify(message)
         resp.status_code = 200
         return resp
+    elif matching_obj.get('errors') and not matching_obj.get('results'):
+        # if only errors and no results, return the errors
+        message['message'] = matching_obj['errors']
+        resp = jsonify(message)
+        resp.status_code = matching_obj['errors'][0]['code']
+        return resp
+
 
     results = matching_obj.get('results')
 

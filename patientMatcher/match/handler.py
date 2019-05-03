@@ -176,24 +176,24 @@ def external_matcher(database, host, patient, node=None):
         LOG.info('sending HTTP request to server: "{}"'.format(server_name))
         # send request and get response from server
         json_response = None
-        server_return = None
-        try:
-            server_return = requests.request(
-                method = 'POST',
-                url = node_url,
-                headers = headers,
-                data = json.dumps(data)
-            )
-            json_response = server_return.json()
-        except Exception as json_exp:
-            error = json_exp
-            LOG.error('Server returned error:{}'.format(error))
+        server_return = requests.request(
+            method = 'POST',
+            url = node_url,
+            headers = headers,
+            json = data
+        )
+        if server_return.status_code != 200:
+            error = '{}: {}'.format(server_return.status_code, server_return.text)
+            LOG.error('Server returned error: {} - '.format(error))
 
             error_obj = {
                 'node' : { 'id': node['_id'], 'label' : node['label'] },
-                'error' : str(error)
+                'error' : str(error),
+                'code': server_return.status_code
             }
             external_match['errors'].append(error_obj)
+        else:
+            json_response = server_return.json()
 
         if json_response:
             LOG.info('server returns the following response: {}'.format(json_response))
@@ -218,7 +218,7 @@ def external_matcher(database, host, patient, node=None):
                 # a delayed request with results and this query_id as identifier
                 LOG.info('Node {} is sending an async response, saving query id to server'.format(server_name))
                 save_async_response(database=database, node_obj=node, query_id=json_response['query_id'],
-                    query_patient_id=patient['_id'])
+                    query_patient_id=patient['id'])
             else:
                 LOG.error('JSON response from server was:{}'.format(json_response))
 
@@ -252,7 +252,7 @@ def async_match(database, response_data):
     resp = response_data.get('response')
     results_obj = {
         'node' : node,
-        'patients' : resp.get('results')
+        'patients' : resp.get('results', [])
     }
 
     async_match = {
