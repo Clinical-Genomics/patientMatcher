@@ -176,24 +176,25 @@ def external_matcher(database, host, patient, node=None):
         LOG.info('sending HTTP request to server: "{}"'.format(server_name))
         # send request and get response from server
         json_response = None
-        server_return = requests.request(
-            method = 'POST',
-            url = node_url,
-            headers = headers,
-            json = data
-        )
-        if server_return.status_code != 200:
-            error = '{}: {}'.format(server_return.status_code, server_return.text)
-            LOG.error('Server returned error: {} - '.format(error))
+        server_return = None
+
+        try:
+            server_return = requests.request(
+                method = 'POST',
+                url = node_url,
+                headers = headers,
+                json = data
+            )
+            json_response = server_return.json()
+        except Exception as json_exp:
+            error = json_exp
+            LOG.error('Server returned error:{}'.format(error))
 
             error_obj = {
                 'node' : { 'id': node['_id'], 'label' : node['label'] },
-                'error' : str(error),
-                'code': server_return.status_code
+                'error' : str(error)
             }
             external_match['errors'].append(error_obj)
-        else:
-            json_response = server_return.json()
 
         if json_response:
             LOG.info('server returns the following response: {}'.format(json_response))
