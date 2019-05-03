@@ -187,7 +187,6 @@ def match_external(patient_id):
         resp.status_code = 200
         return resp
 
-
     results = matching_obj.get('results')
 
     # if patient is matching any other patient on other nodes
