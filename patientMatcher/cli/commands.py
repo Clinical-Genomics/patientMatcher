@@ -10,14 +10,23 @@ from patientMatcher.server import create_app
 from .add import add
 from .remove import remove
 from .update import update
-cli = FlaskGroup(create_app=create_app)
+from patientMatcher import __version__
+
+
+@click.version_option(__version__)
+@click.group(cls=FlaskGroup, create_app=create_app, invoke_without_command=False, add_default_commands=True,
+    add_version_option=False)
+def cli(**_):
+    """Base command for invoking the command line"""
+    pass
 
 @click.group()
 def test():
     """Test server using CLI"""
     pass
 
-@cli.command()
+
+@test.command()
 @with_appcontext
 def name():
     """Returns the app name, for testing purposes, mostly"""
@@ -25,7 +34,8 @@ def name():
     click.echo(app_name)
     return app_name
 
-@cli.command()
+
+@test.command()
 @with_appcontext
 @click.option('-recipient', type=click.STRING, nargs=1, required=True, help="Email address to send the test email to")
 def email(recipient):
@@ -69,9 +79,9 @@ def email(recipient):
     except Exception as err:
         click.echo('An error occurred while sending test email: "{}"'.format(err))
 
+cli.add_command(test)
 test.add_command(name)
 test.add_command(email)
-cli.add_command(test)
 cli.add_command(add)
 cli.add_command(update)
 cli.add_command(remove)

@@ -3,6 +3,9 @@
 ### Added
 - Introduced SCORE_THRESHOLD parameter as a minimum patient score threshold for returned results
 
+### Modified
+- Command line returns app version
+
 
 ## [1.1.1] - 2019-04-25
 
