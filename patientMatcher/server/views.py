@@ -258,10 +258,12 @@ def match_internal():
 
     max_pheno_score = current_app.config.get('MAX_PHENO_SCORE', 0.25) # get max pheno score from app settings, if available
     max_geno_score = current_app.config.get('MAX_GT_SCORE', 0.75) # get max genotyping score from app settings, if available
-    max_results = current_app.config.get('MAX_RESULTS')
+    max_results = current_app.config.get('MAX_RESULTS', 5)
+    score_threshold = current_app.config.get('SCORE_THRESHOLD', 0)
 
     # get a list of matching patients ordered by score
-    match_obj = internal_matcher(current_app.db, query_patient, max_pheno_score, max_geno_score, max_results)
+    match_obj = internal_matcher(current_app.db, query_patient, max_pheno_score, max_geno_score,
+        max_results, score_threshold)
     # save matching object to database
     current_app.db['matches'].insert_one(match_obj)
     matches = match_obj['results'][0]['patients'] #results[0] because there is just one node (internal match)

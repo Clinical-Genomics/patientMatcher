@@ -19,12 +19,29 @@ def test_internal_matching(demo_data_path, database, json_patients):
 
     match_obj = internal_matcher(database, a_patient, 0.5, 0.5)
     matches = match_obj['results'][0]['patients']
-    assert len(matches) > 0
+    assert len(matches) == 5 # default number of MAX_RESULTS
 
     higest_scored_patient = matches[0]
     lowest_scored_patient = matches[-1]
 
     assert higest_scored_patient['score']['patient'] > lowest_scored_patient['score']['patient']
+
+
+def test_internal_matching_with_threshold(demo_data_path, database, json_patients):
+    # load demo data to mock database using function located under utils/load
+    inserted_ids = load_demo(demo_data_path, database, False)
+    assert len(inserted_ids) == 50 # 50 test cases are loaded
+
+    # format test patient for query:
+    test_mme_patients = [ mme_patient(patient) for patient in json_patients ]
+
+    a_patient = test_mme_patients[0]
+    assert a_patient
+
+    match_obj = internal_matcher( database=database, patient_obj=a_patient, max_pheno_score=0.5, max_geno_score=0.5,
+        max_results=5, score_threshold=0.1)
+    matches = match_obj['results'][0]['patients']
+    assert len(matches) == 1
 
 
 def test_external_matching(database, test_node, json_patients):

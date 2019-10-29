@@ -40,7 +40,7 @@ def patient_matches(database, patient_id, type=None, with_results=True):
     return matches
 
 
-def internal_matcher(database, patient_obj, max_pheno_score, max_geno_score, max_results=5):
+def internal_matcher(database, patient_obj, max_pheno_score, max_geno_score, max_results=5, score_threshold=0):
     """Handles a query patient matching against the database of patients
 
     Args:
@@ -49,6 +49,7 @@ def internal_matcher(database, patient_obj, max_pheno_score, max_geno_score, max
         max_pheno_score(float): a number between 0 and 1
         max_geno_score(float): a number between 0 and 1
         max_results(int): the maximum number of results that the server should return.
+        score_threshold(float): minimum score threshold for returned results
 
     Returns:
         internal_match(dict): a matching object with results(list) sorted by score
@@ -90,6 +91,7 @@ def internal_matcher(database, patient_obj, max_pheno_score, max_geno_score, max
             patient_obj = geno_matches[key]['patient_obj']
 
         p_score = pheno_score + geno_score
+
         score = {
             'patient' : p_score,
             '_genotype' : geno_score,
@@ -99,7 +101,8 @@ def internal_matcher(database, patient_obj, max_pheno_score, max_geno_score, max
             'patient' : json_patient(patient_obj),
             'score' : score
         }
-        if score['patient']>0:
+        # remove matches with patient score lower than SCORE_THRESHOLD (from confif settings)
+        if score['patient']>=score_threshold:
             matches.append(match)
 
     # sort patient matches by patient (combined) score

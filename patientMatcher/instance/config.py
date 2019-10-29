@@ -20,6 +20,10 @@ MAX_PHENO_SCORE = 0.25
 # Max results matches returned by server.
 MAX_RESULTS = 5
 
+# Set a minimum patient score threshold for returned results
+# Set this parameter to 0 to return all results with a score higher than 0
+SCORE_THRESHOLD = 0
+
 # Disclaimer. This text is returned along with match results or server metrics
 DISCLAIMER = 'patientMatcher provides data in good faith as a research tool. patientMatcher makes no warranty nor assumes any legal responsibility for any purpose for which the data are used. Users should not attempt in any case to identify patients whose data is returned by the service. Users who intend to publish paper using this software should acknowldge patientMatcher and its developers (https://www.scilifelab.se/facilities/clinical-genomics-stockholm/).'
 
