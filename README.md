@@ -260,6 +260,8 @@ curl -X POST \
 The **maximum number of patients returned by the server** is a parameter which can be customized by editing the "MAX_RESULTS" field in the config.py file. Default value is 5.
 Patient matches are returned in order or descending similarity with the query patient (The most similar patients are higher in the list of results).
 
+Another customizable parameter is the minimum patient score threshold for returned results (**SCORE_THRESHOLD** in the config file). Matches with patient score lower than this number won't be returned. Default value for this parameter is 0.
+
 &nbsp;&nbsp;
 <a name="match_external"></a>
 - **/match/external/<patient_id>**.
