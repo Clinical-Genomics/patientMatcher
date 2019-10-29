@@ -20,7 +20,7 @@ MAX_PHENO_SCORE = 0.25
 # Max results matches returned by server.
 MAX_RESULTS = 5
 
-# Set a minimum score threshold for returned results
+# Set a minimum patient score threshold for returned results
 # Set this parameter to 0 to return all results with a score higher than 0
 SCORE_THRESHOLD = 0
 

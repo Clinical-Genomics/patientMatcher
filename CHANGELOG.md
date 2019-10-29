@@ -1,3 +1,9 @@
+## [] - ?
+
+### Added
+- Introduced SCORE_THRESHOLD parameter as a minimum patient score threshold for returned results
+
+
 ## [1.1.1] - 2019-04-25
 
 ### Modified
