@@ -171,10 +171,10 @@ def external_matcher(database, host, patient, node=None):
         token = node['auth_token']
         request_content_type = node['accepted_content']
 
-        headers = {'Content-Type': request_content_type,
+        headers = {
+            'Content-Type': request_content_type,
             'Accept': 'application/vnd.ga4gh.matchmaker.v1.0+json',
-            "X-Auth-Token": token,
-            'Host' : host
+            "X-Auth-Token": token
         }
         LOG.info('sending HTTP request to server: "{}"'.format(server_name))
         # send request and get response from server
