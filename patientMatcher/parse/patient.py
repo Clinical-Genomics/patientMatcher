@@ -22,7 +22,6 @@ def mme_patient(json_patient):
 
     mme_patient = {
         '_id' : json_patient['id'],
-        'id': json_patient['id'],
         'label' : json_patient.get('label'),
         'sex' : json_patient.get('sex'),
         'contact' : json_patient['contact'],
@@ -51,6 +50,7 @@ def json_patient(mme_patient):
     """
     json_patient = mme_patient
     if '_id' in json_patient:
+        json_patient['id'] = json_patient['_id']
         json_patient.pop('_id')
 
     return json_patient
