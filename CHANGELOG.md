@@ -1,3 +1,9 @@
+## [1.2.1] - 2019-10-30
+
+### Modified
+- Remove Host from external request headers for compatibility issues
+
+
 ## [1.2.0] - 2019-10-29
 
 ### Added
