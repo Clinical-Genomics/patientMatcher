@@ -1,0 +1,243 @@
+{% extends "layout_bs4.html" %}
+
+{% block content_main %}
+{% set panel = panel|int %}
+  <div class="container-float mt-3">
+      <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item"><a href="#" class="nav-link {% if panel == 1 %}active{% endif %}" data-toggle="tab" onclick="hide_div(1)"><h4>General statistics</h4></a></li>
+        <li class="nav-item"><a href="#" class="nav-link {% if panel == 2 %}active{% endif %}" data-toggle="tab" onclick="hide_div(2)"><h4>Case statistics</h4></a></li>
+        <li class="nav-item"><a href="#" class="nav-link {% if panel == 3 %}active{% endif %}" data-toggle="tab" onclick="hide_div(3)"><h4>Variant statistics</h4></a></li>
+      </ul>
+    <div class="tab-content" id="tabs">
+      <div class="tab-pane" id="1">
+        {{ basic_stats() }}
+      </div>
+      <div class="tab-pane" id="2">
+        {{ cases_stats() }}
+      </div>
+      <div class="tab-pane" id="3">
+        {{ variants_stats() }}
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% macro basic_stats() %}
+<div class="card">
+  <div class="card-body">
+    {{ dashboard_search_form(1) }}
+    {{ general_stats_panels() }}
+  </div>
+</div>
+{% endmacro %}
+
+{% macro cases_stats() %}
+<div class="card">
+  <div class="card-body">
+    {{ dashboard_search_form(2) }}
+    {{ cases_stats_panels() }}
+  </div>
+</div>
+{% endmacro %}
+
+{% macro variants_stats() %}
+<div class="card">
+  <div class="card-body">
+    {{ dashboard_search_form(3) }}<br><br>
+    {{ variants_stats_panels() }}
+  </div>
+</div>
+{% endmacro %}
+
+{% macro dashboard_search_form(pane) %}
+<br>
+<form id='form' class="form-horizontal" method='POST' action="{{ url_for('dashboard.index') }}" accept-charset="utf-8">
+    <input type="hidden" value={{pane}} name="pane_id" id="pane_id">
+    <div class="row text-center">
+      <div class="col-md-4 col-sm-4">
+        {% if pane in (1,2) %}
+          <div class="input-group">
+            <span class="input-group-addon">
+              <span class="glyphicon glyphicon-search"></span>
+            </span>
+            <input type="search" class="form-control" value="{{ query if query }}" name="query" id="query" placeholder="Enter query to filter cases summarized below" onchange="update_select({% if current_user.is_admin %}true{% else %}false{% endif %})"></input>
+          </div>
+        {% endif %}
+      </div>
+      <div class="col-md-2 col-sm-2">
+      <select name="institute" id="institute" onchange="this.form.submit()">
+        {% for inst in institutes %}
+          {% if inst.display_name == 'All institutes' and query and not current_user.is_admin %}
+            <option value="{{ inst._id }}" disabled>{{ inst.display_name }}</option>
+          {% else %}
+            <option value="{{ inst._id }}" {{ "selected" if inst._id == choice }} >{{ inst.display_name }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+      </div>
+      <div class="col-md-2 col-sm-2">
+        <button type="submit" class="form-control">Search</input>
+      </div>
+    </div>
+    {% if pane in (1,2) %}
+    <div class="bottom-align-text">
+      <br>Examples: case_id=<strong>18201</strong>, HPO-term=<strong>HP:0001166</strong>, synopsis=<strong>synopsis:epilepsy</strong>, panel=<strong>panel:NMD</strong>, phenotype group=<strong>PG:0100022</strong>, cohort=<strong>cohort:pedhep</strong>.
+    </div>
+    {% endif %}
+  </form>
+  <br>
+{% endmacro %}
+
+{% macro general_stats_panels() %}
+<div class="mt-3 text-center">
+  <div class="row">
+    <div class="col-md-4">
+      <h1>Samples</h1>
+      <div>
+        <canvas id="ngsType" height="150"></canvas><br>
+        <table class="table table-sm text-left">
+          {% for group in analysis_types %}
+            <tr>
+              <td>Total {{ group.name|upper }} samples (not cases)</td>
+              <td>{{ group.count }}</td>
+            </tr>
+          {% endfor %}
+        </table>
+      </div>
+    </div> <!--  end of sample statistics div -->
+    <div class="col-md-4">
+      <h1>Cases</h1>
+      <div>
+          <canvas id="casesType" height="150"></canvas><br>
+          <table class="table table-sm text-left">
+            {% for group in cases %}
+              <tr>
+                <td>Cases {{ group.status|capitalize }}: {{ group.count }}</td>
+                <td>{{(group.percent * 100)|round(1)}}%</td>
+              </tr>
+            {% endfor %}
+          </table>
+      </div>
+    </div> <!--  end of case statistics div -->
+    <div class="col-md-4">
+      <h1>Pedigree info</h1>
+      <div>
+        <canvas id="pedigreeTypes" height="150"></canvas><br>
+        <table class="table table-sm text-left">
+          {% for topic in pedigree %}
+            <tr>
+              <td>{{ topic.title }} Cases</td>
+              <td>{{ (topic.percent * 100)|round(1) }}%</td>
+            </tr>
+          {% endfor %}
+        </table>
+      </div>
+    </div> <!--  end of pedigree info div -->
+
+  </div> <!-- end of class="row"-->
+</div>
+{% endmacro %}
+
+
+{% macro cases_stats_panels() %}
+<div class="mt-3">
+  <div class="row">
+    <div class="col-md-8">
+        <canvas id="cases-bar-horiz" height="100"></canvas>
+    </div>
+    <div class="col-md-4">
+      <table class="table table-sm text-left">
+        {% for topic in overview %}
+          <tr>
+            <td>{{ topic.title }} Cases: {{ topic.count }}</td>
+            <td>{{ (topic.percent * 100)|round(1) }}%</td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+</div>
+{% endmacro %}
+
+
+{% macro variants_stats_panels() %}
+<div class="container-float mt-3 text-center">
+  <div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-4 d-flex justify-content-right align-items-center">
+        <canvas id="var-validations" width="600" height="300"></canvas>
+    </div>
+    <div class="col-md-4">
+      <table class="table text-left">
+        {% for topic in variants %}
+        <tr>
+          <td>{{ topic.title }} Cases: : {{ topic.count }}</td>
+          <td>{{ (topic.percent * 100)|round(1) }}%</td>
+        </tr>
+        {% endfor %}
+      </table>
+        <br>
+        <div id="card mt-3" >
+          <form id="dowload_var_stats" action="{{ url_for('variants.download_verified')}}" method="GET">
+            <button type="submit" name="verified_vars" value="verified" class="btn btn-primary btn-md">Download all verified variants for your cases</button>
+          </form>
+        </div>
+    </div>
+    <div class="col-md-2"></div>
+  </div>
+
+</div>
+{% endmacro %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
+  <script src="{{ url_for('dashboard.static', filename='charts.js') }}"></script>
+  <script type="text/javascript">
+
+    //create analysis type chart ===> general stats
+    createChart(document.getElementById("ngsType").getContext('2d'), analysisTypeData( {{analysis_types|safe }} ))
+    //create cases types chart
+    createChart(document.getElementById("casesType").getContext('2d'), casesType( {{cases[1:]|safe}} ))
+    //create pedigree info chart
+    createChart(document.getElementById("pedigreeTypes").getContext('2d'), pedigreeTypes( {{pedigree|safe}} ))
+
+    // create cases detailed stats chart ===> case stats
+    createChart(document.getElementById("cases-bar-horiz").getContext('2d'), casesDetailed( {{overview|safe}}, {{cases[0].count}} ))
+
+    // create variants detailed stats chart ===> variants stats
+    createChart(document.getElementById("var-validations").getContext('2d'), varValidations( {{variants|safe }}))
+
+    $(document).ready(function() {
+      hide_div({{panel}})
+    });
+
+    function hide_div(show_div){
+      for (i=1; i<4; i++) {
+        var div_el = document.getElementById(i);
+        if (i==show_div){ //show div
+          div_el.style.display = "block";
+        }
+        else{ //hode other divs
+          div_el.style.display = "none";
+        }
+      }
+    }
+
+    function update_select(admin_user){
+      var query_text = document.getElementById("query").value;
+      var sel = document.getElementById("institute");
+      if(query_text && !admin_user) {
+        sel.children[0].disabled = "disabled";
+        if(sel.options[0].selected) {
+          sel.options[0].selected = false;
+          sel.options[1].selected = true;
+        }
+      }
+      else{
+        sel.children[0].disabled = "";
+      }
+    }
+  </script>
+{% endblock %}

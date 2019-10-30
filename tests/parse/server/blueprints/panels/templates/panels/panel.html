@@ -1,0 +1,246 @@
+{% extends "layout_bs4.html" %}
+
+{% block title %}
+  {{ super() }} - {{ panel.institute.display_name }} - {{ panel.display_name }}
+{% endblock %}
+
+{% block top_nav %}
+  {{ super() }}
+  <li class="nav-item">
+    <a class="nav-link" href="{{ url_for('cases.index') }}">Institutes</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="{{ url_for('panels.panels') }}">Gene Panels</a>
+  </li>
+  <li class="nav-item active">
+    <span class="navbar-text">{{ panel.display_name }} {{ panel.version }}</span>
+  </li>
+{% endblock %}
+
+{% block content_main %}
+<div class="container-float">
+  <div class="row">
+    <div class="col-md-6">{{ overview_panel() }}</div>
+    <div class="col-md-6">{{ pending_panel() }}</div>
+  </div>
+  {{ genes_panel() }}
+</div>
+{% endblock %}
+
+{% macro overview_panel() %}
+  <div class="card panel-default">
+    <div class="panel-heading">Overview</div>
+    <ul class="list-group">
+      <li class="list-group-item">
+        <label for="display_name">Full name</label>
+        <span class="float-right" id="display_name">{{ panel.display_name }}</span>
+      </li>
+      <li class="list-group-item">
+        <label for="panel_name">Panel ID</label>
+        <span class="float-right" id="panel_name">{{ panel.panel_name }}</span>
+      </li>
+
+      <div class="list-group-item">
+        <form action="{{ url_for('panels.panel', panel_id=panel._id) }}" method="POST">
+
+          <div class="form-group">
+              <label for="panel_description">Description</label>
+              <textarea class="form-control" id="panel_description" name="panel_description" rows="3" style="background-color: white;" readonly>{{panel.description}}</textarea>
+          </div>
+          <div class="btn-group">
+            <button type="button" name="edit" value="edit" class="btn btn-sm btn-outline-secondary" onclick="editDescription()">
+              Edit
+            </button>
+            <button type="submit" name="update_description" value="update_description" class="btn btn-sm btn-primary">
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+      <li class="list-group-item">
+        <label for="version">Version</label>
+        <span class="float-right" id="version">{{ panel.version }}</span>
+      </li>
+      <li class="list-group-item">
+        <label for="n_genes">Number of genes</label>
+        <span class="float-right" id="n_genes">{{ panel.genes|length }}</span>
+      </li>
+      <li class="list-group-item">
+        <label for="date">Date</label>
+        <span class="float-right" id="date">{{ panel.date.date() }}</span>
+      </li>
+      {% if config.SQLALCHEMY_DATABASE_URI and case %}
+        <li class="list-group-item">
+          <label for="coverage_report">Coverage report</label>
+          Coverage report
+          <a class="float-right" id="coverage_report" href="#" onclick="document.getElementById('report-form').submit();">
+            {{ case.display_name }}
+          </a>
+          <form id="report-form" action="{{ url_for('report.report', sample_id=case.individuals|map(attribute='individual_id')|list, panel_name=panel.name_and_version, level=institute.coverage_cutoff) }}" method="POST" target="_blank">
+            <input type="hidden" name="gene_ids" value="{{ panel.genes|map(attribute='hgnc_id')|join(',') }}">
+          </form>
+        </li>
+        <li class="list-group-item">
+          Coverage overview
+          <span class="float-right">
+            <a class="float-right" href="#" onclick="document.getElementById('report-genes-form').submit();">
+              {{ case.display_name }}
+            </a>
+            <form id="report-genes-form" action="{{ url_for('report.genes', level=institute.coverage_cutoff, sample_id=case.individuals|map(attribute='individual_id')|list) }}" target="_blank" method="POST">
+              <input type="hidden" name="gene_ids" value="{{ panel.genes|map(attribute='hgnc_id')|join(',') }}">
+            </form>
+          </span>
+        </li>
+      {% endif %}
+      <li class="list-group-item">
+        <a href="{{ url_for('panels.panel_export', panel_id=panel._id) }}" class="btn btn-warning btn-sm">Export to PDF</a>
+      </li>
+    </ul>
+  </div>
+{% endmacro %}
+
+{% macro genes_panel() %}
+  <div class="card panel-default mt-3">
+    <div class="panel-heading">Included genes</div>
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Gene</th>
+            <th>HGNC ID</th>
+            <th>Transcripts</th>
+            <th>Reduced penetrance</th>
+            <th>Mosaicism</th>
+            <th>Entry version</th>
+            <th>Inheritance models</th>
+            <th>Comment</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for gene in panel.genes|sort(attribute='symbol') %}
+            <tr>
+              <td>
+                <a href="{{ url_for('genes.gene', hgnc_id=gene.hgnc_id) }}">
+                  {{ gene.symbol }}
+                </a>
+              </td>
+              <td>{{ gene.hgnc_id }}</td>
+              <td>{{ gene.disease_associated_transcripts|join(', ') }}</td>
+              <td>{{ 'Yes' if gene.reduced_penetrance }}</td>
+              <td>{{ 'Yes' if gene.mosaicism }}</td>
+              <td>{{ gene.database_entry_version }}</td>
+              <td>{{ (gene.inheritance_models|list + gene.custom_inheritance_models|list)|join(', ') }}</td>
+              <td>{{ gene.comment }}</td>
+              <td>
+                {% if not panel.is_archived %}
+                  <a class="btn btn-outline-secondary btn-xs" href="{{ url_for('panels.gene_edit', panel_id=panel._id, hgnc_id=gene.hgnc_id) }}">Edit</a>
+                  <form class="float-right" action="{{ url_for('panels.panel', panel_id=panel._id) }}" method="POST">
+                    <input type="hidden" name="hgnc_id" value="{{ gene.hgnc_id }}">
+                    <button name="action" type="submit" value="delete" class="btn btn-danger btn-xs">Delete</button>
+                  </form>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endmacro %}
+
+{% macro pending_panel() %}
+  <div class="card panel-default">
+    <div class="panel-heading">Pending changes</div>
+    {% if not panel.is_archived %}
+      <div class="card-body">
+        <form action="{{ url_for('panels.panel', panel_id=panel._id) }}" method="POST">
+          <div class="row search_form mt-3">
+            <div class="input-group">
+              <div class="col-md-6 col-xs-6"">
+                <input name="hgnc_id" class="typeahead form-control" data-provide="typeahead" autocomplete="off" placeholder="Search for gene...">
+              </div>
+              <div class="col-xs-4">
+                <button type="submit" name="action" value="add" class="btn btn-outline-secondary form-control">
+                  Add gene
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    {% endif %}
+    <ul class="list-group">
+      {% for gene in panel.pending %}
+        <li class="list-group-item">
+          <span data-toggle="tooltip" data-placement="right" data-html="true" title="
+            <div class='text-left'>
+              <strong>Transcripts</strong>:
+              {{ gene.info.disease_associated_transcripts|join(',') }} <br>
+              <strong>Reduced penetrance</strong>:
+              {{ 'yes' if gene.info.reduced_penetrance else 'no' }} <br>
+              <strong>Mosaicism</strong>:
+              {{ 'yes' if gene.info.mosaicism else 'no' }} <br>
+              <strong>Inheritance models</strong>:
+              {{ gene.info.inheritance_models|join(',') }} <br>
+              <strong>Entry version</strong>:
+              {{ gene.info.database_entry_version }} <br>
+            </div>
+          ">
+            {{ gene.symbol }}
+          </span>
+          {% if gene.action == 'add' %}
+            <span class="badge badge-primary badge-pill float-right">{{ gene.action }}</span>
+          {% elif gene.action == 'delete' %}
+            <span class="badge badge-danger badge-pill float-right">{{ gene.action }}</span>
+          {% else %}
+            <span class="badge badge-secondary badge-pill float-right">{{ gene.action }}</span>
+          {% endif %}
+        </li>
+      {% else %}
+        <li class="list-group-item">No pending genes</li>
+      {% endfor %}
+    </ul>
+    {% if panel.pending and not panel.is_archived %}
+      <div class="card-footer">
+        <form action="{{ url_for('panels.panel_update', panel_id=panel._id) }}" method="POST">
+          <div class="form-group">
+            <div class="row">
+              <div class="form-group col-xs-3">
+                <label class="col-form-label">Version</label>
+              </div>
+              <div class="form-group col-sm-3 text-center">
+                <input class="form-control" name="version" type="number" min="{{panel.version}}" value="{{ panel.version + 1 }}">
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-primary form-control">Update panel</button>
+        </form>
+      </div>
+    {% endif %}
+  </div>
+{% endmacro %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
+
+  <script>
+    function editDescription() {
+      document.getElementById("panel_description").readOnly = false
+    }
+
+    $(function () {
+      function getTerms(query, process) {
+        $.get("{{ url_for('genes.api_genes') }}", {query: query}, function(data) {
+          process(data)
+        });
+      }
+      $(".typeahead").typeahead({
+        source: getTerms,
+        minLength: 2,
+      });
+      $('[data-toggle="tooltip"]').tooltip();
+    })
+  </script>
+{% endblock %}

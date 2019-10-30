@@ -1,0 +1,37 @@
+{% extends "layout_bs4.html" %}
+
+{% block content_main %}
+  <div class="container-float">
+    <div class="card mt-3">
+      <div class="card-body">
+        <form class="form-inline" action="{{ url_for('genes.genes') }}">
+          <label for="query">Search for genes</label>
+          <div class="form-group">
+            <input name="query" class="typeahead form-control mx-sm-5" data-provide="typeahead" autocomplete="off" placeholder="Search...">
+            <button class="btn btn-outline-secondary form-control">Search</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
+
+  <script>
+    $(function () {
+      function getTerms(query, process) {
+        $.get("{{ url_for('genes.api_genes') }}", {query: query}, function(data) {
+          process(data)
+        });
+      }
+
+      $(".typeahead").typeahead({
+        source: getTerms,
+        minLength: 2,
+      });
+    })
+  </script>
+{% endblock %}
