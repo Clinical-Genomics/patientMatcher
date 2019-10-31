@@ -164,7 +164,6 @@ def external_matcher(database, patient, node=None):
 
     LOG.info("Matching patient against {} node(s)..".format(len(connected_nodes)))
     for node in connected_nodes:
-
         server_name = node['_id']
         node_url = node['matching_url']
         token = node['auth_token']
@@ -188,14 +187,18 @@ def external_matcher(database, patient, node=None):
                 json = data
             )
             json_response = server_return.json()
-        except Exception as json_exp:
-            error = json_exp
-            LOG.error('Server returned error:{}'.format(error))
-
+        except Exception as exp:
+            error = exp
             error_obj = {
-                'node' : { 'id': node['_id'], 'label' : node['label'] },
+                'node' : None,
                 'error' : str(error)
             }
+            if server_return: # There is a response, but it's not JSON
+                LOG.error('Server returned error:{}'.format(error))
+                error_obj['node'] = { 'id': node['_id'], 'label' : node['label'] }
+            else: # Coudn't even send request
+                LOG.error('Error while sending external match request:{}'.format(error))
+                error_obj['node'] = 'PatientMatcher'
             external_match['errors'].append(error_obj)
 
         if json_response:
