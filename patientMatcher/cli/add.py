@@ -68,8 +68,7 @@ def client(id, token, url, contact=None):
 def demodata():
     """Adds a set of 50 demo patients to database"""
     click.echo('Adding 50 test patients to database..')
-    inserted_ids = load_demo(path_to_json_data=path_to_benchmark_patients, mongo_db=current_app.db,
-        host=current_app.config.get('MME_HOST'))
+    inserted_ids = load_demo(path_to_json_data=path_to_benchmark_patients, mongo_db=current_app.db)
     click.echo('inserted {} patients into db'.format(len(inserted_ids)))
 
 

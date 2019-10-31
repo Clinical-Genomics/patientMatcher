@@ -34,7 +34,7 @@ def add():
 
     # else import patient to database
     modified, inserted, matching_obj= backend_add_patient(mongo_db=current_app.db, patient=formatted_patient,
-        match_external=match_external, host=current_app.config.get('MME_HOST'))
+        match_external=match_external)
     message = {}
 
     if modified:
@@ -178,8 +178,7 @@ def match_external(patient_id):
         resp.status_code = 200
         return resp
 
-    host = current_app.config.get('MME_HOST') # Introduce yourself in request
-    matching_obj = controllers.match_external(current_app.db, host, query_patient, node)
+    matching_obj = controllers.match_external(current_app.db, query_patient, node)
 
     if not matching_obj:
         message['message'] = "Could not find any other node connected to this MatchMaker server"

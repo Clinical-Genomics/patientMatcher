@@ -8,7 +8,7 @@ def test_patients(demo_data_path, database):
     """Tests the function that retrieves patient objects"""
 
     # load demo data in mock database
-    inserted_ids = load_demo(demo_data_path, database, False)
+    inserted_ids = load_demo(demo_data_path, database)
     assert type(inserted_ids) == list
     assert len(inserted_ids) == 50 # 50 test cases are loaded
 

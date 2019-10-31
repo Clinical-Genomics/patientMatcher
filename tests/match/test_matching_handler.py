@@ -8,7 +8,7 @@ def test_internal_matching(demo_data_path, database, json_patients):
     """Testing the combined matching algorithm"""
 
     # load demo data to mock database using function located under utils/load
-    inserted_ids = load_demo(demo_data_path, database, False)
+    inserted_ids = load_demo(demo_data_path, database)
     assert len(inserted_ids) == 50 # 50 test cases are loaded
 
     # format test patient for query:
@@ -29,7 +29,7 @@ def test_internal_matching(demo_data_path, database, json_patients):
 
 def test_internal_matching_with_threshold(demo_data_path, database, json_patients):
     # load demo data to mock database using function located under utils/load
-    inserted_ids = load_demo(demo_data_path, database, False)
+    inserted_ids = load_demo(demo_data_path, database)
     assert len(inserted_ids) == 50 # 50 test cases are loaded
 
     # format test patient for query:
@@ -53,10 +53,10 @@ def test_external_matching(database, test_node, json_patients):
     database['nodes'].insert_one(test_node)
 
     # insert patient object in database
-    inserted_ids = backend_add_patient(mongo_db=database, host='patientMatcher.host.se', patient=patient, match_external=False)
+    inserted_ids = backend_add_patient(mongo_db=database, patient=patient, match_external=False)
     assert inserted_ids
 
-    ext_m_result = external_matcher(database, 'pmatcher', patient, test_node['_id'])
+    ext_m_result = external_matcher(database, patient, test_node['_id'])
     assert isinstance(ext_m_result, dict)
     assert ext_m_result['data']['patient']['id'] == patient['id']
     assert ext_m_result['has_matches'] == False

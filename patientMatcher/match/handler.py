@@ -128,12 +128,11 @@ def internal_matcher(database, patient_obj, max_pheno_score, max_geno_score, max
     return internal_match
 
 
-def external_matcher(database, host, patient, node=None):
+def external_matcher(database, patient, node=None):
     """Handles a query patient matching against all connected MME nodes
 
     Args:
         database(pymongo.database.Database)
-        host(str): Name of this server (MME_HOST in config file)
         patient(dict) : a MME patient entity
         node(str): id of the node to search in
 

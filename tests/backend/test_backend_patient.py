@@ -14,15 +14,15 @@ def test_load_demo_patients(demo_data_path, database):
     assert os.path.isfile(demo_data_path)
 
     # load demo data to mock database using function located under utils/load
-    inserted_ids = load_demo(demo_data_path, database, 'patientMatcher.host.se')
+    inserted_ids = load_demo(demo_data_path, database)
     assert len(inserted_ids) == 50 # 50 test cases should be loaded
 
     # make sure that trying to re-insert the same patients will not work
-    re_inserted_ids = load_demo(demo_data_path, database, 'patientMatcher.host.se')
+    re_inserted_ids = load_demo(demo_data_path, database)
     assert len(re_inserted_ids) == 0
 
     # try to call load_demo with an invalid patient file:
-    inserted_ids = load_demo('this_is_a_fakey_json_file.json', database , 'patientMatcher.host.se')
+    inserted_ids = load_demo('this_is_a_fakey_json_file.json', database)
     assert len(inserted_ids) == 0
 
 
@@ -36,7 +36,7 @@ def test_backend_remove_patient(json_patients, database):
     assert len(test_mme_patients) == 2
 
     # insert the 2 patients into the database
-    inserted_ids = [ backend_add_patient(mongo_db=database, host='patientMatcher.host.se', patient=mme_patient, match_external=False) for mme_patient in test_mme_patients ]
+    inserted_ids = [ backend_add_patient(mongo_db=database, patient=mme_patient, match_external=False) for mme_patient in test_mme_patients ]
     assert len(inserted_ids) == 2
 
     # make sure that inserted patients contain computed phenotypes from Monarch
