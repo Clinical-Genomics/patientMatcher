@@ -1,7 +1,16 @@
+## [1.3] - 2019-10-31
+
+### Fixes
+- Handle better external matching errors
+- Fix a bug introduced in version 1.2.0 (missing patient id in results)
+
+
+
 ## [1.2.1] - 2019-10-30
 
 ### Modified
 - Remove Host from external request headers for compatibility issues
+
 
 
 ## [1.2.0] - 2019-10-29
