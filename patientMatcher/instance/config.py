@@ -27,9 +27,6 @@ SCORE_THRESHOLD = 0
 # Disclaimer. This text is returned along with match results or server metrics
 DISCLAIMER = 'patientMatcher provides data in good faith as a research tool. patientMatcher makes no warranty nor assumes any legal responsibility for any purpose for which the data are used. Users should not attempt in any case to identify patients whose data is returned by the service. Users who intend to publish paper using this software should acknowldge patientMatcher and its developers (https://www.scilifelab.se/facilities/clinical-genomics-stockholm/).'
 
-# Server Host. Used when submitting queries and returning results
-MME_HOST = 'https://www.scilifelab.se/facilities/clinical-genomics-stockholm'
-
 # Email notification params.
 # Required only if you want to send match notifications to patients contacts
 #MAIL_SERVER = mail_port
