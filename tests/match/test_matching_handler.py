@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import requests
 from patientMatcher.utils.add import load_demo, backend_add_patient
 from patientMatcher.parse.patient import mme_patient
 from patientMatcher.match.handler import internal_matcher, save_async_response, external_matcher
@@ -44,7 +44,7 @@ def test_internal_matching_with_threshold(demo_data_path, database, json_patient
     assert len(matches) == 1
 
 
-def test_external_matching(database, test_node, json_patients):
+def test_external_matching(database, test_node, json_patients, monkeypatch):
     """Testing the function that trigger patient matching across connected nodes"""
 
     patient = json_patients[0]
@@ -56,10 +56,25 @@ def test_external_matching(database, test_node, json_patients):
     inserted_ids = backend_add_patient(mongo_db=database, patient=patient, match_external=False)
     assert inserted_ids
 
+    class MockResponse(object):
+        def __init__(self):
+            self.status_code = 200
+        def json(self):
+            resp = {
+                "disclaimer" : "This is a test disclaimer",
+                "results" : json_patients
+            }
+            return resp
+
+    def mock_response(*args, **kwargs):
+        return MockResponse()
+
+    monkeypatch.setattr( requests , 'request', mock_response )
+
     ext_m_result = external_matcher(database, patient, test_node['_id'])
     assert isinstance(ext_m_result, dict)
     assert ext_m_result['data']['patient']['id'] == patient['id']
-    assert ext_m_result['has_matches'] == False
+    assert ext_m_result['has_matches'] == True
     assert ext_m_result['match_type'] == 'external'
 
 
