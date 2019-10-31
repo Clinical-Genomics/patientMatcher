@@ -98,14 +98,14 @@ def match_objs():
                 {
                     'node' : {'id' : 'test_node1', 'label': 'Test Node 1'},
                     'patients' : [
-                        {'patient' : { 'patient_data1' : 'test_stuff1'}},
-                        {'patient' : { 'patient_data2' : 'test_stuff2'}}
+                        {'patient' : { 'id' : 'patient1'}},
+                        {'patient' : { 'id' : 'patient2'}}
                     ]
                 },
                 {
                     'node' : {'id' : 'test_node2', 'label': 'Test Node 2'},
                     'patients' : [
-                        {'patient' : { 'patient_data3' : 'test_stuff3'}}
+                        {'patient' : { 'id' : 'patient3'}}
                     ]
                 }
             ],
@@ -126,7 +126,7 @@ def match_objs():
                 {
                     'node': {'id' : 'patientMatcher', 'label' : 'patientMatcher server'},
                     'patients' : [
-                        {'patient' : { 'int_pat1' : 'test_stuff'}}
+                        {'patient' : { 'id' : 'int_patient_id'}}
                     ]
                 }
             ],

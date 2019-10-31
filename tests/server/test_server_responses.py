@@ -362,7 +362,7 @@ def test_patient_matches(mock_app, database, match_objs, test_client):
     for match in matches:
         for result in match['results']:
             for patient in result['patients']:
-                assert patient['id']
+                assert patient['patient']['id']
 
     # Call the same function to get only external matches
     matches = patient_matches(database=database, patient_id='P0000079', type='external', with_results=False)

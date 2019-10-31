@@ -50,6 +50,8 @@ def json_patient(mme_patient):
             json_patient(dict): a patient object conforming to MME API
     """
     json_patient = mme_patient
+    if 'id' not in mme_patient:
+        json_patient['id'] = json_patient['_id']
     if '_id' in json_patient:
         json_patient.pop('_id')
 
