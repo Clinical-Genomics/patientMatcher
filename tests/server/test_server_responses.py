@@ -359,6 +359,10 @@ def test_patient_matches(mock_app, database, match_objs, test_client):
     # Test that there are actually 3 matches by calling directly the function returning matches
     matches = patient_matches(database=database, patient_id='P0000079', type=None, with_results=False)
     assert len(matches) == 3
+    for match in matches:
+        for result in match['results']:
+            for patient in result['patients']:
+                assert patient['patient']['id']
 
     # Call the same function to get only external matches
     matches = patient_matches(database=database, patient_id='P0000079', type='external', with_results=False)
