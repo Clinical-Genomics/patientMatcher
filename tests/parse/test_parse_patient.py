@@ -15,10 +15,13 @@ def test_disorders_to_omim_no_omim():
 
 def test_gtfeatures_to_genes():
     # Test parsing of genotype feature
+    required_symbols = ['AAGAB','LIMS2']
 
     g_features = [
         {'gene':{'id':'ENSG00000103591'}},
         {'gene':{'id':'ENSG00000072163'}}
     ]
+    # Make sure that Ensembl rest API convert ensembl IDs to gene symbols
     gene_set = gtfeatures_to_genes(g_features)
-    assert gene_set == ['AAGAB','LIMS2']
+    for item in gene_set:
+        assert item in required_symbols
