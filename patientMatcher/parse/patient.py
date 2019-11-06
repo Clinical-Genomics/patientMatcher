@@ -4,7 +4,6 @@ import json
 from jsonschema import validate, RefResolver, FormatChecker
 from pkgutil import get_data
 import logging
-import patientMatcher.utils.ensembl_rest_client as ensembl_client
 
 LOG = logging.getLogger(__name__)
 SCHEMA_FILE = 'api.json'
@@ -93,23 +92,15 @@ def disorders_to_omim(disorders):
 
 def gtfeatures_to_genes(gtfeatures):
     """Extracts all gene names from a list of genomic features
-
     Args:
         gtfeatures(list): a list of genomic features objects
-
     Returns:
         gene_set(list): a list of unique gene names contained in the features
     """
     genes = []
     for feature in gtfeatures:
         if 'gene' in feature and feature['gene']['id']: # collect non-null gene IDs
-            gene = feature['gene']['id']
-            if gene.startswith('ENSG'): # Ensembl gene, convert it to official symbol
-                LOG.info('Converted Ensembl gene {} to official symbol'.format(gene))
-                client = ensembl_client.EnsemblRestApiClient()
-                gene = client.ensembl_id_to_symbol(gene)
-            if gene:
-                genes.append(gene)
+            genes.append(feature['gene']['id'])
     gene_set = list(set(genes))
     return gene_set
 
