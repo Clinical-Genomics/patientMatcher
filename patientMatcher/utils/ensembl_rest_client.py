@@ -9,12 +9,9 @@ from urllib.request import Request, urlopen
 LOG = logging.getLogger(__name__)
 
 HEADERS = {'Content-type':'application/json'}
-RESTAPI_37 = 'http://grch37.rest.ensembl.org'
-RESTAPI_38 = 'http://rest.ensembl.org/'
+RESTAPI_37 = 'https://grch37.rest.ensembl.org'
+RESTAPI_38 = 'https://rest.ensembl.org/'
 PING_ENDPOINT = 'info/ping'
-
-BIOMART_37 =  "http://grch37.ensembl.org/biomart/martservice?query="
-BIOMART_38 =  "http://ensembl.org/biomart/martservice?query="
 
 class EnsemblRestApiClient:
     """A class handling requests and responses to and from the Ensembl REST APIs.
@@ -42,6 +39,22 @@ class EnsemblRestApiClient:
         url = '/'.join([server, PING_ENDPOINT])
         data = self.send_request(url)
         return data
+
+
+    def ensembl_id_to_symbol(ensembl_id, server=RESTAPI_37):
+        """Handles requests to Ensembl to Ensembl server
+
+        Accepts:
+            ensembl_id(str): an ensembl gene id. Ex: ENSG00000103591
+
+        Returns:
+            gene_symbol(str): an official gene symbol. Ex: AAGAB
+        """
+
+        url = ''.join([server, '/lookup/id/', ensembl_id])
+        result = send_request(url)
+        return result.get('display_name', None)
+
 
     def send_request(self, url):
         """Sends the actual request to the server and returns the response
