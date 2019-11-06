@@ -71,7 +71,6 @@ def demodata():
     inserted_ids = load_demo(path_to_json_data=path_to_benchmark_patients, mongo_db=current_app.db)
     click.echo('inserted {} patients into db'.format(len(inserted_ids)))
 
-
 add.add_command(node)
 add.add_command(client)
 add.add_command(demodata)

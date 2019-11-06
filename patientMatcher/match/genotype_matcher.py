@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import logging
 
-import patientMatcher.utils.ensembl_rest_client as ensembl_client
+from patientMatcher.utils.gene import ensembl_to_symbol
 from patientMatcher.parse.patient import gtfeatures_to_genes, gtfeatures_to_variants
 LOG = logging.getLogger(__name__)
 
@@ -32,10 +32,9 @@ def match(database, gt_features, max_score):
         query_fields = []
 
         # Check if genes are described by ensembl ids:
-        client = ensembl_client.EnsemblRestApiClient()
         for feature in gt_features:
             if 'gene' in feature and feature['gene']['id'].startswith('ENSG'):
-                gene_symbol = client.ensembl_id_to_symbol(feature['gene']['id'])
+                gene_symbol = ensembl_to_symbol(feature['gene']['id'])
                 if gene_symbol:
                     feature['gene']['id'] = gene_symbol
 
