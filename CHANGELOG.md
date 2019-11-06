@@ -1,3 +1,10 @@
+## [1.4] - 2019-11-06
+
+### Modified
+- Allow gene search using ensembl gene IDs
+
+
+
 ## [1.3] - 2019-10-31
 
 ### Fixes

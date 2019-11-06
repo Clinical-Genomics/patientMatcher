@@ -22,7 +22,6 @@ def match(database, gt_features, max_score):
     LOG.info('\n\n###### Running genome matcher module ######')
 
     if n_gtfeatures > 0:
-
         max_feature_similarity = max_score/n_gtfeatures
 
         LOG.info('Query patient has {0} genotype features.'.format(n_gtfeatures))
