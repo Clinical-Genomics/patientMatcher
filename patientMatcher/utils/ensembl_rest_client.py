@@ -41,7 +41,7 @@ class EnsemblRestApiClient:
         return data
 
 
-    def ensembl_id_to_symbol(ensembl_id, server=RESTAPI_37):
+    def ensembl_id_to_symbol(self, ensembl_id):
         """Handles requests to Ensembl to Ensembl server
 
         Accepts:
@@ -51,8 +51,8 @@ class EnsemblRestApiClient:
             gene_symbol(str): an official gene symbol. Ex: AAGAB
         """
 
-        url = ''.join([server, '/lookup/id/', ensembl_id])
-        result = send_request(url)
+        url = ''.join([self.server, '/lookup/id/', ensembl_id])
+        result = self.send_request(url)
         return result.get('display_name', None)
 
 

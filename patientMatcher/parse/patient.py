@@ -4,7 +4,7 @@ import json
 from jsonschema import validate, RefResolver, FormatChecker
 from pkgutil import get_data
 import logging
-from patientMatcher.utils.ensembl_rest_client import ensembl_id_to_symbol
+import patientMatcher.utils.ensembl_rest_client as ensembl_client
 
 LOG = logging.getLogger(__name__)
 SCHEMA_FILE = 'api.json'
@@ -106,7 +106,8 @@ def gtfeatures_to_genes(gtfeatures):
             gene = feature['gene']['id']
             if gene.startswith('ENSG'): # Ensembl gene, convert it to official symbol
                 LOG.info('Converted Ensembl gene {} to official symbol'.format(gene))
-                gene = ensembl_id_to_symbol(gene)
+                client = ensembl_client.EnsemblRestApiClient()
+                gene = client.ensembl_id_to_symbol(gene)
             if gene:
                 genes.append(gene)
     gene_set = list(set(genes))
