@@ -115,8 +115,8 @@ def format_genes(patient_obj):
                 else: # It's a gene symbol
                     symbol = gene
                 if symbol:
-                    LOG.info('Converting gene symbol {} to Ensembl'.format(gene))
-                    ensembl_id = symbol_to_ensembl(gene)
+                    LOG.info('Converting gene symbol {} to Ensembl'.format(symbol))
+                    ensembl_id = symbol_to_ensembl(symbol)
                     if ensembl_id:
                         feature['gene']['id'] = ensembl_id
         formatted_features.append(feature)

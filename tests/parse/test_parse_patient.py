@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+from patientMatcher.parse.patient import format_genes
 
 from patientMatcher.parse.patient import features_to_hpo, disorders_to_omim, gtfeatures_to_genes
 

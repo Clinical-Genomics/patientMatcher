@@ -35,7 +35,7 @@ def load_demo(path_to_json_data, mongo_db):
             for json_patient in patients:
 
                 #parse patient into format accepted by database
-                patient = mme_patient(json_patient)
+                patient = mme_patient(json_patient, True)
 
                 inserted_id = backend_add_patient(mongo_db=mongo_db, patient=patient)[1]
                 if inserted_id:

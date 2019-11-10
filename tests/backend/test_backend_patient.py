@@ -7,12 +7,14 @@ from patientMatcher.utils.add import load_demo, backend_add_patient
 from patientMatcher.utils.delete import delete_by_query
 from patientMatcher.parse.patient import mme_patient
 
-def test_add_entrez_gene_patient(entrez_gene_patient, database):
-    """Test load a patient with entrez gene id"""
 
-    assert entrez_gene_patient
+def test_add_entrez_gene_patient(entrez_gene_patient, database):
+    #Test load a patient with entrez gene id
+
+    assert entrez_gene_patient['genomicFeatures'][0]['gene']['id'] == 16084
     mme_formatted_patient = mme_patient(entrez_gene_patient, True)
-    assert mme_formatted_patient
+    #assert mme_formatted_patient['genomicFeatures'][0]['gene']['id'] == 'LIMS2'
+    assert mme_formatted_patient['genomicFeatures'] == 'jakljdla'
 
 
 def test_load_demo_patients(demo_data_path, database):

@@ -83,7 +83,7 @@ def entrez_gene_patient():
     """Returns a test patient with an entrez gene ID"""
 
     patient = {
-        "id": "patient_1",
+        "id": "patient_ID",
         "label": "Patient number 1",
         "contact": {
             "href": "mailto:contact_email@email.com",
