@@ -78,6 +78,45 @@ def test_node():
     }
     return node
 
+@pytest.fixture(scope='function')
+def entrez_gene_patient():
+    """Returns a test patient with an entrez gene ID"""
+
+    patient = {
+        "id": "patient_1",
+        "label": "Patient number 1",
+        "contact": {
+            "href": "mailto:contact_email@email.com",
+            "name": "A contact at an institute"
+        },
+        "features": [
+        {
+            "id": "HP:0010943",
+            "label": "Echogenic fetal bowel",
+            "observed": "yes"
+        }],
+        "genomicFeatures": [
+        {
+            "gene": {
+              "id": 16084
+            },
+            "type": {
+              "id": "SO:0001583",
+              "label": "MISSENSE"
+            },
+            "variant": {
+              "alternateBases": "C",
+              "assembly": "GRCh37",
+              "end": 128412081,
+              "referenceBases": "G",
+              "referenceName": "2",
+              "start": 128412080
+            },
+            "zygosity": 1
+        }]
+    }
+    return patient
+
 
 @pytest.fixture(scope='function')
 def match_objs():

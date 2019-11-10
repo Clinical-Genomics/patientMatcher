@@ -3,6 +3,22 @@
 import logging
 import patientMatcher.utils.ensembl_rest_client as ensembl_client
 
+def entrez_to_symbol(entrez_id):
+    """Convert entrez id to gene symbol
+
+    Accepts:
+        entrez_id(int) ex. 673
+
+    Returns
+        gene_symbol(str) ex. BRAF
+    """
+    client = ensembl_client.EnsemblRestApiClient()
+    url = ''.join([client.server, '/xrefs/name/human/', str(entrez_id), '?external_db=EntrezGene'])
+    results = client.send_request(url)
+    for gene in results: # result is an array. First element is enough
+        return gene['display_id']
+
+
 def symbol_to_ensembl(gene_symbol):
     """Convert gene symbol to ensembl id
 
@@ -15,7 +31,7 @@ def symbol_to_ensembl(gene_symbol):
     client = ensembl_client.EnsemblRestApiClient()
     url = ''.join([client.server, '/xrefs/symbol/homo_sapiens/', gene_symbol, '?external_db=HGNC'])
     results = client.send_request(url)
-    for gene in results: # result is an array
+    for gene in results: # result is an array. First element is enough
         if gene['id'].startswith('ENSG'): # it's the ensembl id
             return gene['id']
 

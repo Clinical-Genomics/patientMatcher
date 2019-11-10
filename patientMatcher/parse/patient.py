@@ -2,23 +2,29 @@
 
 import json
 from jsonschema import validate, RefResolver, FormatChecker
+from patientMatcher.utils.gene import symbol_to_ensembl, entrez_to_symbol, symbol_to_ensembl
 from pkgutil import get_data
 import logging
 
 LOG = logging.getLogger(__name__)
 SCHEMA_FILE = 'api.json'
 
-def mme_patient(json_patient):
+def mme_patient(json_patient, convert_to_ensembl=False):
     """
         Accepts a json patient and converts it to a MME patient,
         formatted as required by patientMatcher database
 
         Args:
             patient_obj(dict): a patient object as in https://github.com/ga4gh/mme-apis
+            convert_to_entrez(bool): convert gene IDs to ensembl IDs
 
         Returns:
             mme_patient(dict) : a mme patient entity
     """
+
+    # Make sure gene objects are defined as ensembl IDs
+    if json_patient.get('genomicFeatures') and convert_to_ensembl:
+        format_genes(json_patient)
 
     mme_patient = {
         '_id' : json_patient['id'],
@@ -90,16 +96,46 @@ def disorders_to_omim(disorders):
     return omim_terms
 
 
+def format_genes(patient_obj):
+    """Checks if patient's gFeatures gene ids are defined as ensembl ids.
+    If they are entrez ids or symbols thet will be converted to ensembl IDs.
+
+    Args:
+        patient_obj(dict): A patient object with genotype features
+    """
+    formatted_features = []
+    for feature in patient_obj.get('genomicFeatures', []):
+        if 'gene' in feature and feature['gene'].get('id'):
+            gene = feature['gene']['id']
+            symbol = None
+            if isinstance(gene, int) or gene.startswith('ENSG') is False:
+                if isinstance(gene, int): #Likely an entrez gene ID
+                    LOG.info('Converting entrez gene {} to symbol'.format(gene))
+                    symbol = entrez_to_symbol(gene)
+                else: # It's a gene symbol
+                    symbol = gene
+                if symbol:
+                    LOG.info('Converting gene symbol {} to Ensembl'.format(gene))
+                    ensembl_id = symbol_to_ensembl(gene)
+                    if ensembl_id:
+                        feature['gene']['id'] = ensembl_id
+        formatted_features.append(feature)
+
+    if formatted_features:
+        patient_obj['genomicFeatures'] = formatted_features
+
+
 def gtfeatures_to_genes(gtfeatures):
     """Extracts all gene names from a list of genomic features
     Args:
         gtfeatures(list): a list of genomic features objects
+
     Returns:
         gene_set(list): a list of unique gene names contained in the features
     """
     genes = []
     for feature in gtfeatures:
-        if 'gene' in feature and feature['gene']['id']: # collect non-null gene IDs
+        if 'gene' in feature and feature['gene'].get('id'): # collect non-null gene IDs
             genes.append(feature['gene']['id'])
     gene_set = list(set(genes))
     return gene_set
