@@ -84,7 +84,8 @@ def check_request(database, request):
         LOG.info("Patient data does not conform to API:{}".format(err))
         return 422
 
-    formatted_patient = mme_patient(json_patient=request_json['patient'])
+    formatted_patient = mme_patient(json_patient=request_json['patient'],
+        convert_to_ensembl = True)
     return formatted_patient
 
 

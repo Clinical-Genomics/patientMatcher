@@ -62,13 +62,15 @@ def client(id, token, url, contact=None):
         click.echo('Aborted')
 
 
-
 @add.command()
 @with_appcontext
-def demodata():
+@click.option('--ensembl_genes', is_flag=True, help="Convert gene symbols to Ensembl IDs")
+def demodata(ensembl_genes):
     """Adds a set of 50 demo patients to database"""
     click.echo('Adding 50 test patients to database..')
-    inserted_ids = load_demo(path_to_json_data=path_to_benchmark_patients, mongo_db=current_app.db)
+    click.echo('ENSEMBL GENES IS {}'.format(ensembl_genes))
+    inserted_ids = load_demo(path_to_json_data=path_to_benchmark_patients, mongo_db=current_app.db,
+        convert_to_ensembl=ensembl_genes)
     click.echo('inserted {} patients into db'.format(len(inserted_ids)))
 
 add.add_command(node)
