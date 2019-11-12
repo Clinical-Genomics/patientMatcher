@@ -18,6 +18,6 @@ def test_symbol_to_ensembl():
 
 def test_entrez_to_symbol():
     # Test converting entrez ID to gene symbol
-    entrez_id = 673
+    entrez_id = 3735
     symbol = entrez_to_symbol(entrez_id)
-    assert symbol == 'BRAF'
+    assert symbol == 'KARS'

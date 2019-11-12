@@ -7,28 +7,6 @@ from patientMatcher.utils.add import load_demo, backend_add_patient
 from patientMatcher.utils.delete import delete_by_query
 from patientMatcher.parse.patient import mme_patient
 
-"""
-def test_mme_patient_entrez_gene(entrez_gene_patient, database):
-    #Test format a patient with entrez gene
-
-    assert entrez_gene_patient['genomicFeatures'][0]['gene']['id'] == 16084
-    mme_formatted_patient = mme_patient(entrez_gene_patient, True) # convert genes to Ensembl
-    assert mme_formatted_patient['_id'] == entrez_gene_patient.get('id')
-    #assert mme_formatted_patient['genomicFeatures'][0]['gene']['id'] == 'LIMS2'
-    #assert mme_formatted_patient['genomicFeatures'][0]['gene'] == 'jakljdla'
-"""
-
-def test_mme_patient_gene_symbol(json_patients,database):
-    # Test format a patient with gene symbol
-
-    test_patient = json_patients[0]
-    # Before conversion patient's gene id is a gene symbol
-    assert test_patient['genomicFeatures'][0]['gene']['id'] == 'LIMS2'
-    mme_formatted_patient = mme_patient(test_patient, True) # Convert gene symbol to Ensembl
-    # After conversion formatted patient's gene id should be an Ensembl id
-    assert mme_formatted_patient['genomicFeatures'][0]['gene']['id'].startswith('ENSG')
-
-
 def test_load_demo_patients(demo_data_path, database):
     """Testing if loading of 50 test patients in database is working as it should"""
 

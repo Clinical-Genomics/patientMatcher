@@ -81,39 +81,47 @@ def test_node():
 @pytest.fixture(scope='function')
 def entrez_gene_patient():
     """Returns a test patient with an entrez gene ID"""
-
     patient = {
-        "id": "patient_ID",
-        "label": "Patient number 1",
         "contact": {
-            "href": "mailto:contact_email@email.com",
-            "name": "A contact at an institute"
+          "href": "mailto:someuser@mail.com",
+          "institution": "Test institution",
+          "name": "Test user"
         },
+        "disorders": [],
         "features": [
-        {
-            "id": "HP:0010943",
-            "label": "Echogenic fetal bowel",
+          {
+            "id": "HP:0001263",
+            "label": "Global developmental delay",
             "observed": "yes"
-        }],
+          },
+          {
+            "id": "HP:0000252",
+            "label": "Microcephaly",
+            "observed": "yes"
+          }
+        ],
         "genomicFeatures": [
-        {
+          {
             "gene": {
-              "id": 16084
+              "id": 3735
             },
             "type": {
               "id": "SO:0001583",
               "label": "MISSENSE"
             },
             "variant": {
-              "alternateBases": "C",
+              "alternateBases": "A",
               "assembly": "GRCh37",
-              "end": 128412081,
+              "end": 75665092,
               "referenceBases": "G",
-              "referenceName": "2",
-              "start": 128412080
+              "referenceName": "16",
+              "start": 75665091
             },
             "zygosity": 1
-        }]
+            }
+        ],
+        "id": "P0001013",
+        "label": "169_1-test"
     }
     return patient
 
