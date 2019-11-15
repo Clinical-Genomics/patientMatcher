@@ -26,11 +26,11 @@ def test_load_demo_patients(demo_data_path, database):
     assert len(inserted_ids) == 0
 
 
-def test_backend_remove_patient(json_patients, database):
+def test_backend_remove_patient(gpx4_patients, database):
     """ Test adding 2 test patients and then removing them using label or ID """
 
     # test conversion to format required for the database:
-    test_mme_patients = [ mme_patient(json_patient=patient) for patient in json_patients]
+    test_mme_patients = [ mme_patient(json_patient=patient) for patient in gpx4_patients]
 
     # make sure 2 json patient are correctly parsed
     assert len(test_mme_patients) == 2
@@ -44,13 +44,13 @@ def test_backend_remove_patient(json_patients, database):
     assert a_patient
 
     # test removing a patient by ID:
-    remove_query = {'_id' : 'patient_1'}
+    remove_query = {'_id' : 'P0001058'}
     deleted = delete_by_query(remove_query, database, 'patients')
     db_patients = database['patients'].find()
     assert db_patients.count() == 1
 
     # test removing a patient by label:
-    remove_query = {'label' : 'Patient number 2'}
+    remove_query = {'label' : '350_2-test'}
     deleted = delete_by_query(remove_query, database, 'patients')
     db_patients = database['patients'].find()
     assert db_patients.count() == 0

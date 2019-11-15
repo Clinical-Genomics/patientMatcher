@@ -12,12 +12,12 @@ def test_disorders_to_omim_no_omim():
     result = disorders_to_omim(None)
     assert result == []
 
-def test_mme_patient_gene_symbol(json_patients,database):
+def test_mme_patient_gene_symbol(gpx4_patients,database):
     # Test format a patient with gene symbol
 
-    test_patient = json_patients[0]
+    test_patient = gpx4_patients[0]
     # Before conversion patient's gene id is a gene symbol
-    assert test_patient['genomicFeatures'][0]['gene']['id'] == 'LIMS2'
+    assert test_patient['genomicFeatures'][0]['gene']['id'].startswith('ENSG') is False
     mme_formatted_patient = mme_patient(test_patient, True) # Convert gene symbol to Ensembl
     # After conversion formatted patient's gene id should be an Ensembl id
     assert mme_formatted_patient['genomicFeatures'][0]['gene']['id'].startswith('ENSG')

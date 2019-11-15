@@ -2,6 +2,7 @@
 import os
 import pytest
 import mongomock
+import json
 from pathlib import Path
 from patientMatcher.server import create_app
 from patientMatcher.resources import path_to_benchmark_patients
@@ -135,7 +136,7 @@ def match_objs():
             'has_matches' : True,
             'data' : {
                 'patient' : {
-                    'id' : 'P0000079',
+                    'id' : 'P0001058',
                     'contact' : {
                         'href' : 'mailto:test_contact@email.com'
                     }
@@ -163,7 +164,7 @@ def match_objs():
             'has_matches' : False,
             'data' : {
                 'patient' : {
-                    'id' : 'P0000079'
+                    'id' : 'P0001058'
                 },
                 'contact' : {
                     'href' : 'mailto:test_contact@email.com'
@@ -195,7 +196,7 @@ def match_objs():
                     'node' : {'id' : 'test_node1', 'label': 'Test Node 1'},
                     'patients' : [
                         {'patient' : {
-                            'id' : 'P0000079',
+                            'id' : 'P0001058',
                             'contact' : {
                                 'href' : 'mailto:test_contact2@email.com'
                             }
@@ -210,120 +211,32 @@ def match_objs():
 
 
 @pytest.fixture(scope='function')
-def json_patients():
-    """ returns a list containing two matchmaker-like patient objects """
-    fakey_patients = [
-    {
-        "contact": {
-          "href": "mailto:contact_email@email.com",
-          "name": "A contact at an institute"
-        },
-        "features": [
-          {
-            "id": "HP:0010943",
-            "label": "Echogenic fetal bowel",
-            "observed": "yes"
-          }
-        ],
-        "disorders": [
-            {
-                "id" : "MIM:616007"
-            }
-        ],
-        "genomicFeatures": [
-        {
-            "gene": {
-              "id": "LIMS2"
-            },
-            "type": {
-              "id": "SO:0001583",
-              "label": "MISSENSE"
-            },
-            "variant": {
-              "alternateBases": "C",
-              "assembly": "GRCh37",
-              "end": 128412081,
-              "referenceBases": "G",
-              "referenceName": "2",
-              "start": 128412080
-            },
-            "zygosity": 1
-        },
-        {
-            "gene": {
-              "id": "LIMS2"
-            },
-            "type": {
-              "id": "SO:0001583",
-              "label": "MISSENSE"
-            },
-            "variant": {
-              "alternateBases": "A",
-              "assembly": "GRCh37",
-              "end": 128412067,
-              "referenceBases": "G",
-              "referenceName": "2",
-              "start": 128412066
-            },
-            "zygosity": 1
-        },
-        {
-            "gene": {
-              "id": "KARS"
-            },
-            "type": {
-              "id": "SO:0001583",
-              "label": "MISSENSE"
-            },
-            "variant": {
-              "alternateBases": "A",
-              "assembly": "GRCh37",
-              "end": 75665092,
-              "referenceBases": "G",
-              "referenceName": "16",
-              "start": 75665091
-            },
-            "zygosity": 1
-        }],
-        "id": "patient_1",
-        "label": "Patient number 1"
-    },
-    {
-        "contact": {
-          "href": "mailto:contact_email@email.com",
-          "name": "A contact at an institute"
-        },
-        "features": [
-          {
-            "id": "HP:0001644",
-            "label": "Dilated cardiomyopathy",
-            "observed": "yes"
-          },
-        ],
-        "genomicFeatures": [
-          {
-            "gene": {
-              "id": ""
-            },
-            "type": {
-              "id": "SO:0001583",
-              "label": "MISSENSE"
-            },
-            "variant": {
-              "alternateBases": "C",
-              "assembly": "GRCh37",
-              "end": 128412081,
-              "referenceBases": "G",
-              "referenceName": "2",
-              "start": 128412080
-            },
-            "zygosity": 1
-          },
-        ],
-        "id": "patient_2",
-        "label": "Patient number 2"
-    }]
-    return fakey_patients
+def gpx4_patients(json_patients):
+    """Return all patients with variants in GPX4 gene"""
+
+    patient_list = []
+
+    for patient in json_patients:
+        gpx4 = False
+        if patient.get('genomicFeatures') is None:
+            continue
+        for g_feature in patient['genomicFeatures']:
+            if g_feature['gene']["id"] == 'GPX4':
+                gpx4 = True
+        if gpx4:
+            patient_list.append(patient)
+    return patient_list
+
+
+@pytest.fixture(scope='function')
+def json_patients(demo_data_path):
+    """ Returns a list of 3 MME patient from the 50 patients included
+        in the benchmarking patients file.
+    """
+    patients = {}
+    with open(demo_data_path) as json_data:
+        patients = json.load(json_data)
+    return patients
 
 
 @pytest.fixture(scope='function')

@@ -5,6 +5,7 @@ import pymongo
 from flask_mail import Message
 
 from patientMatcher.cli.commands import cli
+from patientMatcher.parse.patient import mme_patient
 from patientMatcher.utils.add import load_demo
 
 def test_appname(mock_app):
@@ -148,15 +149,14 @@ def test_cli_add_demo_data(mock_app, database):
     assert database['patients'].find().count() == 50
 
 
-def test_cli_remove_patient(mock_app, database, json_patients, match_objs):
+def test_cli_remove_patient(mock_app, database, gpx4_patients, match_objs):
 
     runner = mock_app.test_cli_runner()
 
     # add a test patient to database
-    test_patient = json_patients[0]
-    test_patient['_id'] = 'P0000079'
+    test_patient  = mme_patient(gpx4_patients[0], True) # True --> convert gene symbols to ensembl
     inserted_id = mock_app.db['patients'].insert_one(test_patient).inserted_id
-    assert inserted_id == 'P0000079'
+    assert inserted_id == gpx4_patients[0]['id']
 
     # there is now 1 patient in database
     assert database['patients'].find().count() == 1
@@ -171,7 +171,7 @@ def test_cli_remove_patient(mock_app, database, json_patients, match_objs):
     assert database['matches'].find( {'data.patient.id' : inserted_id }).count() == 2
 
     # involke cli command to remove the patient by id and label
-    result =  runner.invoke(cli, ['remove', 'patient', '-id', inserted_id, '-label', 'Patient number 1', '-leave_matches'])
+    result =  runner.invoke(cli, ['remove', 'patient', '-id', inserted_id, '-label', '350_1-test', '-leave_matches'])
     assert result.exit_code == 0
 
     # check that the patient was removed from database
@@ -181,7 +181,7 @@ def test_cli_remove_patient(mock_app, database, json_patients, match_objs):
     assert database['matches'].find( {'data.patient.id' : inserted_id }).count() == 2
 
     # Run remove patient command with option to remove matches but without patient ID
-    result =  runner.invoke(cli, ['remove', 'patient', '-label', 'Patient number 1', '-remove_matches'])
+    result =  runner.invoke(cli, ['remove', 'patient', '-label', '350_1-test', '-remove_matches'])
     # And make sure that it doesn't work
     assert 'Please provide patient ID and not label to remove all its matches.' in result.output
 

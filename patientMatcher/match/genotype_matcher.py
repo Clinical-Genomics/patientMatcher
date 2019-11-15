@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import logging
 
-from patientMatcher.utils.gene import ensembl_to_symbol
+from patientMatcher.utils.gene import ensembl_to_symbol, symbol_to_ensembl
 from patientMatcher.parse.patient import gtfeatures_to_genes, gtfeatures_to_variants
 LOG = logging.getLogger(__name__)
 
@@ -33,10 +33,20 @@ def match(database, gt_features, max_score):
 
         # Check if genes are described by ensembl ids:
         for feature in gt_features:
-            if 'gene' in feature and feature['gene']['id'].startswith('ENSG'):
-                gene_symbol = ensembl_to_symbol(feature['gene']['id'])
-                if gene_symbol:
-                    feature['gene']['id'] = gene_symbol
+            if 'gene' in feature and feature['gene'].get('id'):
+                gene = feature['gene']['id']
+                symbol = None
+                if isinstance(gene, int) or gene.startswith('ENSG') is False:
+                    if isinstance(gene, int): #Likely an entrez gene ID
+                        LOG.info('Converting entrez gene {} to symbol'.format(gene))
+                        symbol = entrez_to_symbol(gene)
+                    else: # It's a gene symbol
+                        symbol = gene
+                    if symbol:
+                        LOG.info('Converting gene symbol {} to Ensembl'.format(symbol))
+                        ensembl_id = symbol_to_ensembl(symbol)
+                        if ensembl_id:
+                            feature['gene']['id'] = ensembl_id
 
         genes = gtfeatures_to_genes(gt_features)
         if genes:
