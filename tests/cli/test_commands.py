@@ -6,7 +6,6 @@ from flask_mail import Message
 
 from patientMatcher.cli.commands import cli
 from patientMatcher.parse.patient import mme_patient
-from patientMatcher.utils.add import load_demo
 
 def test_appname(mock_app):
     runner = mock_app.test_cli_runner()

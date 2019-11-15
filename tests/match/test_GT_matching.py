@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from patientMatcher.utils.add import load_demo
 from patientMatcher.parse.patient import mme_patient
 from patientMatcher.match.genotype_matcher import match
 
-def test_genotype_matching(demo_data_path, database, gpx4_patients):
+def test_genotype_matching(database, gpx4_patients):
     """Testing the genotyping matching algorithm"""
 
     # load 2 test patients in mock database
