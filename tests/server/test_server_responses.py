@@ -380,7 +380,7 @@ def test_patient_matches(mock_app, database, match_objs, test_client):
     assert len(matches) == 2
 
 
-def test_match_gene_symbol_patient(mock_app, gpx4_patients, test_client, database):
+def test_match_hgnc_symbol_patient(mock_app, gpx4_patients, test_client, database):
     """Testing matching patient with gene symbl against patientMatcher database (internal matching)"""
 
     # add an authorized client to database
@@ -425,6 +425,7 @@ def test_match_gene_symbol_patient(mock_app, gpx4_patients, test_client, databas
             assert pat['patient']['contact'] # each result should have a contact person
             assert pat['score']['patient'] > 0
 
+
 def test_match_ensembl_patient(mock_app, test_client, gpx4_patients, database):
     """Test matching patient with ensembl gene against patientMatcher database (internal matching)"""
 
@@ -434,6 +435,50 @@ def test_match_ensembl_patient(mock_app, test_client, gpx4_patients, database):
 
     query_patient = {'patient' : mme_patient(gpx4_patients[0], True)}
     assert query_patient['patient']['genomicFeatures'][0]['gene']['id'].startswith('ENSG')
+
+    # load 2 test patient in mock database
+    assert len(gpx4_patients) == 2
+    inserted_ids = []
+    for pat in gpx4_patients:
+        # convert patient in mme patient type (convert also gene to ensembl)
+        mme_pat = mme_patient(pat, True)
+        inserted_ids.append(backend_add_patient(database,mme_pat))
+
+    assert len(inserted_ids) == 2
+
+    # make sure that there are no patient matches in the 'matches collection'
+    assert database['matches'].find().count()==0
+
+    # send a POST request to match patient with patients in database
+    response = mock_app.test_client().post('/match', data=json.dumps(query_patient), headers = auth_headers(ok_token))
+    assert response.status_code == 200 # POST request should be successful
+    data = json.loads(response.data)
+    # data should contain results and the max number of results is as defined in the config file
+    assert len(data['results']) == 2
+    assert type(data['results']) == list # which is a list
+    assert 'patient' in data['results'][0] # of patients
+    assert 'score' in data['results'][0] # with matching scores
+    assert 'contact' in data['results'][0]['patient'] # contact info should be available as well
+
+    # make sure that there are match object is created in db for this internal matching
+    match = database['matches'].find_one()
+    for res in match['results']:
+        for pat in res['patients']:
+            assert pat['patient']['contact'] # each result should have a contact person
+            assert pat['score']['patient'] > 0
+
+
+def test_match_entrez_patient(mock_app, test_client, gpx4_patients, database):
+    """Test matching patient with ensembl gene against patientMatcher database (internal matching)"""
+
+    # add an authorized client to database
+    ok_token = test_client['auth_token']
+    add_node(mongo_db=mock_app.db, obj=test_client, is_client=True)
+
+    query_patient = gpx4_patients[0]
+    query_patient = {'patient' : gpx4_patients[0]}
+    for feat in query_patient['patient']['genomicFeatures']:
+        feat['gene']['id'] == 2879 # entrez id for GPX4
 
     # load 2 test patient in mock database
     assert len(gpx4_patients) == 2
