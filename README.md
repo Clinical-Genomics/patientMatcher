@@ -304,7 +304,7 @@ The relative weight of the GTscore and the PhenoScore can be customised by the d
 
 <a name="geno_matching"></a>
 ### Genotyping matching algorithm
-GTscore is computed by evaluating the list of genomic features of the queried patient and the patients available on the MME server. **PatientMatcher patients are saved with gene ids described by Ensembl gene ids**, but it's possible to search the database using patients with genes represented as HGNC symbols, Entrez ids and Ensembl ids.
+GTscore is computed by evaluating the list of genomic features of the queried patient and the patients available on the MME server. **PatientMatcher patients are saved with gene ids described by Ensembl gene ids**, but it's possible to search the database using patients with genes represented by HGNC symbols, Entrez ids and Ensembl ids.
 
 If the queried patient has no genomic features (only phenotype features) then GTscore of all the returned matches will be 0.
 
