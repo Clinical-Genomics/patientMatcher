@@ -121,8 +121,10 @@ pmatcher
 For testing purposes you can upload a list of [50 benchmarking patients](https://github.com/ga4gh/mme-apis/tree/master/testing).&nbsp;
 To add these patients to the database run the following command:
 ```bash
-pmatcher add demodata
+pmatcher add demodata --ensembl_genes
 ```
+Please note that the list of benchmarking patients all gene ids are represented as HGNC gene symbols.
+The command above, with the `--ensembl_genes` option, will convert gene symbols to Ensembl ids, in accordance to the Ga4GH API: https://github.com/ga4gh/mme-apis/blob/master/search-api.md.
 &nbsp;&nbsp;
 
 <a name="cli_remove_patient"></a>
@@ -302,7 +304,7 @@ The relative weight of the GTscore and the PhenoScore can be customised by the d
 
 <a name="geno_matching"></a>
 ### Genotyping matching algorithm
-GTscore is computed by evaluating the list of genomic features of the queried patient and the patients available on the MME server.
+GTscore is computed by evaluating the list of genomic features of the queried patient and the patients available on the MME server. **PatientMatcher patients are saved with gene ids described by Ensembl gene ids**, but it's possible to search the database using patients with genes represented by HGNC symbols, Entrez ids and Ensembl ids.
 
 If the queried patient has no genomic features (only phenotype features) then GTscore of all the returned matches will be 0.
 

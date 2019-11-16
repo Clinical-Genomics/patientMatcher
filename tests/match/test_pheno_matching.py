@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from patientMatcher.utils.add import load_demo
 from patientMatcher.match.phenotype_matcher import match, similarity_wrapper
 from patientMatcher.parse.patient import mme_patient
 from patientMatcher.resources import path_to_hpo_terms, path_to_phenotype_annotations
@@ -11,7 +10,6 @@ PHENOTYPE_ROOT = 'HP:0000118'
 
 def test_patient_similarity_wrapper():
     """test the wrapper around this repo: https://github.com/buske/patient-similarity"""
-
 
     # Create the information-content functionality for the HPO
     hpo = HPO(path_to_hpo_terms, new_root=PHENOTYPE_ROOT)
@@ -44,17 +42,18 @@ def test_patient_similarity_wrapper():
     assert round(unrelated_pheno_score,2) == 0
 
     # but still a positive number
-    assert unrelated_pheno_score
+    assert unrelated_pheno_score >0
 
 
-def test_phenotype_matching(json_patients, database, demo_data_path):
+def test_phenotype_matching(gpx4_patients, database):
     """test the algorithm that compares the phenotype of a query patient against the database"""
 
-    # insert demo patients into test database
-    inserted_ids = load_demo(demo_data_path, database)
-    assert len(inserted_ids) == 50 # 50 test cases should be loaded
+    # insert 2 test patients into test database
+    for patient in gpx4_patients:
+        database['patients'].insert_one(patient)
+    database['patients'].find().count() == 2
 
-    query_patient = json_patients[0]
+    query_patient = gpx4_patients[0]
     assert query_patient
 
     # this patient has HPO terms and OMIM diagnosis
@@ -63,7 +62,7 @@ def test_phenotype_matching(json_patients, database, demo_data_path):
     assert len(formatted_patient['disorders']) > 0
 
     matches_HPO_OMIM = match(database, 0.75, formatted_patient['features'],  formatted_patient['disorders'])
-    assert len(matches_HPO_OMIM.keys()) == 50
+    assert len(matches_HPO_OMIM.keys()) == 2
     for key,value in matches_HPO_OMIM.items():
         assert 'patient_obj' in value
         assert value['pheno_score'] > 0
@@ -88,7 +87,7 @@ def test_phenotype_matching(json_patients, database, demo_data_path):
     # Add again features. The algorithm works again because HPO terms will be used
     formatted_patient['features'] = features
     matches_HPO = match(database, 0.75, formatted_patient['features'],  formatted_patient['disorders'])
-    assert len(matches_HPO.keys()) == 50
+    assert len(matches_HPO.keys()) == 2
     for key,value in matches_HPO.items():
         assert 'patient_obj' in value
         assert value['pheno_score'] > 0

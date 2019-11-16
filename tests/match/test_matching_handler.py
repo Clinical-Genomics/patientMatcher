@@ -1,53 +1,55 @@
 # -*- coding: utf-8 -*-
 import requests
-from patientMatcher.utils.add import load_demo, backend_add_patient
+from patientMatcher.utils.add import backend_add_patient
 from patientMatcher.parse.patient import mme_patient
 from patientMatcher.match.handler import internal_matcher, save_async_response, external_matcher
 
-def test_internal_matching(demo_data_path, database, json_patients):
+def test_internal_matching(database, gpx4_patients):
     """Testing the combined matching algorithm"""
 
-    # load demo data to mock database using function located under utils/load
-    inserted_ids = load_demo(demo_data_path, database)
-    assert len(inserted_ids) == 50 # 50 test cases are loaded
+    # load 2 test patients in mock database
+    for patient in gpx4_patients:
+        mme_pat =  mme_patient(patient, True) # convert gene symbol to ensembl
+        database['patients'].insert_one(mme_pat).inserted_id
 
-    # format test patient for query:
-    test_mme_patients = [ mme_patient(patient) for patient in json_patients ]
+    # 2 patients should be inserted
+    assert database['patients'].find({'genomicFeatures.gene.id': 'ENSG00000167468'}).count() == 2
 
-    a_patient = test_mme_patients[0]
-    assert a_patient
+    # test matching of one of the 2 patients against both patients in database
+    proband_patient = mme_patient(gpx4_patients[0], True)
 
-    match_obj = internal_matcher(database, a_patient, 0.5, 0.5)
-    matches = match_obj['results'][0]['patients']
-    assert len(matches) == 5 # default number of MAX_RESULTS
+    match = internal_matcher(database, proband_patient, 0.5, 0.5)
+    match_patients = match['results'][0]['patients']
+    assert len(match_patients) == 2
 
-    higest_scored_patient = matches[0]
-    lowest_scored_patient = matches[-1]
+    higest_scored_patient = match_patients[0] # first returned patient has higher score
+    lowest_scored_patient = match_patients[-1] # last returned patient has lower score
 
     assert higest_scored_patient['score']['patient'] > lowest_scored_patient['score']['patient']
 
 
-def test_internal_matching_with_threshold(demo_data_path, database, json_patients):
-    # load demo data to mock database using function located under utils/load
-    inserted_ids = load_demo(demo_data_path, database)
-    assert len(inserted_ids) == 50 # 50 test cases are loaded
+def test_internal_matching_with_threshold(database, gpx4_patients):
+    # load 2 test patients in mock database
+    for patient in gpx4_patients:
+        mme_pat =  mme_patient(patient, True) # convert gene symbol to ensembl
+        database['patients'].insert_one(mme_pat).inserted_id
 
-    # format test patient for query:
-    test_mme_patients = [ mme_patient(patient) for patient in json_patients ]
+    # 2 patients should be inserted
+    assert database['patients'].find({'genomicFeatures.gene.id': 'ENSG00000167468'}).count() == 2
 
-    a_patient = test_mme_patients[0]
-    assert a_patient
+    # test matching of one of the 2 patients against both patients in database
+    proband_patient = mme_patient(gpx4_patients[0], True)
 
-    match_obj = internal_matcher( database=database, patient_obj=a_patient, max_pheno_score=0.5, max_geno_score=0.5,
-        max_results=5, score_threshold=0.1)
-    matches = match_obj['results'][0]['patients']
-    assert len(matches) == 1
+    match = internal_matcher( database=database, patient_obj=proband_patient, max_pheno_score=0.5, max_geno_score=0.5,
+        max_results=5, score_threshold=0.5)
+    match_patients = match['results'][0]['patients']
+    assert len(match_patients) == 1 # one patient is filtered out by search threshold
 
 
-def test_external_matching(database, test_node, json_patients, monkeypatch):
+def test_external_matching(database, test_node, gpx4_patients, monkeypatch):
     """Testing the function that trigger patient matching across connected nodes"""
 
-    patient = json_patients[0]
+    patient = gpx4_patients[0]
 
     # insert test node object in database
     database['nodes'].insert_one(test_node)
@@ -62,7 +64,7 @@ def test_external_matching(database, test_node, json_patients, monkeypatch):
         def json(self):
             resp = {
                 "disclaimer" : "This is a test disclaimer",
-                "results" : json_patients
+                "results" : gpx4_patients
             }
             return resp
 

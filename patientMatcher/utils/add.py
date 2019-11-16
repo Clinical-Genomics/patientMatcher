@@ -11,7 +11,7 @@ from patientMatcher.match.handler import external_matcher
 
 LOG = logging.getLogger(__name__)
 
-def load_demo(path_to_json_data, mongo_db):
+def load_demo(path_to_json_data, mongo_db, convert_to_ensembl=False):
     """Inserts demo patient data into database
         Demo data consists of a set of 50 patients from this paper: http://onlinelibrary.wiley.com/doi/10.1002/humu.22850
 
@@ -35,7 +35,7 @@ def load_demo(path_to_json_data, mongo_db):
             for json_patient in patients:
 
                 #parse patient into format accepted by database
-                patient = mme_patient(json_patient)
+                patient = mme_patient(json_patient, convert_to_ensembl)
 
                 inserted_id = backend_add_patient(mongo_db=mongo_db, patient=patient)[1]
                 if inserted_id:

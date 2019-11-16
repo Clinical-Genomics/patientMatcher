@@ -2,8 +2,9 @@
 import requests
 import json
 import pymongo
+import pytest
 from werkzeug.datastructures import Headers
-from patientMatcher.utils.add import add_node, load_demo
+from patientMatcher.utils.add import add_node, load_demo, backend_add_patient
 from patientMatcher.auth.auth import authorize
 from patientMatcher.server.controllers import validate_response
 from patientMatcher.parse.patient import mme_patient
@@ -111,7 +112,6 @@ def test_match_async_request(mock_app, database, async_response_obj, json_patien
     # server should return status 422 (Patient data does not conform to API)
     assert response.status_code == 422
 
-
 def test_heartbeat(mock_app, database, test_client):
     """Test sending a GET request to see if app has a heartbeat"""
 
@@ -135,11 +135,12 @@ def test_heartbeat(mock_app, database, test_client):
     assert isinstance(data['heartbeat']['accept'], list)
     assert len(data['heartbeat']['accept']) > 0
 
-
-def test_add_patient(mock_app, database, json_patients, test_client, test_node):
+def test_add_patient(mock_app, database, gpx4_patients, test_client, test_node):
     """Test sending a POST request to server to add a patient"""
 
-    patient_data = json_patients[0]
+    assert len(gpx4_patients) == 2 # patients with variants in this gene
+
+    patient_data = gpx4_patients[1]
     # try to add a patient without being authorized
     response = mock_app.test_client().post('patient/add', data=json.dumps(patient_data), headers=unauth_headers())
     assert response.status_code == 401
@@ -172,19 +173,26 @@ def test_add_patient(mock_app, database, json_patients, test_client, test_node):
     assert response.status_code == 200
 
     # make sure that the POST request to add the patient triggers the matching request to an external node
-    assert database['matches'].find().count()==1
+    assert database['matches'].find_one()
+
 
     # There should be one patient in database now
     assert database['patients'].find().count() == 1
-    # the patient in database has label "Patient number 2"
-    assert database['patients'].find({'label' : 'Patient number 1'}).count() == 1
+
+    # the patient in database has label "Patient number 1"
+    result =  database['patients'].find_one({'label' : '350_2-test'})
+    # make sure patient's gene was converted to ensembl
+    assert result['genomicFeatures'][0]['gene']['id'].startswith('ENSG')
+    # and that non-standard but informative _geneName field was added to genomic feature
+    assert result['genomicFeatures'][0]['gene']['_geneName'] == 'GPX4'
+
 
     # Add same patient again and see that label is unchanged and there is still one patient in database:
     patient_obj = {'patient' : patient_data} # this is a valid patient object
     response = mock_app.test_client().post('patient/add', data=json.dumps(patient_obj), headers = auth_headers(ok_token))
     assert response.status_code == 200
     assert database['patients'].find().count() == 1
-    assert database['patients'].find({'label' : 'Patient number 1'}).count() == 1
+    assert database['patients'].find({'label' : '350_2-test'}).count() == 1
 
     # modify patient label and check the update command (add a patient with the same id) works
     patient_data['label'] = 'modified patient label'
@@ -196,7 +204,7 @@ def test_add_patient(mock_app, database, json_patients, test_client, test_node):
     assert database['patients'].find().count() == 1
 
     # But its label is changed
-    assert database['patients'].find({'label' : 'Patient number 1'}).count() == 0
+    assert database['patients'].find({'label' : '350_2-test'}).count() == 0
     assert database['patients'].find({'label' : 'modified patient label'}).count() == 1
 
     # make sure that the POST request to add modify patient triggers the matching request to an external node again
@@ -277,16 +285,21 @@ def test_nodes_view(mock_app, database, test_node, test_client):
     assert data[0]['id'] == test_node['_id']
 
 
-def test_delete_patient(mock_app, database, demo_data_path, test_client, match_objs):
+def test_delete_patient(mock_app, database, gpx4_patients, test_client, match_objs):
     """Test deleting a patient from database by sending a DELETE request"""
 
-    # load demo data to mock database using function located under utils/load
-    inserted_ids = load_demo(demo_data_path, database)
-    assert len(inserted_ids) == 50 # 50 test cases should be loaded
+    # load 2 patients from demo data in mock database
+    assert len(gpx4_patients) == 2
+    inserted_ids = []
+    for pat in gpx4_patients:
+        # convert patient in mme patient type (convert also gene to ensembl)
+        mme_pat = mme_patient(pat, True)
+        inserted_ids.append(backend_add_patient(database,mme_pat))
+
+    assert len(inserted_ids) == 2
 
     # 50 cases present on patients collection
-    assert database['patients'].find().count() == 50
-    delete_id = 'P0000079'
+    delete_id = 'P0001058'
 
     # try to delete patient without auth token:
     response = mock_app.test_client().delete(''.join(['patient/delete/', delete_id]))
@@ -315,7 +328,7 @@ def test_delete_patient(mock_app, database, demo_data_path, test_client, match_o
     assert response.status_code == 200
 
     # make sure that the patient was removed from database
-    assert database['patients'].find().count() == 49
+    assert database['patients'].find().count() == 1
 
     # make sure that patient matches are also gone
     assert database['matches'].find().count() == 1
@@ -336,7 +349,7 @@ def test_patient_matches(mock_app, database, match_objs, test_client):
 
     # test endpoint to get matches by ID
     # test by sending a non-authorized request
-    response = mock_app.test_client().get('matches/P0000079')
+    response = mock_app.test_client().get('matches/P0001058')
     # response gives a 401 code (not authorized)
     assert response.status_code == 401
 
@@ -349,7 +362,7 @@ def test_patient_matches(mock_app, database, match_objs, test_client):
     assert data['message'] == 'Could not find any matches in database for patient ID unknown_patient'
 
     # Try with authenticates request and valid patient
-    response = mock_app.test_client().get('matches/P0000079', headers = auth_headers(ok_token))
+    response = mock_app.test_client().get('matches/P0001058', headers = auth_headers(ok_token))
     # response gives success
     assert response.status_code == 200
     data = json.loads(response.data)
@@ -357,7 +370,7 @@ def test_patient_matches(mock_app, database, match_objs, test_client):
     assert len(data['matches']) == 2 # 2 matches returned because endpoint returns only matches with results
 
     # Test that there are actually 3 matches by calling directly the function returning matches
-    matches = patient_matches(database=database, patient_id='P0000079', type=None, with_results=False)
+    matches = patient_matches(database=database, patient_id='P0001058', type=None, with_results=False)
     assert len(matches) == 3
     for match in matches:
         for result in match['results']:
@@ -365,25 +378,33 @@ def test_patient_matches(mock_app, database, match_objs, test_client):
                 assert patient['patient']['id']
 
     # Call the same function to get only external matches
-    matches = patient_matches(database=database, patient_id='P0000079', type='external', with_results=False)
+    matches = patient_matches(database=database, patient_id='P0001058', type='external', with_results=False)
     assert len(matches) == 1
 
     # Call the same function to get only external matches
-    matches = patient_matches(database=database, patient_id='P0000079', type='internal', with_results=False)
+    matches = patient_matches(database=database, patient_id='P0001058', type='internal', with_results=False)
     assert len(matches) == 2
 
 
-def test_match(mock_app, json_patients, test_client, demo_data_path, database):
-    """Testing patient matching against patientMatcher database (internal match)"""
+def test_match_hgnc_symbol_patient(mock_app, gpx4_patients, test_client, database):
+    """Testing matching patient with gene symbl against patientMatcher database (internal matching)"""
 
     # add an authorized client to database
     ok_token = test_client['auth_token']
     add_node(mongo_db=mock_app.db, obj=test_client, is_client=True)
 
-    query_patient = {'patient' : json_patients[0]}
+    query_patient = {'patient' : gpx4_patients[0]}
+    assert query_patient['patient']['genomicFeatures'][0]['gene']['id'] == 'GPX4'
 
-    # load demo data in mock database
-    inserted_ids = load_demo(demo_data_path, database)
+    # load 2 test patient in mock database
+    assert len(gpx4_patients) == 2
+    inserted_ids = []
+    for pat in gpx4_patients:
+        # convert patient in mme patient type (convert also gene to ensembl)
+        mme_pat = mme_patient(pat, True)
+        inserted_ids.append(backend_add_patient(database,mme_pat))
+
+    assert len(inserted_ids) == 2
 
     # test the API response validator with non valid patient data:
     malformed_match_results = {'results': 'fakey_results'}
@@ -397,14 +418,104 @@ def test_match(mock_app, json_patients, test_client, demo_data_path, database):
     assert response.status_code == 200 # POST request should be successful
     data = json.loads(response.data)
     # data should contain results and the max number of results is as defined in the config file
-    assert len(data['results']) == mock_app.config['MAX_RESULTS']
-
+    assert len(data['results']) == 2
     assert type(data['results']) == list # which is a list
     assert 'patient' in data['results'][0] # of patients
     assert 'score' in data['results'][0] # with matching scores
+    assert 'contact' in data['results'][0]['patient'] # contact info should be available as well
 
     # make sure that there are match object is created in db for this internal matching
-    assert database['matches'].find().count()==1
+    match = database['matches'].find_one()
+    for res in match['results']:
+        for pat in res['patients']:
+            assert pat['patient']['contact'] # each result should have a contact person
+            assert pat['score']['patient'] > 0
+
+
+def test_match_ensembl_patient(mock_app, test_client, gpx4_patients, database):
+    """Test matching patient with ensembl gene against patientMatcher database (internal matching)"""
+
+    # add an authorized client to database
+    ok_token = test_client['auth_token']
+    add_node(mongo_db=mock_app.db, obj=test_client, is_client=True)
+
+    query_patient = {'patient' : mme_patient(gpx4_patients[0], True)}
+    assert query_patient['patient']['genomicFeatures'][0]['gene']['id'].startswith('ENSG')
+
+    # load 2 test patient in mock database
+    assert len(gpx4_patients) == 2
+    inserted_ids = []
+    for pat in gpx4_patients:
+        # convert patient in mme patient type (convert also gene to ensembl)
+        mme_pat = mme_patient(pat, True)
+        inserted_ids.append(backend_add_patient(database,mme_pat))
+
+    assert len(inserted_ids) == 2
+
+    # make sure that there are no patient matches in the 'matches collection'
+    assert database['matches'].find().count()==0
+
+    # send a POST request to match patient with patients in database
+    response = mock_app.test_client().post('/match', data=json.dumps(query_patient), headers = auth_headers(ok_token))
+    assert response.status_code == 200 # POST request should be successful
+    data = json.loads(response.data)
+    # data should contain results and the max number of results is as defined in the config file
+    assert len(data['results']) == 2
+    assert type(data['results']) == list # which is a list
+    assert 'patient' in data['results'][0] # of patients
+    assert 'score' in data['results'][0] # with matching scores
+    assert 'contact' in data['results'][0]['patient'] # contact info should be available as well
+
+    # make sure that there are match object is created in db for this internal matching
+    match = database['matches'].find_one()
+    for res in match['results']:
+        for pat in res['patients']:
+            assert pat['patient']['contact'] # each result should have a contact person
+            assert pat['score']['patient'] > 0
+
+
+def test_match_entrez_patient(mock_app, test_client, gpx4_patients, database):
+    """Test matching patient with ensembl gene against patientMatcher database (internal matching)"""
+
+    # add an authorized client to database
+    ok_token = test_client['auth_token']
+    add_node(mongo_db=mock_app.db, obj=test_client, is_client=True)
+
+    query_patient = gpx4_patients[0]
+    query_patient = {'patient' : gpx4_patients[0]}
+    for feat in query_patient['patient']['genomicFeatures']:
+        feat['gene']['id'] == "2879" # entrez id for GPX4
+
+    # load 2 test patient in mock database
+    assert len(gpx4_patients) == 2
+    inserted_ids = []
+    for pat in gpx4_patients:
+        # convert patient in mme patient type (convert also gene to ensembl)
+        mme_pat = mme_patient(pat, True)
+        inserted_ids.append(backend_add_patient(database,mme_pat))
+
+    assert len(inserted_ids) == 2
+
+    # make sure that there are no patient matches in the 'matches collection'
+    assert database['matches'].find().count()==0
+
+    # send a POST request to match patient with patients in database
+    response = mock_app.test_client().post('/match', data=json.dumps(query_patient), headers = auth_headers(ok_token))
+    assert response.status_code == 200 # POST request should be successful
+    data = json.loads(response.data)
+    # data should contain results and the max number of results is as defined in the config file
+    assert len(data['results']) == 2
+    assert type(data['results']) == list # which is a list
+    assert 'patient' in data['results'][0] # of patients
+    assert 'score' in data['results'][0] # with matching scores
+    assert 'contact' in data['results'][0]['patient'] # contact info should be available as well
+
+    # make sure that there are match object is created in db for this internal matching
+    match = database['matches'].find_one()
+    for res in match['results']:
+        for pat in res['patients']:
+            assert pat['patient']['contact'] # each result should have a contact person
+            assert pat['score']['patient'] > 0
 
 
 def test_match_external(mock_app, test_client, test_node, database, json_patients):
