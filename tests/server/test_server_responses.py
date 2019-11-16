@@ -140,7 +140,7 @@ def test_add_patient(mock_app, database, gpx4_patients, test_client, test_node):
 
     assert len(gpx4_patients) == 2 # patients with variants in this gene
 
-    patient_data = gpx4_patients[0]
+    patient_data = gpx4_patients[1]
     # try to add a patient without being authorized
     response = mock_app.test_client().post('patient/add', data=json.dumps(patient_data), headers=unauth_headers())
     assert response.status_code == 401
@@ -179,14 +179,14 @@ def test_add_patient(mock_app, database, gpx4_patients, test_client, test_node):
     assert database['patients'].find().count() == 1
 
     # the patient in database has label "Patient number 1"
-    assert database['patients'].find({'label' : '350_1-test'}).count() == 1
+    assert database['patients'].find({'label' : '350_2-test'}).count() == 1
 
     # Add same patient again and see that label is unchanged and there is still one patient in database:
     patient_obj = {'patient' : patient_data} # this is a valid patient object
     response = mock_app.test_client().post('patient/add', data=json.dumps(patient_obj), headers = auth_headers(ok_token))
     assert response.status_code == 200
     assert database['patients'].find().count() == 1
-    assert database['patients'].find({'label' : '350_1-test'}).count() == 1
+    assert database['patients'].find({'label' : '350_2-test'}).count() == 1
 
     # modify patient label and check the update command (add a patient with the same id) works
     patient_data['label'] = 'modified patient label'
@@ -198,7 +198,7 @@ def test_add_patient(mock_app, database, gpx4_patients, test_client, test_node):
     assert database['patients'].find().count() == 1
 
     # But its label is changed
-    assert database['patients'].find({'label' : '350_1-test'}).count() == 0
+    assert database['patients'].find({'label' : '350_2-test'}).count() == 0
     assert database['patients'].find({'label' : 'modified patient label'}).count() == 1
 
     # make sure that the POST request to add modify patient triggers the matching request to an external node again
