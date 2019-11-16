@@ -31,23 +31,6 @@ def match(database, gt_features, max_score):
         query = {}
         query_fields = []
 
-        # Check if genes are described by ensembl ids:
-        for feature in gt_features:
-            if 'gene' in feature and feature['gene'].get('id'):
-                gene = feature['gene']['id']
-                symbol = None
-                if gene.isdigit() or gene.startswith('ENSG') is False:
-                    if gene.isdigit(): #Likely an entrez gene ID
-                        LOG.info('Converting entrez gene {} to symbol'.format(gene))
-                        symbol = entrez_to_symbol(gene)
-                    else: # It's a gene symbol
-                        symbol = gene
-                    if symbol:
-                        LOG.info('Converting gene symbol {} to Ensembl'.format(symbol))
-                        ensembl_id = symbol_to_ensembl(symbol)
-                        if ensembl_id:
-                            feature['gene']['id'] = ensembl_id
-
         genes = gtfeatures_to_genes(gt_features)
         if genes:
             query_fields.append({'genomicFeatures.gene.id' : {"$in" : genes}})
