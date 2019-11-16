@@ -108,8 +108,8 @@ def format_genes(patient_obj):
         if 'gene' in feature and feature['gene'].get('id'):
             gene = feature['gene']['id']
             symbol = None
-            if isinstance(gene, int) or gene.startswith('ENSG') is False:
-                if isinstance(gene, int): #Likely an entrez gene ID
+            if gene.isdigit() or gene.startswith('ENSG') is False:
+                if gene.isdigit(): #Likely an entrez gene ID
                     LOG.info('Converting entrez gene {} to symbol'.format(gene))
                     symbol = entrez_to_symbol(gene)
                 else: # It's a gene symbol

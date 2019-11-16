@@ -27,7 +27,7 @@ def test_mme_patient_entrez_gene(entrez_gene_patient, database):
     #Test format a patient with entrez gene
 
     # Before conversion patient's gene id is an entrez gene ID
-    assert entrez_gene_patient['genomicFeatures'][0]['gene']['id'] == 3735
+    assert entrez_gene_patient['genomicFeatures'][0]['gene']['id'] == "3735"
     mme_formatted_patient = mme_patient(entrez_gene_patient, True) # convert genes to Ensembl
     # After conversion formatted patient's gene id should be an Ensembl id
     assert mme_formatted_patient['genomicFeatures'][0]['gene']['id'].startswith('ENSG')

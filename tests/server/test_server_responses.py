@@ -478,7 +478,7 @@ def test_match_entrez_patient(mock_app, test_client, gpx4_patients, database):
     query_patient = gpx4_patients[0]
     query_patient = {'patient' : gpx4_patients[0]}
     for feat in query_patient['patient']['genomicFeatures']:
-        feat['gene']['id'] == 2879 # entrez id for GPX4
+        feat['gene']['id'] == "2879" # entrez id for GPX4
 
     # load 2 test patient in mock database
     assert len(gpx4_patients) == 2

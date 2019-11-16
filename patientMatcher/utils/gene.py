@@ -7,13 +7,13 @@ def entrez_to_symbol(entrez_id):
     """Convert entrez id to gene symbol
 
     Accepts:
-        entrez_id(int) ex. 673
+        entrez_id(str) ex. "3735"
 
     Returns
         gene_symbol(str) ex. BRAF
     """
     client = ensembl_client.EnsemblRestApiClient()
-    url = ''.join([client.server, '/xrefs/name/human/', str(entrez_id), '?external_db=EntrezGene'])
+    url = ''.join([client.server, '/xrefs/name/human/', entrez_id, '?external_db=EntrezGene'])
     results = client.send_request(url)
     for gene in results: # result is an array. First element is enough
         return gene['display_id']

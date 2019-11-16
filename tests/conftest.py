@@ -104,7 +104,7 @@ def entrez_gene_patient():
         "genomicFeatures": [
           {
             "gene": {
-              "id": 3735
+              "id": "3735"
             },
             "type": {
               "id": "SO:0001583",
