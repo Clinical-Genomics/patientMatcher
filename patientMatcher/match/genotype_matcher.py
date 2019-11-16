@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 import logging
 
-from patientMatcher.utils.gene import ensembl_to_symbol, symbol_to_ensembl
 from patientMatcher.parse.patient import gtfeatures_to_genes, gtfeatures_to_variants
 LOG = logging.getLogger(__name__)
 

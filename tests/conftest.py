@@ -230,9 +230,7 @@ def gpx4_patients(json_patients):
 
 @pytest.fixture(scope='function')
 def json_patients(demo_data_path):
-    """ Returns a list of 3 MME patient from the 50 patients included
-        in the benchmarking patients file.
-    """
+    """ Returns a list of 50 MME test patients from demo data"""
     patients = {}
     with open(demo_data_path) as json_data:
         patients = json.load(json_data)

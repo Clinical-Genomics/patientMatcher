@@ -2,7 +2,7 @@
 
 import json
 from jsonschema import validate, RefResolver, FormatChecker
-from patientMatcher.utils.gene import symbol_to_ensembl, entrez_to_symbol, symbol_to_ensembl
+from patientMatcher.utils.gene import symbol_to_ensembl, entrez_to_symbol
 from pkgutil import get_data
 import logging
 
@@ -22,7 +22,7 @@ def mme_patient(json_patient, convert_to_ensembl=False):
             mme_patient(dict) : a mme patient entity
     """
 
-    # Make sure gene objects are defined as ensembl IDs
+    # Make sure gene objects are defined by ensembl IDs
     if json_patient.get('genomicFeatures') and convert_to_ensembl:
         format_genes(json_patient)
 
