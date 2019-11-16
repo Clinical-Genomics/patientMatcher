@@ -173,13 +173,19 @@ def test_add_patient(mock_app, database, gpx4_patients, test_client, test_node):
     assert response.status_code == 200
 
     # make sure that the POST request to add the patient triggers the matching request to an external node
-    assert database['matches'].find().count()==1
+    assert database['matches'].find_one()
+
 
     # There should be one patient in database now
     assert database['patients'].find().count() == 1
 
     # the patient in database has label "Patient number 1"
-    assert database['patients'].find({'label' : '350_2-test'}).count() == 1
+    result =  database['patients'].find_one({'label' : '350_2-test'})
+    # make sure patient's gene was converted to ensembl
+    assert result['genomicFeatures'][0]['gene']['id'].startswith('ENSG')
+    # and that non-standard but informative _geneName field was added to genomic feature
+    assert result['genomicFeatures'][0]['gene']['_geneName'] == 'GPX4'
+
 
     # Add same patient again and see that label is unchanged and there is still one patient in database:
     patient_obj = {'patient' : patient_data} # this is a valid patient object
