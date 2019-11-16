@@ -466,12 +466,14 @@ def test_match_ensembl_patient(mock_app, test_client, gpx4_patients, database):
     assert 'score' in data['results'][0] # with matching scores
     assert 'contact' in data['results'][0]['patient'] # contact info should be available as well
 
-    # make sure that there are match object is created in db for this internal matching
+    # make sure that a match object is created in db for this internal matching
     match = database['matches'].find_one()
     for res in match['results']:
         for pat in res['patients']:
             assert pat['patient']['contact'] # each result should have a contact person
             assert pat['score']['patient'] > 0
+    # and query patient should have hgnc gene symbol saved as non-standard _geneName field
+    assert match['data']['patient']['genomicFeatures'][0]['gene']['_geneName'] == 'GPX4'
 
 
 def test_match_entrez_patient(mock_app, test_client, gpx4_patients, database):
@@ -510,12 +512,14 @@ def test_match_entrez_patient(mock_app, test_client, gpx4_patients, database):
     assert 'score' in data['results'][0] # with matching scores
     assert 'contact' in data['results'][0]['patient'] # contact info should be available as well
 
-    # make sure that there are match object is created in db for this internal matching
+    # make sure that a match object is created in db for this internal matching
     match = database['matches'].find_one()
     for res in match['results']:
         for pat in res['patients']:
             assert pat['patient']['contact'] # each result should have a contact person
             assert pat['score']['patient'] > 0
+    # and query patient should have hgnc gene symbol saved as non-standard _geneName field
+    assert match['data']['patient']['genomicFeatures'][0]['gene']['_geneName'] == 'GPX4'
 
 
 def test_match_external(mock_app, test_client, test_node, database, json_patients):

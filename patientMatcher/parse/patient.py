@@ -2,7 +2,7 @@
 
 import json
 from jsonschema import validate, RefResolver, FormatChecker
-from patientMatcher.utils.gene import symbol_to_ensembl, entrez_to_symbol
+from patientMatcher.utils.gene import symbol_to_ensembl, entrez_to_symbol, ensembl_to_symbol
 from pkgutil import get_data
 import logging
 
@@ -105,9 +105,9 @@ def format_genes(patient_obj):
     """
     formatted_features = []
     for feature in patient_obj.get('genomicFeatures', []):
+        symbol = None
         if 'gene' in feature and feature['gene'].get('id'):
             gene = feature['gene']['id']
-            symbol = None
             if gene.isdigit() or gene.startswith('ENSG') is False:
                 if gene.isdigit(): #Likely an entrez gene ID
                     LOG.info('Converting entrez gene {} to symbol'.format(gene))
@@ -117,9 +117,14 @@ def format_genes(patient_obj):
                 if symbol:
                     LOG.info('Converting gene symbol {} to Ensembl'.format(symbol))
                     ensembl_id = symbol_to_ensembl(symbol)
-                    feature['gene']['_geneName'] = symbol # add non-standard but informative field
                     if ensembl_id:
                         feature['gene']['id'] = ensembl_id
+            else: # gene id is Ensembl id
+                symbol = ensembl_to_symbol(gene)
+
+            if symbol:
+                feature['gene']['_geneName'] = symbol # add non-standard but informative field
+
         formatted_features.append(feature)
 
     if formatted_features:
