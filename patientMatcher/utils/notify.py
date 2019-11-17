@@ -173,7 +173,7 @@ def html_format(obj, indent=0, notify_complete=False):
     if isinstance(obj, dict): # patient object
         htmls = []
         for k,v in obj.items():
-            if notify_complete or k in ['node', 'patients', 'patient', 'contact', 'id', 'name', 'href', 'institution']:
+            if notify_complete or k in ['node', 'patients', 'patient', 'contact', 'id', 'name', 'href', 'email', 'institution']:
                 htmls.append("<span style='font-style: italic; color: #888'>%s</span>: %s" % (k,html_format(obj=v,indent=indent+1,
                     notify_complete=notify_complete)))
 
