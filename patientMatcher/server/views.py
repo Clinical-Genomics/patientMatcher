@@ -264,8 +264,13 @@ def match_internal():
     match_obj = internal_matcher(current_app.db, query_patient, max_pheno_score, max_geno_score,
         max_results, score_threshold)
     # save matching object to database
-    current_app.db['matches'].insert_one(match_obj)
-    matches = match_obj['results'][0]['patients'] #results[0] because there is just one node (internal match)
+    if match_obj and (match_obj.get('has_matches') or match_obj.get('errors')):
+        current_app.db['matches'].insert_one(match_obj)
+    matches=[]
+    try:
+        matches = match_obj['results'][0]['patients'] #results[0] because there is just one node (internal match)
+    except Exception as ex:
+        LOG.info('An error has occurred while executing an internal patient match:{}'.format(ex))
 
     # if notifications are on and there are matching results
     if current_app.config.get('MAIL_SERVER') and len(matches):
