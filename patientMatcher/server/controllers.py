@@ -55,8 +55,8 @@ def match_external(database, query_patient, node=None):
     """Trigger an external patient matching for a given patient object"""
     # trigger the matching and save the matching id to variable
     matching_obj = external_matcher(database, query_patient, node)
-    # save matching object to database
-    if matching_obj:
+    # save matching object to database only if there are results or error messages
+    if matching_obj and (matching_obj.get('has_matches') or matching_obj.get('errors')):
         database['matches'].insert_one(matching_obj)
     return matching_obj
 
