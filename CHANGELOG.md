@@ -1,3 +1,12 @@
+## [2.0] - 2019-11-17
+
+### Modified
+- Ensembl gene IDs to describe gene IDs
+- Allow matching when external patients have entrez gene IDs or HGNC symbols
+- Display contact email in notification emails
+- Save to database only matches with results or error messages
+
+
 ## [1.4] - 2019-11-06
 
 ### Modified
