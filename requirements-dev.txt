@@ -4,6 +4,7 @@ pytest==4.4.1
 mongomock<=3.12
 pytest-cov==2.6.1
 python-coveralls
+coveralls
 
 # server-related stuff
 requests
