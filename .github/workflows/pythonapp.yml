@@ -45,11 +45,17 @@ jobs:
       uses: samuelmeuli/lint-action@v1
       # Let linters fix problems if they can
       with:
-        github_token: ${{ secrets.github_token }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
         auto_fix: true
         # Enable linters
         black: true
         black_args: "--check"
         # stop the build if there are Python syntax errors or undefined names
-        flake8: true§
+        flake8: true 
+    
+    - name: Coveralls Finished
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        parallel-finished: true
     
