@@ -43,8 +43,7 @@ jobs:
         
     - name: python-lint
       uses: CyberZHG/github-action-python-lint@0.0.2
-      with:
-        args: --max-line-length=120
+      args: max-line-length=100
     
     - name: Black Check
       uses: jpetrucciani/black-check@19.10b0
