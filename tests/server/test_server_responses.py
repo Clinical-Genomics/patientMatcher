@@ -226,30 +226,6 @@ def test_metrics(mock_app, database, test_client, demo_data_path, match_objs):
     response = mock_app.test_client().get('metrics')
     assert response.status_code == 200
 
-
-    """
-
-    # add an authorized client to database
-    ok_token = test_client['auth_token']
-
-    add_node(mongo_db=mock_app.db, obj=test_client, is_client=True)
-
-    # make sure that database contains at least one client with auth_token == test_client['auth_token']
-    clients = mock_app.db['clients'].find({'auth_token' : ok_token }).count()
-    assert clients > 0
-
-    # load demo data of 50 test patients
-    inserted_ids = load_demo(demo_data_path, database)
-    assert len(inserted_ids) == 50 # 50 test cases should be loaded
-
-    # load mock matches into database
-    database.matches.insert_many(match_objs)
-    assert database.matches.find().count() == 3
-
-    # if a valid token is provided the server should return metrics with patient data and matching results
-    auth_response = mock_app.test_client().get('metrics', headers = auth_headers(ok_token))
-    assert auth_response.status_code == 200
-    """
     data = json.loads(response.data)
     assert data['disclaimer'] # disclaimer should be returned
     metrics = data['metrics']
