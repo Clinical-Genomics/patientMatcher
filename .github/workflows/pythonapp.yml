@@ -11,11 +11,12 @@ jobs:
         python-version: [3.6, 3.7]
         mongodb-version: ["3.6", "4.0"]
         
-   steps:
-     
+    steps:
+
+    # Check out Scout code
     - uses: actions/checkout@v1
-    
-     Set up python
+
+    # Set up python
     - name: Set up Python ${{ matrix.python-version}}
       uses: actions/setup-python@v1
       with:
