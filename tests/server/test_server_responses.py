@@ -214,9 +214,20 @@ def test_add_patient(mock_app, database, gpx4_patients, test_client, test_node):
 def test_metrics(mock_app, database, test_client, demo_data_path, match_objs):
     """Testing viewing the list of patients on server for authorized users"""
 
+    # load demo data of 50 test patients
+    inserted_ids = load_demo(demo_data_path, database)
+    assert len(inserted_ids) == 50 # 50 test cases should be loaded
+
+    # load mock matches into database
+    database.matches.insert_many(match_objs)
+    assert database.matches.find().count() == 3
+
     # send a get request without being authorized
     response = mock_app.test_client().get('metrics')
-    assert response.status_code == 401
+    assert response.status_code == 200
+
+
+    """
 
     # add an authorized client to database
     ok_token = test_client['auth_token']
@@ -238,8 +249,8 @@ def test_metrics(mock_app, database, test_client, demo_data_path, match_objs):
     # if a valid token is provided the server should return metrics with patient data and matching results
     auth_response = mock_app.test_client().get('metrics', headers = auth_headers(ok_token))
     assert auth_response.status_code == 200
-
-    data = json.loads(auth_response.data)
+    """
+    data = json.loads(response.data)
     assert data['disclaimer'] # disclaimer should be returned
     metrics = data['metrics']
 

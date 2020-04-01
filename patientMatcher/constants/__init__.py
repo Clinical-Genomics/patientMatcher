@@ -27,7 +27,7 @@ PHENOTYPE_TERMS= {
         'resource_path' : path_to_hpo_terms
     },
     'hpo_annotations' : {
-        'url': 'http://compbio.charite.de/jenkins/job/hpo.annotations/lastStableBuild/artifact/misc/phenotype_annotation_hpoteam.tab',
+        'url': 'http://compbio.charite.de/jenkins/job/hpo.annotations/lastStableBuild/artifact/misc/phenotype_annotation.tab',
         'resource_path' : path_to_phenotype_annotations
     }
 }

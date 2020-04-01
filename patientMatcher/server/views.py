@@ -94,7 +94,6 @@ def heartbeat():
 @blueprint.route('/metrics', methods=['GET'])
 def metrics():
     """Get database metrics"""
-
     results = controllers.metrics(database=current_app.db)
     resp = jsonify({'metrics' : results, 'disclaimer' : current_app.config.get('DISCLAIMER')})
     resp.status_code = 200
