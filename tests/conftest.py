@@ -7,7 +7,8 @@ from pathlib import Path
 from patientMatcher.server import create_app
 from patientMatcher.resources import path_to_benchmark_patients
 
-DATABASE = 'testdb'
+DATABASE = "testdb"
+
 
 class MockMail:
     _send_was_called = False
@@ -17,6 +18,7 @@ class MockMail:
         self._send_was_called = True
         self._message = message
 
+
 @pytest.fixture
 def mock_app(database, pymongo_client):
     app = create_app()
@@ -24,24 +26,30 @@ def mock_app(database, pymongo_client):
     app.client = pymongo_client
     return app
 
+
 @pytest.fixture
 def mock_mail():
     return MockMail()
 
+
 @pytest.fixture
 def mock_sender():
-    return 'mock_sender'
+    return "mock_sender"
 
-@pytest.fixture(scope='function')
+
+@pytest.fixture(scope="function")
 def pymongo_client(request):
     """Get a client to the mongo database"""
     mock_client = mongomock.MongoClient()
+
     def teardown():
         mock_client.drop_database(DATABASE)
+
     request.addfinalizer(teardown)
     return mock_client
 
-@pytest.fixture(scope='function')
+
+@pytest.fixture(scope="function")
 def database(request, pymongo_client):
     """Get an adapter connected to mongo database"""
     mongo_client = pymongo_client
@@ -49,168 +57,148 @@ def database(request, pymongo_client):
     return database
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def demo_data_path():
     return path_to_benchmark_patients
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def test_client():
     """Returns a test client object"""
     client = {
-        '_id' : 'client_1',
-        'auth_token' : 'superSecretToken',
-        'base_url' : 'http://test_node_institution.com',
-        'contact' : 'test_client@email.com'
+        "_id": "client_1",
+        "auth_token": "superSecretToken",
+        "base_url": "http://test_node_institution.com",
+        "contact": "test_client@email.com",
     }
     return client
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def test_node():
     """Returns a test client object"""
     node = {
-        '_id' : 'node_1',
-        'label' : 'Test node description',
-        'auth_token' : 'superSecretToken',
-        'matching_url' : 'http://test_node/match/',
-        'accepted_content' : 'application/vnd.ga4gh.matchmaker.v1.0+json',
-        'contact' : 'test_node_user@email.com'
+        "_id": "node_1",
+        "label": "Test node description",
+        "auth_token": "superSecretToken",
+        "matching_url": "http://test_node/match/",
+        "accepted_content": "application/vnd.ga4gh.matchmaker.v1.0+json",
+        "contact": "test_node_user@email.com",
     }
     return node
 
-@pytest.fixture(scope='function')
+
+@pytest.fixture(scope="function")
 def entrez_gene_patient():
     """Returns a test patient with an entrez gene ID"""
     patient = {
         "contact": {
-          "href": "mailto:someuser@mail.com",
-          "institution": "Test institution",
-          "name": "Test user"
+            "href": "mailto:someuser@mail.com",
+            "institution": "Test institution",
+            "name": "Test user",
         },
         "disorders": [],
         "features": [
-          {
-            "id": "HP:0001263",
-            "label": "Global developmental delay",
-            "observed": "yes"
-          },
-          {
-            "id": "HP:0000252",
-            "label": "Microcephaly",
-            "observed": "yes"
-          }
+            {
+                "id": "HP:0001263",
+                "label": "Global developmental delay",
+                "observed": "yes",
+            },
+            {"id": "HP:0000252", "label": "Microcephaly", "observed": "yes"},
         ],
         "genomicFeatures": [
-          {
-            "gene": {
-              "id": "3735"
-            },
-            "type": {
-              "id": "SO:0001583",
-              "label": "MISSENSE"
-            },
-            "variant": {
-              "alternateBases": "A",
-              "assembly": "GRCh37",
-              "end": 75665092,
-              "referenceBases": "G",
-              "referenceName": "16",
-              "start": 75665091
-            },
-            "zygosity": 1
+            {
+                "gene": {"id": "3735"},
+                "type": {"id": "SO:0001583", "label": "MISSENSE"},
+                "variant": {
+                    "alternateBases": "A",
+                    "assembly": "GRCh37",
+                    "end": 75665092,
+                    "referenceBases": "G",
+                    "referenceName": "16",
+                    "start": 75665091,
+                },
+                "zygosity": 1,
             }
         ],
         "id": "P0001013",
-        "label": "169_1-test"
+        "label": "169_1-test",
     }
     return patient
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def match_objs():
     """Mock the results of an internal and an external match"""
     matches = [
-        {    # External match where test_patient is the query and with results
-            '_id' : 'match_1',
-            'has_matches' : True,
-            'data' : {
-                'patient' : {
-                    'id' : 'P0001058',
-                    'contact' : {
-                        'href' : 'mailto:test_contact@email.com'
-                    }
+        {  # External match where test_patient is the query and with results
+            "_id": "match_1",
+            "has_matches": True,
+            "data": {
+                "patient": {
+                    "id": "P0001058",
+                    "contact": {"href": "mailto:test_contact@email.com"},
                 }
             },
-            'results' : [
+            "results": [
                 {
-                    'node' : {'id' : 'test_node1', 'label': 'Test Node 1'},
-                    'patients' : [
-                        {'patient' : { 'id' : 'patient1'}},
-                        {'patient' : { 'id' : 'patient2'}}
-                    ]
+                    "node": {"id": "test_node1", "label": "Test Node 1"},
+                    "patients": [
+                        {"patient": {"id": "patient1"}},
+                        {"patient": {"id": "patient2"}},
+                    ],
                 },
                 {
-                    'node' : {'id' : 'test_node2', 'label': 'Test Node 2'},
-                    'patients' : [
-                        {'patient' : { 'id' : 'patient3'}}
-                    ]
-                }
-            ],
-            'match_type' : 'external'
-        },
-        {    # Internal match where test_patient is the query and there are no results
-            '_id' : 'match_2',
-            'has_matches' : False,
-            'data' : {
-                'patient' : {
-                    'id' : 'P0001058'
+                    "node": {"id": "test_node2", "label": "Test Node 2"},
+                    "patients": [{"patient": {"id": "patient3"}}],
                 },
-                'contact' : {
-                    'href' : 'mailto:test_contact@email.com'
-                }
+            ],
+            "match_type": "external",
+        },
+        {  # Internal match where test_patient is the query and there are no results
+            "_id": "match_2",
+            "has_matches": False,
+            "data": {
+                "patient": {"id": "P0001058"},
+                "contact": {"href": "mailto:test_contact@email.com"},
             },
-            'results' : [
+            "results": [
                 {
-                    'node': {'id' : 'patientMatcher', 'label' : 'patientMatcher server'},
-                    'patients' : [
-                        {'patient' : { 'id' : 'int_patient_id'}}
-                    ]
+                    "node": {"id": "patientMatcher", "label": "patientMatcher server"},
+                    "patients": [{"patient": {"id": "int_patient_id"}}],
                 }
             ],
-            'match_type' : 'internal'
+            "match_type": "internal",
         },
-        {    #  Internal match where test_patient is among results
-            '_id' : 'match_3',
-            'has_matches' : True,
-            'data' : {
-                'patient' : {
-                    'id' : 'external_patient_1',
-                    'contact' : {
-                        'href' : 'mailto:test_contact@email.com'
-                    }
+        {  #  Internal match where test_patient is among results
+            "_id": "match_3",
+            "has_matches": True,
+            "data": {
+                "patient": {
+                    "id": "external_patient_1",
+                    "contact": {"href": "mailto:test_contact@email.com"},
                 }
             },
-            'results' : [
+            "results": [
                 {
-                    'node' : {'id' : 'test_node1', 'label': 'Test Node 1'},
-                    'patients' : [
-                        {'patient' : {
-                            'id' : 'P0001058',
-                            'contact' : {
-                                'href' : 'mailto:test_contact2@email.com'
+                    "node": {"id": "test_node1", "label": "Test Node 1"},
+                    "patients": [
+                        {
+                            "patient": {
+                                "id": "P0001058",
+                                "contact": {"href": "mailto:test_contact2@email.com"},
                             }
-                        }}
-                    ]
+                        }
+                    ],
                 }
             ],
-            'match_type' : 'internal'
+            "match_type": "internal",
         },
     ]
     return matches
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def gpx4_patients(json_patients):
     """Return all patients with variants in GPX4 gene"""
 
@@ -218,17 +206,17 @@ def gpx4_patients(json_patients):
 
     for patient in json_patients:
         gpx4 = False
-        if patient.get('genomicFeatures') is None:
+        if patient.get("genomicFeatures") is None:
             continue
-        for g_feature in patient['genomicFeatures']:
-            if g_feature['gene']["id"] == 'GPX4':
+        for g_feature in patient["genomicFeatures"]:
+            if g_feature["gene"]["id"] == "GPX4":
                 gpx4 = True
         if gpx4:
             patient_list.append(patient)
     return patient_list
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def json_patients(demo_data_path):
     """ Returns a list of 50 MME test patients from demo data"""
     patients = {}
@@ -237,18 +225,15 @@ def json_patients(demo_data_path):
     return patients
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def async_response_obj(test_node, json_patients):
     """Returns the object written to database when sending a match request to
     an async server"""
 
     async_response = {
-        '_id' : 'async_obj_id',
-        'query_id' : 'test_query_id',
-        'node' : {
-            'id' : test_node['_id'],
-            'label' : test_node['label']
-        },
-        'query_patient_id' : json_patients[0]['id'],
+        "_id": "async_obj_id",
+        "query_id": "test_query_id",
+        "node": {"id": test_node["_id"], "label": test_node["label"]},
+        "query_patient_id": json_patients[0]["id"],
     }
     return async_response

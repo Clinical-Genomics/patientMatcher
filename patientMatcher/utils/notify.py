@@ -23,49 +23,86 @@ def notify_match_internal(database, match_obj, admin_email, mail, notify_complet
     patient_label = None
     results = None
     recipient = None
-    email_subject = 'MatchMaker Exchange: new patient match available.'
+    email_subject = "MatchMaker Exchange: new patient match available."
     email_body = None
 
     # check if query patient already belongs to patientMatcher database:
-    internal_patient = database['patients'].find_one({'_id':match_obj['data']['patient']['id']})
+    internal_patient = database["patients"].find_one(
+        {"_id": match_obj["data"]["patient"]["id"]}
+    )
     if internal_patient:
-        #If patient used for the search is in patientMatcher database, notify querier as well:
-        patient_id = match_obj['data']['patient']['id']
-        patient_label = match_obj['data']['patient'].get('label')
-        recipient = match_obj['data']['patient']['contact']['href'][7:]
-        email_body = active_match_email_body(patient_id=patient_id, match_results=match_obj['results'], patient_label=patient_label,
-            external_match=False, notify_complete=notify_complete)
-        LOG.info('Sending an internal match notification for query patient with ID:{0}. Patient contact: {1}'.format(patient_id, recipient))
+        # If patient used for the search is in patientMatcher database, notify querier as well:
+        patient_id = match_obj["data"]["patient"]["id"]
+        patient_label = match_obj["data"]["patient"].get("label")
+        recipient = match_obj["data"]["patient"]["contact"]["href"][7:]
+        email_body = active_match_email_body(
+            patient_id=patient_id,
+            match_results=match_obj["results"],
+            patient_label=patient_label,
+            external_match=False,
+            notify_complete=notify_complete,
+        )
+        LOG.info(
+            "Sending an internal match notification for query patient with ID:{0}. Patient contact: {1}".format(
+                patient_id, recipient
+            )
+        )
 
-        kwargs = dict(subject=email_subject, html=email_body, sender=sender, recipients=[recipient])
+        kwargs = dict(
+            subject=email_subject,
+            html=email_body,
+            sender=sender,
+            recipients=[recipient],
+        )
         message = Message(**kwargs)
         # send email using flask_mail
         try:
             mail.send(message)
         except Exception as err:
-            LOG.error('An error occurred while sending an internal match notification: {}'.format(err))
+            LOG.error(
+                "An error occurred while sending an internal match notification: {}".format(
+                    err
+                )
+            )
 
     # Loop over the result patients and notify their contact about the matching with query patient
-    for result in match_obj['results'][0]['patients']: #this list has only one element since there is only one internal node
+    for result in match_obj["results"][0][
+        "patients"
+    ]:  # this list has only one element since there is only one internal node
 
-        patient_id = result['patient']['id']
+        patient_id = result["patient"]["id"]
 
         # do not notify when patient in results is the same as the one used for query
-        if internal_patient and internal_patient['_id'] == patient_id:
+        if internal_patient and internal_patient["_id"] == patient_id:
             continue
 
-        patient_label =  result['patient'].get('label')
-        recipient = result['patient']['contact']['href'][7:]
-        email_body = passive_match_email_body(patient_id, match_obj['data']['patient'], patient_label, notify_complete)
-        LOG.info('Sending an internal match notification for match result with ID {}'.format(patient_id))
+        patient_label = result["patient"].get("label")
+        recipient = result["patient"]["contact"]["href"][7:]
+        email_body = passive_match_email_body(
+            patient_id, match_obj["data"]["patient"], patient_label, notify_complete
+        )
+        LOG.info(
+            "Sending an internal match notification for match result with ID {}".format(
+                patient_id
+            )
+        )
 
-        kwargs = dict(subject=email_subject, html=email_body, sender=sender, recipients=[recipient])
+        kwargs = dict(
+            subject=email_subject,
+            html=email_body,
+            sender=sender,
+            recipients=[recipient],
+        )
         message = Message(**kwargs)
         # send email using flask_mail
         try:
             mail.send(message)
         except Exception as err:
-            LOG.error('An error occurred while sending an internal match notification: {}'.format(err))
+            LOG.error(
+                "An error occurred while sending an internal match notification: {}".format(
+                    err
+                )
+            )
 
 
 def notify_match_external(match_obj, admin_email, mail, notify_complete):
@@ -78,24 +115,45 @@ def notify_match_external(match_obj, admin_email, mail, notify_complete):
         notify_complete(bool): set to False to NOT notify variants and phenotype terms by email
     """
     sender = admin_email
-    patient_id = match_obj['data']['patient']['id']
-    patient_label = match_obj['data']['patient'].get('label')
-    recipient = match_obj['data']['patient']['contact']['href'][7:]
-    email_subject = 'MatchMaker Exchange: new patient match available.'
-    email_body = active_match_email_body(patient_id=patient_id, match_results=match_obj['results'], patient_label=patient_label,
-        external_match=True, notify_complete=notify_complete)
-    LOG.info('Sending an external match notification for query patient with ID {0}. Patient contact: {1}'.format(patient_id, recipient))
+    patient_id = match_obj["data"]["patient"]["id"]
+    patient_label = match_obj["data"]["patient"].get("label")
+    recipient = match_obj["data"]["patient"]["contact"]["href"][7:]
+    email_subject = "MatchMaker Exchange: new patient match available."
+    email_body = active_match_email_body(
+        patient_id=patient_id,
+        match_results=match_obj["results"],
+        patient_label=patient_label,
+        external_match=True,
+        notify_complete=notify_complete,
+    )
+    LOG.info(
+        "Sending an external match notification for query patient with ID {0}. Patient contact: {1}".format(
+            patient_id, recipient
+        )
+    )
 
-    kwargs = dict(subject=email_subject, html=email_body, sender=sender, recipients=[recipient])
+    kwargs = dict(
+        subject=email_subject, html=email_body, sender=sender, recipients=[recipient]
+    )
     message = Message(**kwargs)
     # send email using flask_mail
     try:
         mail.send(message)
     except Exception as err:
-        LOG.error('An error occurred while sending an external match notification: {}'.format(err))
+        LOG.error(
+            "An error occurred while sending an external match notification: {}".format(
+                err
+            )
+        )
 
 
-def active_match_email_body(patient_id, match_results, patient_label=None, external_match=False, notify_complete=False):
+def active_match_email_body(
+    patient_id,
+    match_results,
+    patient_label=None,
+    external_match=False,
+    notify_complete=False,
+):
     """Returns the body message of the notification email when the patient was used as query patient
 
     Args:
@@ -108,9 +166,9 @@ def active_match_email_body(patient_id, match_results, patient_label=None, exter
     Returns:
         html(str): the body message
     """
-    search_type = 'against the internal database of MatchMaker patients'
+    search_type = "against the internal database of MatchMaker patients"
     if external_match:
-        search_type = 'against external nodes connected to MatchMaker'
+        search_type = "against external nodes connected to MatchMaker"
 
     html = """
         ***This is an automated message, please do not reply to this email.***<br><br>
@@ -123,12 +181,16 @@ def active_match_email_body(patient_id, match_results, patient_label=None, exter
         <br><br>
         Kind regards,<br>
         The PatientMatcher team
-    """.format(patient_id, patient_label, html_format(match_results, 0, notify_complete))
+    """.format(
+        patient_id, patient_label, html_format(match_results, 0, notify_complete)
+    )
 
     return html
 
 
-def passive_match_email_body(patient_id, matched_patient, patient_label=None, notify_complete=False):
+def passive_match_email_body(
+    patient_id, matched_patient, patient_label=None, notify_complete=False
+):
     """Returns the body message of the notification email when the patient was used as query patient
 
     Args:
@@ -151,7 +213,9 @@ def passive_match_email_body(patient_id, matched_patient, patient_label=None, no
         <br><br>
         Kind regards,<br>
         The PatientMatcher team
-    """.format(patient_id, patient_label, html_format(matched_patient, 0, notify_complete))
+    """.format(
+        patient_id, patient_label, html_format(matched_patient, 0, notify_complete)
+    )
 
     return html
 
@@ -163,20 +227,45 @@ def html_format(obj, indent=0, notify_complete=False):
         obj(list): a list of patient objects or a patient object
         notify_complete(bool): set to False to NOT notify variants and phenotype terms by email
     """
-    if isinstance(obj, list): # a list pf match results
+    if isinstance(obj, list):  # a list pf match results
         htmls = []
         for k in obj:
-            htmls.append(html_format(obj=k, indent=indent+1, notify_complete=notify_complete))
+            htmls.append(
+                html_format(obj=k, indent=indent + 1, notify_complete=notify_complete)
+            )
 
-        return '[<div style="margin-left: %dem">%s</div>]' % (indent, ',<br>'.join(htmls))
+        return '[<div style="margin-left: %dem">%s</div>]' % (
+            indent,
+            ",<br>".join(htmls),
+        )
 
-    if isinstance(obj, dict): # patient object
+    if isinstance(obj, dict):  # patient object
         htmls = []
-        for k,v in obj.items():
-            if notify_complete or k in ['node', 'patients', 'patient', 'contact', 'id', 'name', 'href', 'email', 'institution']:
-                htmls.append("<span style='font-style: italic; color: #888'>%s</span>: %s" % (k,html_format(obj=v,indent=indent+1,
-                    notify_complete=notify_complete)))
+        for k, v in obj.items():
+            if notify_complete or k in [
+                "node",
+                "patients",
+                "patient",
+                "contact",
+                "id",
+                "name",
+                "href",
+                "email",
+                "institution",
+            ]:
+                htmls.append(
+                    "<span style='font-style: italic; color: #888'>%s</span>: %s"
+                    % (
+                        k,
+                        html_format(
+                            obj=v, indent=indent + 1, notify_complete=notify_complete
+                        ),
+                    )
+                )
 
-        return '{<div style="margin-left: %dem">%s</div>}' % (indent, ',<br>'.join(htmls))
+        return '{<div style="margin-left: %dem">%s</div>}' % (
+            indent,
+            ",<br>".join(htmls),
+        )
 
     return str(obj)

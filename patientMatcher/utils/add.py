@@ -11,6 +11,7 @@ from patientMatcher.match.handler import external_matcher
 
 LOG = logging.getLogger(__name__)
 
+
 def load_demo(path_to_json_data, mongo_db, convert_to_ensembl=False):
     """Inserts demo patient data into database
         Demo data consists of a set of 50 patients from this paper: http://onlinelibrary.wiley.com/doi/10.1002/humu.22850
@@ -22,19 +23,19 @@ def load_demo(path_to_json_data, mongo_db, convert_to_ensembl=False):
         Returns:
             inserted_ids(list): the database ID of the inserted patients
     """
-    patients = [] # a list of dictionaries
+    patients = []  # a list of dictionaries
     inserted_ids = []
 
-    #open json file and try to insert one patient at the time
+    # open json file and try to insert one patient at the time
     try:
-        LOG.info('reading patients file')
+        LOG.info("reading patients file")
         with open(path_to_json_data) as json_data:
             patients = json.load(json_data)
             # create a progress bar
-            pbar = enlighten.Counter(total=len(patients), desc='', unit='patients')
+            pbar = enlighten.Counter(total=len(patients), desc="", unit="patients")
             for json_patient in patients:
 
-                #parse patient into format accepted by database
+                # parse patient into format accepted by database
                 patient = mme_patient(json_patient, convert_to_ensembl)
 
                 inserted_id = backend_add_patient(mongo_db=mongo_db, patient=patient)[1]
@@ -43,7 +44,9 @@ def load_demo(path_to_json_data, mongo_db, convert_to_ensembl=False):
                 pbar.update()
 
     except Exception as err:
-        LOG.fatal("An error occurred while importing benchmarking patients: {}".format(err))
+        LOG.fatal(
+            "An error occurred while importing benchmarking patients: {}".format(err)
+        )
 
     return inserted_ids
 
@@ -64,7 +67,9 @@ def backend_add_patient(mongo_db, patient, match_external=False):
     matching_obj = None
 
     try:
-        result = mongo_db['patients'].replace_one({'_id': patient['_id']}, patient , upsert=True)
+        result = mongo_db["patients"].replace_one(
+            {"_id": patient["_id"]}, patient, upsert=True
+        )
         modified = result.modified_count
         upserted = result.upserted_id
 
@@ -76,8 +81,8 @@ def backend_add_patient(mongo_db, patient, match_external=False):
     # Matching is not triggered by inserting demo data into database
     if match_external and (modified or upserted):
         matching_obj = external_matcher(mongo_db, patient)
-        #save matching object to database
-        mongo_db['matches'].insert_one(matching_obj)
+        # save matching object to database
+        mongo_db["matches"].insert_one(matching_obj)
 
     return modified, upserted, matching_obj
 
@@ -105,6 +110,8 @@ def add_node(mongo_db, obj, is_client):
     try:
         inserted_id = mongo_db[collection].insert_one(obj).inserted_id
     except Exception as err:
-        LOG.fatal('Error while inserting a new client/server node to database:{}'.format(err))
+        LOG.fatal(
+            "Error while inserting a new client/server node to database:{}".format(err)
+        )
 
     return inserted_id, collection
