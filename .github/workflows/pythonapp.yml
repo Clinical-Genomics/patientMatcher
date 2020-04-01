@@ -1,4 +1,4 @@
-name: PatienMatcher tests
+name: PatientMatcher tests
 
 on: push 
 
@@ -13,7 +13,7 @@ jobs:
         
    steps:
 
-    # Check out Scout code
+    # Check out
     - uses: actions/checkout@v1
 
     # Set up python
