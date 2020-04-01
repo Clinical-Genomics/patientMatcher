@@ -11,3 +11,6 @@ Flask-Mail
 
 # database connection
 pymongo<3.7
+
+# PEP8 compliance
+black

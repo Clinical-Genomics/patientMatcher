@@ -1,5 +1,8 @@
 ## [2.1] - 2019-04-01
 
+### Added
+- Github actions
+
 ### Modified
 - Metrics endpoint is open now and can be accessed without a token
 
@@ -20,7 +23,6 @@
 
 ### Modified
 - Allow gene search using ensembl gene IDs
-
 
 
 ## [1.3] - 2019-10-31
