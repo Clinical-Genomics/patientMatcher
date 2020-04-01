@@ -1,3 +1,12 @@
+## [2.1] - 2019-04-01
+
+### Modified
+- Metrics endpoint is open now and can be accessed without a token
+
+### Fixed
+- Phenotype file name changed on Jenkins lab server
+
+
 ## [2.0] - 2019-11-17
 
 ### Modified
@@ -16,7 +25,7 @@
 
 ## [1.3] - 2019-10-31
 
-### Fixes
+### Fixed
 - Handle better external matching errors
 - Fix a bug introduced in version 1.2.0 (missing patient id in results)
 

@@ -227,7 +227,6 @@ Stats which could be retrieved by a MME service are described [here](https://git
 Example:
 ```bash
 curl -X GET \
-  -H 'X-Auth-Token: custom_token' \
   localhost:9020/metrics
 ```
 &nbsp;&nbsp;
