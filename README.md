@@ -93,7 +93,7 @@ You can then `curl localhost:5000/...` to the appropriate resources from another
 initialized with a test token (`test_token`) that can be used. e.g.,
 
 ```bash
-$ curl -H 'x-auth-token: test_token' localhost:5000/metrics
+$ curl localhost:5000/metrics
 ```
 
 To run with your own settings, mount an `instance` directory containing a `config.py`:
@@ -227,7 +227,6 @@ Stats which could be retrieved by a MME service are described [here](https://git
 Example:
 ```bash
 curl -X GET \
-  -H 'X-Auth-Token: custom_token' \
   localhost:9020/metrics
 ```
 &nbsp;&nbsp;
