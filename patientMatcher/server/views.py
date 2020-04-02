@@ -94,16 +94,10 @@ def heartbeat():
 @blueprint.route('/metrics', methods=['GET'])
 def metrics():
     """Get database metrics"""
-    resp = None
-    if authorize(current_app.db, request):
-        LOG.info('Authorized client requests metrics..')
-        results = controllers.metrics(database=current_app.db)
-        resp = jsonify({'metrics' : results, 'disclaimer' : current_app.config.get('DISCLAIMER')})
-        resp.status_code = 200
-
-    else: # not authorized, return a 401 status code
-        return controllers.bad_request(401)
-
+    LOG.info('Receiving a requests for server metrics.')
+    results = controllers.metrics(database=current_app.db)
+    resp = jsonify({'metrics' : results, 'disclaimer' : current_app.config.get('DISCLAIMER')})
+    resp.status_code = 200
     return resp
 
 

@@ -1,5 +1,8 @@
 ## [X.X]
 
+### Modified
+- Open up metrics requests for all (no token needed)
+
 ### Fixed
 - Update HPO file name to reflect resource on compbio.charite.de/jenkins
 
