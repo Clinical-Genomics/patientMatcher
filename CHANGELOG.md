@@ -1,7 +1,7 @@
-## [X.X]
+## [2.1]
 
 ### Modified
-- Open up metrics requests for all (no token needed)
+- Open up metrics endpoint for any request (no token needed)
 
 ### Fixed
 - Update HPO file name to reflect resource on compbio.charite.de/jenkins
