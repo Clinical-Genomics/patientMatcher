@@ -1,3 +1,9 @@
+## [X.X]
+
+### Fixed
+- Update HPO file name to reflect resource on compbio.charite.de/jenkins
+
+
 ## [2.0] - 2019-11-17
 
 ### Modified
@@ -16,7 +22,7 @@
 
 ## [1.3] - 2019-10-31
 
-### Fixes
+### Fixed
 - Handle better external matching errors
 - Fix a bug introduced in version 1.2.0 (missing patient id in results)
 
