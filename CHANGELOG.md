@@ -1,3 +1,9 @@
+## [x.x.x]
+
+### Added
+- Codeowners document
+
+
 ## [2.1]
 
 ### Modified
