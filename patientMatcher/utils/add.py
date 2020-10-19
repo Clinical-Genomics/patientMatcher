@@ -75,7 +75,6 @@ def backend_add_patient(mongo_db, patient, match_external=False):
     # and if there is a change in patients' collections (new patient or updated patient)
     # Matching is not triggered by inserting demo data into database
     if match_external and (modified or upserted):
-        LOG.error(f"modified:{modified}, upserted:{upserted}")
         matching_obj = external_matcher(mongo_db, patient)
         #save matching object to database
         mongo_db['matches'].insert_one(matching_obj)

@@ -217,7 +217,7 @@ def test_add_patient(mock_app, test_client, gpx4_patients, test_node, database):
     assert result['genomicFeatures'][0]['gene']['_geneName'] == 'GPX4'
 
 
-def test_update_patient(mock_app, test_client, gpx4_patients, test_node, databas):
+def test_update_patient(mock_app, test_client, gpx4_patients, test_node, database):
     """Test updating a patient by sending a POST request to the add endpoint with valid data"""
 
     patient_data = gpx4_patients[1]

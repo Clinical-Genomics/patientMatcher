@@ -25,7 +25,6 @@ def add():
     """Add patient to database"""
 
     formatted_patient = controllers.check_request(current_app.db, request)
-    LOG.error(f"FORMATTED PATIENT--->{formatted_patient}")
     if isinstance(formatted_patient, int): # some error must have occurred during validation
         return controllers.bad_request(formatted_patient)
 
