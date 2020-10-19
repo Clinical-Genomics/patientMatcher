@@ -165,7 +165,7 @@ def match_external(patient_id):
     node = request.args.get('node')
 
     # if search should be performed on a specific node, make sure node is in database
-    if node and not current_app.db['nodes'].find({'_id':node}).count():
+    if node and current_app.db['nodes'].find_one({'_id':node}) is None:
         LOG.info('ERROR, theres no node with id "{}" in database'.format(request.args['node']))
         message['message'] = 'ERROR. Could not find any connected node with id {} in database'.format(request.args['node'])
         resp = jsonify(message)

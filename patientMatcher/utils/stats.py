@@ -56,8 +56,12 @@ def general_metrics(db):
     match_type = {'match_type':'internal'}
     unique_gene_matches = db.matches.distinct('results.patients.patient.genomicFeatures.gene', match_type)
 
+    n_cases = sum(1 for i in db.patients.find())
+    n_cases_diagnosis = sum(1 for i in db.patients.find({'disorders': {'$exists': True, '$ne' : []} }))
+    n_requests = sum(1 for i in db.matches.find({'match_type':'internal'}))
+    n_positive_matches = sum(1 for i in db.matches.find({'match_type':'internal', 'has_matches': True}))
     metrics = {
-        'numberOfCases' : db.patients.find().count(),
+        'numberOfCases' : n_cases,
         'numberOfSubmitters' : len(db.patients.distinct('contact.href')),
         'numberOfGenes' : n_genes,
         'numberOfUniqueGenes': len(db.patients.distinct('genomicFeatures.gene')),
@@ -66,9 +70,9 @@ def general_metrics(db):
         'numberOfFeatures' : n_feat,
         'numberOfUniqueFeatures' : len(db.patients.distinct('features.id')),
         'numberOfUniqueGenesMatched' : len(unique_gene_matches),
-        'numberOfCasesWithDiagnosis' : db.patients.find({'disorders': {'$exists': True, '$ne' : []} }).count(),
-        'numberOfRequestsReceived' : db.matches.find({'match_type':'internal'}).count(),
-        'numberOfPotentialMatchesSent' : db.matches.find({'match_type':'internal', 'has_matches': True}).count(),
+        'numberOfCasesWithDiagnosis' : n_cases_diagnosis,
+        'numberOfRequestsReceived' : n_requests,
+        'numberOfPotentialMatchesSent' : n_positive_matches,
         'dateGenerated' : str(date.today())
     }
     return metrics
