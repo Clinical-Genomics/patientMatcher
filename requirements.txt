@@ -1,12 +1,13 @@
 ## server
 Flask
 Flask-Mail
-Flask-Negotiate
+flask-negotiate
 requests
 jsonschema
 
+
 ## database connection
-pymongo<3.7
+pymongo
 
 ##backend
 enlighten

@@ -51,7 +51,7 @@ def test_phenotype_matching(gpx4_patients, database):
     # insert 2 test patients into test database
     for patient in gpx4_patients:
         database['patients'].insert_one(patient)
-    database['patients'].find().count() == 2
+    assert len(list(database['patients'].find())) == 2
 
     query_patient = gpx4_patients[0]
     assert query_patient

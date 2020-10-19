@@ -12,7 +12,8 @@ def test_genotype_matching(database, gpx4_patients):
         database['patients'].insert_one(mme_pat).inserted_id
 
     # 2 patients should be inserted
-    assert database['patients'].find({'genomicFeatures.gene.id': 'ENSG00000167468'}).count() == 2
+    results = database['patients'].find({'genomicFeatures.gene.id': 'ENSG00000167468'})
+    assert len(list(results)) == 2
 
     # test matching of a patient (with variants in genes) against the demo patients in database
     proband_patient = mme_patient(gpx4_patients[0], True)

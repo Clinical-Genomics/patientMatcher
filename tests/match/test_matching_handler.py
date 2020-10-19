@@ -13,7 +13,8 @@ def test_internal_matching(database, gpx4_patients):
         database['patients'].insert_one(mme_pat).inserted_id
 
     # 2 patients should be inserted
-    assert database['patients'].find({'genomicFeatures.gene.id': 'ENSG00000167468'}).count() == 2
+    results = database['patients'].find({'genomicFeatures.gene.id': 'ENSG00000167468'})
+    assert len(list(results)) == 2
 
     # test matching of one of the 2 patients against both patients in database
     proband_patient = mme_patient(gpx4_patients[0], True)
@@ -35,7 +36,8 @@ def test_internal_matching_with_threshold(database, gpx4_patients):
         database['patients'].insert_one(mme_pat).inserted_id
 
     # 2 patients should be inserted
-    assert database['patients'].find({'genomicFeatures.gene.id': 'ENSG00000167468'}).count() == 2
+    results = database['patients'].find({'genomicFeatures.gene.id': 'ENSG00000167468'})
+    assert len(list(results)) == 2
 
     # test matching of one of the 2 patients against both patients in database
     proband_patient = mme_patient(gpx4_patients[0], True)
@@ -84,7 +86,8 @@ def test_save_async_response(database, test_node):
     """Testing the function that saves an async response object to database"""
 
     # Test database should not contain async responses
-    assert database['async_responses'].find().count() == 0
+    results = database['async_responses'].find()
+    assert len(list(results)) == 0
 
     # Save an async response using the matching handler
     save_async_response(database=database, node_obj=test_node,

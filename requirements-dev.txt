@@ -1,13 +1,10 @@
 # testing:
 click
-pytest==4.4.1
-mongomock<=3.12
+pytest
+mongomock
 pytest-cov
 coveralls
 
 # server-related stuff
 requests
 Flask-Mail
-
-# database connection
-pymongo<3.7

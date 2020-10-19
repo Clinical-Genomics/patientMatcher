@@ -29,7 +29,7 @@ def test_sendemail(mock_app, mock_mail):
 
 def test_cli_add_node(mock_app, database, test_node):
     # make sure that "nodes" collection is empty
-    assert database['nodes'].find().count() == 0
+    assert database['nodes'].find_one() is None
 
     # test add a server using the app cli
     runner = mock_app.test_cli_runner()
@@ -41,7 +41,7 @@ def test_cli_add_node(mock_app, database, test_node):
     assert 'Inserted node' in result.output
 
     # check that the server was added to the "nodes" collection
-    assert database['nodes'].find().count() == 1
+    assert database['nodes'].find_one()
 
     # Try adding the node again
     result =  runner.invoke(cli, ['add', 'node', '-id', test_node['_id'],
@@ -52,12 +52,13 @@ def test_cli_add_node(mock_app, database, test_node):
     # And you should get an abort message
     assert 'Aborted' in result.output
     # And number of nodes in database should stay the same
-    assert database['nodes'].find().count() == 1
+    results = database['nodes'].find()
+    assert len(list(results)) == 1
 
 def test_cli_add_client(mock_app, database, test_client):
 
     # make sure that "clients" collection is empty
-    assert database['client'].find().count() == 0
+    assert database['client'].find_one() is None
 
     # test add a server using the app cli
     runner = mock_app.test_cli_runner()
@@ -68,7 +69,7 @@ def test_cli_add_client(mock_app, database, test_client):
     assert 'Inserted client' in result.output
 
     # check that the server was added to the "nodes" collection
-    assert database['clients'].find().count() == 1
+    assert database['clients'].find_one()
 
     # Try adding the client again
     result =  runner.invoke(cli, ['add', 'client', '-id', test_client['_id'],
@@ -77,7 +78,8 @@ def test_cli_add_client(mock_app, database, test_client):
     # And you should get an abort message
     assert 'Aborted' in result.output
     # And number of clients in database should stay the same
-    assert database['clients'].find().count() == 1
+    results = database['clients'].find()
+    assert len(list(results)) == 1
 
 
 def test_cli_remove_client(mock_app, database, test_client):
@@ -89,7 +91,7 @@ def test_cli_remove_client(mock_app, database, test_client):
     assert result.exit_code == 0
 
     # check that the server was added to the "nodes" collection
-    assert database['clients'].find().count() == 1
+    assert database['clients'].find_one()
 
     # Use the cli to remove client
     result =  runner.invoke(cli, ['remove', 'client', '-id', test_client['_id'] ])
@@ -98,7 +100,7 @@ def test_cli_remove_client(mock_app, database, test_client):
     assert result.exit_code == 0
 
     # and that client is gone from database
-    assert database['clients'].find().count() == 0
+    assert database['clients'].find_one() is None
 
 
 def test_cli_remove_node(mock_app, database, test_node):
@@ -112,7 +114,7 @@ def test_cli_remove_node(mock_app, database, test_node):
     assert result.exit_code == 0
 
     # check that the server was added to the "nodes" collection
-    assert database['nodes'].find().count() == 1
+    assert database['nodes'].find_one()
 
     # Use the cli to remove client
     result =  runner.invoke(cli, ['remove', 'node', '-id', test_node['_id'] ])
@@ -121,7 +123,7 @@ def test_cli_remove_node(mock_app, database, test_node):
     assert result.exit_code == 0
 
     # and that node is gone from database
-    assert database['nodes'].find().count() == 0
+    assert database['nodes'].find_one() is None
 
 
 def test_cli_update_resources(mock_app):
@@ -138,14 +140,15 @@ def test_cli_add_demo_data(mock_app, database):
     runner = mock_app.test_cli_runner()
 
     # make sure that "patients" collection is empty
-    assert database['patients'].find().count() == 0
+    assert database['patients'].find_one() is None
 
     # run the load demo command without the -compute_phenotypes flag
     result =  runner.invoke(cli, ['add', 'demodata'])
     assert result.exit_code == 0
 
     # check that the 50 demo patients where inserted into database
-    assert database['patients'].find().count() == 50
+    results = database['patients'].find()
+    assert len(list(results)) == 50
 
 
 def test_cli_remove_patient(mock_app, database, gpx4_patients, match_objs):
@@ -158,7 +161,7 @@ def test_cli_remove_patient(mock_app, database, gpx4_patients, match_objs):
     assert inserted_id == gpx4_patients[0]['id']
 
     # there is now 1 patient in database
-    assert database['patients'].find().count() == 1
+    assert database['patients'].find_one()
 
     # test that without a valid id or label no patient is removed
     result =  runner.invoke(cli, ['remove', 'patient', '-id', '', '-label', ''])
@@ -167,17 +170,19 @@ def test_cli_remove_patient(mock_app, database, gpx4_patients, match_objs):
     # Add mock patient matches objects to database
     database['matches'].insert_many(match_objs)
     # There should be 2 matches in database for this patient:
-    assert database['matches'].find( {'data.patient.id' : inserted_id }).count() == 2
+    results = database['matches'].find( {'data.patient.id' : inserted_id })
+    assert len(list(results)) == 2
 
     # involke cli command to remove the patient by id and label
     result =  runner.invoke(cli, ['remove', 'patient', '-id', inserted_id, '-label', '350_1-test', '-leave_matches'])
     assert result.exit_code == 0
 
     # check that the patient was removed from database
-    assert database['patients'].find().count() == 0
+    assert database['patients'].find_one() is None
 
     # But matches are still there
-    assert database['matches'].find( {'data.patient.id' : inserted_id }).count() == 2
+    results = database['matches'].find( {'data.patient.id' : inserted_id })
+    assert len(list(results)) == 2
 
     # Run remove patient command with option to remove matches but without patient ID
     result =  runner.invoke(cli, ['remove', 'patient', '-label', '350_1-test', '-remove_matches'])
@@ -189,4 +194,4 @@ def test_cli_remove_patient(mock_app, database, gpx4_patients, match_objs):
     assert result.exit_code == 0
 
     # And make sure that patient removal removed its matchings
-    assert database['matches'].find( {'data.patient.id' : inserted_id }).count() == 0
+    assert database['matches'].find_one( {'data.patient.id' : inserted_id }) is None
