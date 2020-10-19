@@ -207,7 +207,7 @@ def test_add_patient(mock_app, database, gpx4_patients, test_client, test_node):
     assert database['patients'].find_one({'label' : 'modified patient label'})
 
     # make sure that the POST request to add modify patient triggers the matching request to an external node again
-    results = database['matches'].find()
+    results = database.matches.find()
     assert len(list(results)) == 3
 
 
