@@ -3,6 +3,10 @@
 ### Added
 - Codeowners document
 
+### Fixed
+- Avoid pymongo-related deprecated code
+- Unblock pytest and mongomock dependencies
+
 
 ## [2.1]
 
