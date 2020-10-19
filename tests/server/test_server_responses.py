@@ -49,8 +49,7 @@ def test_match_async_request(mock_app, database, async_response_obj, json_patien
     assert response.status_code == 401
 
     # save async_response_obj into database
-    mock_app.db['async_responses'].insert_one(async_response_obj)
-    assert mock_app.db['async_responses'].find().count() == 1
+    assert mock_app.db['async_responses'].insert_one(async_response_obj).inserted_id
 
     # send a response with valid data but query patient is not in database
     response = mock_app.test_client().post('/async_response',
@@ -65,11 +64,10 @@ def test_match_async_request(mock_app, database, async_response_obj, json_patien
     test_patient = mme_patient(json_patients[0])
 
     # save test patient in database
-    mock_app.db['patients'].insert_one(test_patient)
-    assert mock_app.db['patients'].find().count() == 1
+    assert mock_app.db['patients'].insert_one(test_patient).inserted_id
 
     # There should be no match object in database
-    assert mock_app.db['matches'].find().count() == 0
+    assert mock_app.db['matches'].find_one() is None
 
     # send a response with valid data
     # patient object is in database
@@ -81,10 +79,11 @@ def test_match_async_request(mock_app, database, async_response_obj, json_patien
     assert resp_data['message'] == 'results received, many thanks!'
 
     # make sure the async response entry was removed from database
-    assert mock_app.db['async_responses'].find({'query_id':async_response_obj['query_id']}).count() == 0
+    results =  mock_app.db['async_responses'].find({'query_id':async_response_obj['query_id']})
+    assert len(list(results)) == 0
 
     # and that match result was saved to server
-    assert mock_app.db['matches'].find().count() == 1
+    assert mock_app.db['matches'].find_one()
 
     # re-introduce async response in database for further testing
     mock_app.db['async_responses'].insert_one(async_response_obj)
@@ -152,7 +151,7 @@ def test_add_patient(mock_app, database, gpx4_patients, test_client, test_node):
     add_node(mongo_db=mock_app.db, obj=test_node, is_client=False) # add a test node, to perform external matching
 
     # make sure there are no matchings in 'matches' collection
-    assert database['matches'].find().count()==0
+    assert database['matches'].find_one() is None
 
     # send a malformed json object using a valid auth token
     malformed_json = "{'_id': 'patient_id' }"
@@ -166,7 +165,7 @@ def test_add_patient(mock_app, database, gpx4_patients, test_client, test_node):
     assert response.status_code == 422
 
     # check that patient collection in database is empty
-    assert database['patients'].find().count() == 0
+    assert database['patients'].find_one() is None
 
     patient_obj = {'patient' : patient_data} # this is a valid patient object
     response = mock_app.test_client().post('patient/add', data=json.dumps(patient_obj), headers = auth_headers(ok_token))
@@ -175,9 +174,8 @@ def test_add_patient(mock_app, database, gpx4_patients, test_client, test_node):
     # make sure that the POST request to add the patient triggers the matching request to an external node
     assert database['matches'].find_one()
 
-
     # There should be one patient in database now
-    assert database['patients'].find().count() == 1
+    assert database['patients'].find_one()
 
     # the patient in database has label "Patient number 1"
     result =  database['patients'].find_one({'label' : '350_2-test'})
@@ -191,8 +189,9 @@ def test_add_patient(mock_app, database, gpx4_patients, test_client, test_node):
     patient_obj = {'patient' : patient_data} # this is a valid patient object
     response = mock_app.test_client().post('patient/add', data=json.dumps(patient_obj), headers = auth_headers(ok_token))
     assert response.status_code == 200
-    assert database['patients'].find().count() == 1
-    assert database['patients'].find({'label' : '350_2-test'}).count() == 1
+    assert database['patients'].find_one()
+    result = database['patients'].find({'label' : '350_2-test'})
+    assert len(list(result)) == 1
 
     # modify patient label and check the update command (add a patient with the same id) works
     patient_data['label'] = 'modified patient label'
@@ -201,14 +200,15 @@ def test_add_patient(mock_app, database, gpx4_patients, test_client, test_node):
     assert response.status_code == 200
 
     # There should still be one patient in database
-    assert database['patients'].find().count() == 1
+    assert database['patients'].find_one()
 
     # But its label is changed
-    assert database['patients'].find({'label' : '350_2-test'}).count() == 0
-    assert database['patients'].find({'label' : 'modified patient label'}).count() == 1
+    assert database['patients'].find_one({'label' : '350_2-test'}) is None
+    assert database['patients'].find_one({'label' : 'modified patient label'})
 
     # make sure that the POST request to add modify patient triggers the matching request to an external node again
-    assert database['matches'].find().count()==3
+    results = database['matches'].find()
+    assert len(list(results)) == 3
 
 
 def test_metrics(mock_app, database, test_client, demo_data_path, match_objs):
@@ -220,7 +220,8 @@ def test_metrics(mock_app, database, test_client, demo_data_path, match_objs):
 
     # load mock matches into database
     database.matches.insert_many(match_objs)
-    assert database.matches.find().count() == 3
+    results = database.matches.find()
+    assert len(list(results)) == 3
 
     # send a get request without being authorized
     response = mock_app.test_client().get("metrics")
@@ -256,7 +257,7 @@ def test_nodes_view(mock_app, database, test_node, test_client):
     assert response.status_code == 401
 
     # since there are no connected nodes in database
-    assert database['nodes'].find().count() == 0
+    assert database['nodes'].find_one() is None
     # When you send an authorized request
     response = mock_app.test_client().get('nodes', headers = auth_headers(ok_token))
     data = json.loads(response.data)
@@ -305,22 +306,25 @@ def test_delete_patient(mock_app, database, gpx4_patients, test_client, match_ob
     # but server returns error
     assert data['message'] == 'ERROR. Could not delete a patient with ID not_a_valid_ID from database'
 
-    assert database['matches'].find().count() == 0 # no matches in database
+    assert database['matches'].find_one() is None # no matches in database
     # insert into database some mock matching objects
     database['matches'].insert_many(match_objs)
 
     # patient "delete_id" should have two associated matches in database
-    assert database['matches'].find({'data.patient.id' : delete_id}).count() == 2
+    results = database['matches'].find({'data.patient.id' : delete_id})
+    assert len(list(results)) == 2
 
     # Send valid patient ID and valid token
     response = mock_app.test_client().delete(''.join(['patient/delete/', delete_id]), headers = auth_headers(ok_token))
     assert response.status_code == 200
 
     # make sure that the patient was removed from database
-    assert database['patients'].find().count() == 1
+    results = database['patients'].find()
+    assert len(list(results)) == 1
 
     # make sure that patient matches are also gone
-    assert database['matches'].find().count() == 1
+    results = database['matches'].find()
+    assert len(list(results)) == 1
 
 
 def test_patient_matches(mock_app, database, match_objs, test_client):
@@ -331,7 +335,7 @@ def test_patient_matches(mock_app, database, match_objs, test_client):
     add_node(mongo_db=mock_app.db, obj=test_client, is_client=True)
 
     # start from a database with no matches
-    assert database['matches'].find().count() == 0
+    assert database['matches'].find_one() is None
     # import mock matches into datababase
     database['matches'].insert_many(match_objs)
     # database now should have two matching objects
@@ -400,7 +404,7 @@ def test_match_hgnc_symbol_patient(mock_app, gpx4_patients, test_client, databas
     assert validate_response(malformed_match_results) == 422
 
     # make sure that there are no patient matches in the 'matches collection'
-    assert database['matches'].find().count()==0
+    assert database['matches'].find_one() is None
 
     # send a POST request to match patient with patients in database
     response = mock_app.test_client().post('/match', data=json.dumps(query_patient), headers = auth_headers(ok_token))
@@ -442,7 +446,7 @@ def test_match_ensembl_patient(mock_app, test_client, gpx4_patients, database):
     assert len(inserted_ids) == 2
 
     # make sure that there are no patient matches in the 'matches collection'
-    assert database['matches'].find().count()==0
+    assert database['matches'].find_one() is None
 
     # send a POST request to match patient with patients in database
     response = mock_app.test_client().post('/match', data=json.dumps(query_patient), headers = auth_headers(ok_token))
@@ -488,7 +492,7 @@ def test_match_entrez_patient(mock_app, test_client, gpx4_patients, database):
     assert len(inserted_ids) == 2
 
     # make sure that there are no patient matches in the 'matches collection'
-    assert database['matches'].find().count()==0
+    assert database['matches'].find_one() is None
 
     # send a POST request to match patient with patients in database
     response = mock_app.test_client().post('/match', data=json.dumps(query_patient), headers = auth_headers(ok_token))
@@ -522,9 +526,9 @@ def test_match_external(mock_app, test_client, test_node, database, json_patient
     parsed_patient = mme_patient(a_patient)
 
     # insert patient into mock database:
-    assert database['patients'].find().count() == 0
+    assert database['patients'].find_one() is None
     inserted_id = database['patients'].insert_one(parsed_patient).inserted_id
-    assert database['patients'].find().count() == 1
+    assert database['patients'].find_one()
 
     # send an un-authorized match request to server
     response = mock_app.test_client().post(''.join(['/match/external/', inserted_id]))
@@ -540,7 +544,7 @@ def test_match_external(mock_app, test_client, test_node, database, json_patient
     assert data['message'] == 'ERROR. Could not find any patient with ID not_a_valid_ID in database'
 
     # there are no matches in mock database
-    assert database['matches'].find().count() == 0
+    assert database['matches'].find_one() is None
     # after sending an authorized request with a patient ID that exists on database
 
     # Check that external matching doesn't work if there are no connected nodes:
@@ -564,7 +568,7 @@ def test_match_external(mock_app, test_client, test_node, database, json_patient
     # Response should be valid
     assert response.status_code == 200
     # And a new match should be created in matches collection
-    assert database['matches'].find().count() == 1
+    assert database['matches'].find_one()
 
     # send a request to match patients against the specific existing node:
     response = mock_app.test_client().post(''.join(['/match/external/', inserted_id, '?node=', test_node['_id']]), headers = auth_headers(ok_token))
@@ -572,7 +576,8 @@ def test_match_external(mock_app, test_client, test_node, database, json_patient
     assert response.status_code == 200
 
     # And a new match should be created in matches collection. So total matches are 2
-    assert database['matches'].find().count() == 2
+    results = database['matches'].find()
+    assert len(list(results)) == 2
 
 
 def unauth_headers():

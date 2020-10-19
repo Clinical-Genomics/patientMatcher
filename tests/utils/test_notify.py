@@ -24,9 +24,8 @@ def test_notify_match_internal(database, match_objs, mock_sender, mock_mail):
     assert match_obj['match_type'] == 'internal'
 
     # insert patient used as query in database:
-    assert database['patients'].find().count() == 0
-    database['patients'].insert_one({ '_id' : 'external_patient_1'})
-    assert database['patients'].find().count() == 1
+    assert database['patients'].find_one() is None
+    assert database['patients'].insert_one({ '_id' : 'external_patient_1'}).inserted_id
 
     # When calling the function that sends internal match notifications
     notify_complete = False # test notification of partial patient data by email
