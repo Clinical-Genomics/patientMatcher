@@ -87,7 +87,7 @@ def test_save_async_response(database, test_node):
 
     # Test database should not contain async responses
     results = database['async_responses'].find()
-    assert len(results) == 0
+    assert len(list(results)) == 0
 
     # Save an async response using the matching handler
     save_async_response(database=database, node_obj=test_node,
