@@ -134,15 +134,58 @@ def test_heartbeat(mock_app, database, test_client):
     assert isinstance(data['heartbeat']['accept'], list)
     assert len(data['heartbeat']['accept']) > 0
 
-def test_add_patient(mock_app, database, gpx4_patients, test_client, test_node):
-    """Test sending a POST request to server to add a patient"""
+
+def test_add_patient_no_auth(mock_app, gpx4_patients):
+    """Test sending a POST request to server to add a patient without valid token"""
 
     assert len(gpx4_patients) == 2 # patients with variants in this gene
-
     patient_data = gpx4_patients[1]
+
     # try to add a patient without being authorized
     response = mock_app.test_client().post('patient/add', data=json.dumps(patient_data), headers=unauth_headers())
     assert response.status_code == 401
+
+
+def test_add_patient_malformed_patient(mock_app, test_client, gpx4_patients, test_node):
+    """Test sending a POST request to server to add a patient with malformed patient json"""
+
+    patient_data = gpx4_patients[1]
+
+    # add an authorized client to database
+    ok_token = test_client['auth_token']
+
+    add_node(mongo_db=mock_app.db, obj=test_client, is_client=True)
+    add_node(mongo_db=mock_app.db, obj=test_node, is_client=False) #
+
+
+    # send a malformed json object using a valid auth token
+    malformed_json = "{'_id': 'patient_id' }"
+    response = mock_app.test_client().post('patient/add', data=malformed_json, headers = auth_headers(ok_token))
+    # and check that you get the correct error code from server(400)
+    assert response.status_code == 400
+
+
+def test_add_patient_malformed_data(mock_app, test_client, gpx4_patients, test_node):
+    """Test sending a POST request to server to add a patient with malformed data"""
+
+    patient_data = gpx4_patients[1]
+
+    # add an authorized client to database
+    ok_token = test_client['auth_token']
+
+    add_node(mongo_db=mock_app.db, obj=test_client, is_client=True)
+    add_node(mongo_db=mock_app.db, obj=test_node, is_client=False) # add a test node, to perform external matching
+
+    # add a patient not conforming to MME API using a valid auth token
+    response = mock_app.test_client().post('patient/add', data=json.dumps(patient_data), headers = auth_headers(ok_token))
+    # and check that the server returns an error 422 (unprocessable entity)
+    assert response.status_code == 422
+
+
+def test_add_patient(mock_app, test_client, gpx4_patients, test_node, database):
+    """Test adding a patient by sending a POST request to the add endpoint with valid data"""
+
+    patient_data = gpx4_patients[1]
 
     # add an authorized client to database
     ok_token = test_client['auth_token']
@@ -152,17 +195,6 @@ def test_add_patient(mock_app, database, gpx4_patients, test_client, test_node):
 
     # make sure there are no matchings in 'matches' collection
     assert database['matches'].find_one() is None
-
-    # send a malformed json object using a valid auth token
-    malformed_json = "{'_id': 'patient_id' }"
-    response = mock_app.test_client().post('patient/add', data=malformed_json, headers = auth_headers(ok_token))
-    # and check that you get the correct error code from server(400)
-    assert response.status_code == 400
-
-    # add a patient not conforming to MME API using a valid auth token
-    response = mock_app.test_client().post('patient/add', data=json.dumps(patient_data), headers = auth_headers(ok_token))
-    # and check that the server returns an error 422 (unprocessable entity)
-    assert response.status_code == 422
 
     # check that patient collection in database is empty
     assert database['patients'].find_one() is None
@@ -185,30 +217,31 @@ def test_add_patient(mock_app, database, gpx4_patients, test_client, test_node):
     assert result['genomicFeatures'][0]['gene']['_geneName'] == 'GPX4'
 
 
-    # Add same patient again and see that label is unchanged and there is still one patient in database:
+def test_update_patient(mock_app, test_client, gpx4_patients, test_node, databas):
+    """Test updating a patient by sending a POST request to the add endpoint with valid data"""
+
+    patient_data = gpx4_patients[1]
+    # add an authorized client to database
+    ok_token = test_client['auth_token']
+
+    add_node(mongo_db=mock_app.db, obj=test_client, is_client=True)
+    add_node(mongo_db=mock_app.db, obj=test_node, is_client=False) # add a test node, to perform external matching
+
+    # GIVEN a database with one patient
+    database['patients'].insert_one(patient_data)
+
+    # WHEN the patient is updated using the add endpoint
     patient_obj = {'patient' : patient_data} # this is a valid patient object
     response = mock_app.test_client().post('patient/add', data=json.dumps(patient_obj), headers = auth_headers(ok_token))
     assert response.status_code == 200
-    assert database['patients'].find_one()
-    result = database['patients'].find({'label' : '350_2-test'})
+
+    # Then there is still one patient in the database
+    results = database['patients'].find()
     assert len(list(result)) == 1
 
-    # modify patient label and check the update command (add a patient with the same id) works
-    patient_data['label'] = 'modified patient label'
-    patient_obj = {'patient' : patient_data}
-    response = mock_app.test_client().post('patient/add', data=json.dumps(patient_obj), headers = auth_headers(ok_token))
-    assert response.status_code == 200
-
-    # There should still be one patient in database
-    assert database['patients'].find_one()
-
-    # But its label is changed
-    assert database['patients'].find_one({'label' : '350_2-test'}) is None
-    assert database['patients'].find_one({'label' : 'modified patient label'})
-
-    # make sure that the POST request to add modify patient triggers the matching request to an external node again
-    results = database.matches.find()
-    assert len(list(results)) == 3
+    # And the update triggers an external patient matching
+    results = database['matches'].find()
+    assert len(list(results)) == 1
 
 
 def test_metrics(mock_app, database, test_client, demo_data_path, match_objs):

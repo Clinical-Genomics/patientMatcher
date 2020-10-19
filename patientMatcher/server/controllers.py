@@ -73,6 +73,7 @@ def check_request(database, request):
         return 401
 
     try: # make sure request has valid json data
+        LOG.error(str(request))
         request_json = request.get_json(force=True)
     except Exception as err:
         LOG.info("Json data in request is not valid:{}".format(err))

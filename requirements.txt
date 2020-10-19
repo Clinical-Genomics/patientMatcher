@@ -1,9 +1,10 @@
 ## server
 Flask
 Flask-Mail
-Flask-Negotiate
+flask-negotiate
 requests
 jsonschema
+
 
 ## database connection
 pymongo
