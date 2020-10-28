@@ -28,7 +28,7 @@ def create_app():
         app.config.from_pyfile('config.py')
 
     db_username = app.config['DB_USERNAME']
-    db_password = app.config['DB_USERNAME']
+    db_password = app.config['DB_PASSWORD']
     # If app is runned from inside a container, override host port
     db_host = os.getenv("MONGODB_HOST") or app.config['DB_HOST']
     db_port = app.config['DB_PORT']

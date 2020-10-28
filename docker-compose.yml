@@ -4,31 +4,43 @@ version: '3'
 # sudo docker-compose up
 services:
   mongodb:
-    image: mvertes/alpine-mongo
-    container_name: mongodb
+    # Docker image for MongoDB which makes it easy to create:
+    # - admin
+    # - database
+    # - database user with password
+    # when the container is first launched.
+    image: aashreys/mongo-auth
+    container_name: mongo
+    environment:
+      - AUTH=yes
+      - MONGODB_ADMIN_USER=root
+      - MONGODB_ADMIN_PASS=admin123
+      - MONGODB_APPLICATION_DATABASE=pmatcher
+      - MONGODB_APPLICATION_USER=pmUser
+      - MONGODB_APPLICATION_PASS=pmPassword
     ports:
       - '27017:27017'
     expose:
       - '27017'
 
   pmatcher-cli:
+    image: northwestwitch/patientmatcher
     environment:
       MONGODB_HOST: mongodb
-    image: northwestwitch/patientmatcher
     container_name: pmatcher-cli
     links:
       - mongodb
     command: bash -c 'pmatcher add demodata --ensembl_genes'
 
   pmatcher-web:
+    image: northwestwitch/patientmatcher
     environment:
       MONGODB_HOST: mongodb
-    image: northwestwitch/patientmatcher
     container_name: pmatcher-web
     links:
       - mongodb
     expose:
       - '5000'
     ports:
-      - '9020:5000'
+      - '5000:5000'
     command: bash -c 'pmatcher run --host 0.0.0.0'
