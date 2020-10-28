@@ -8,10 +8,11 @@ from urllib.request import Request, urlopen
 
 LOG = logging.getLogger(__name__)
 
-HEADERS = {'Content-type':'application/json'}
-RESTAPI_37 = 'https://grch37.rest.ensembl.org'
-RESTAPI_38 = 'https://rest.ensembl.org/'
-PING_ENDPOINT = 'info/ping'
+HEADERS = {"Content-type": "application/json"}
+RESTAPI_37 = "https://grch37.rest.ensembl.org"
+RESTAPI_38 = "https://rest.ensembl.org/"
+PING_ENDPOINT = "info/ping"
+
 
 class EnsemblRestApiClient:
     """A class handling requests and responses to and from the Ensembl REST APIs.
@@ -21,8 +22,8 @@ class EnsemblRestApiClient:
     doi:10.1093/bioinformatics/btu613
     """
 
-    def __init__(self, build='37'):
-        if build == '38':
+    def __init__(self, build="37"):
+        if build == "38":
             self.server = RESTAPI_38
         else:
             self.server = RESTAPI_37
@@ -36,16 +37,18 @@ class EnsemblRestApiClient:
         Returns:
             data(dict): dictionary from json response
         """
-        url = '/'.join([server, PING_ENDPOINT])
+        url = "/".join([server, PING_ENDPOINT])
         data = self.send_request(url)
         return data
 
-    def _except_on_invalid_response(self, resp):
+    def except_on_invalid_response(self, resp):
         """Checks if Ensembl service returned a valid response(status:200->OK), otherwise raise error with informative message"""
         # If service returned error
         if resp.status != 200:
-            # raise an exception with proper message
-            raise Exception(f"Ensembl Rest API server returned error {str(resp.status_code)} (it's probably down) and gene info could not be converted. Please try again later.")
+            # raise an exception with a proper message
+            raise Exception(
+                f"Ensembl Rest API server returned error {str(resp.status)} (it's probably down) and gene info could not be converted. Please try again later."
+            )
 
     def send_request(self, url):
         """Sends the actual request to the server and returns the response
@@ -60,14 +63,14 @@ class EnsemblRestApiClient:
         try:
             request = Request(url, headers=HEADERS)
             response = urlopen(request)
-            self._except_on_invalid_response(response)
+            self.except_on_invalid_response(response)
             content = response.read()
             if content:
                 data = json.loads(content)
         except HTTPError as e:
-            LOG.info('Request failed for url {0}: Error: {1}\n'.format(url, e))
+            LOG.info("Request failed for url {0}: Error: {1}\n".format(url, e))
             data = e
         except ValueError as e:
-            LOG.info('Request failed for url {0}: Error: {1}\n'.format(url, e))
+            LOG.info("Request failed for url {0}: Error: {1}\n".format(url, e))
             data = e
         return data
