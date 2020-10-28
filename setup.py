@@ -22,33 +22,6 @@ LICENSE = 'MIT'
 
 here = os.path.abspath(os.path.dirname(__file__))
 
-def parse_reqs(req_path='./requirements.txt'):
-    """Recursively parse requirements from nested pip files."""
-    install_requires = []
-    with io.open(os.path.join(here, 'requirements.txt'), encoding='utf-8') as handle:
-        # remove comments and empty lines
-        lines = (line.strip() for line in handle
-                 if line.strip() and not line.startswith('#'))
-
-        for line in lines:
-            # check for nested requirements files
-            if line.startswith('-r'):
-                # recursively call this function
-                install_requires += parse_reqs(req_path=line[3:])
-
-            else:
-                # add the line as a new requirement
-                install_requires.append(line)
-
-    return install_requires
-
-# What packages are required for this module to be executed?
-REQUIRED = parse_reqs()
-
-# The rest you shouldn't have to touch too much :)
-# ------------------------------------------------
-# Except, perhaps the License and Trove Classifiers!
-# If you do change the License, remember to change the Trove Classifier for that!
 
 # Import the README and use it as the long-description.
 # Note: this will only work if 'README.rst' is present in your MANIFEST.in file!
@@ -106,7 +79,6 @@ setup(
     download_url = '/'.join([URL,'tarball',version]),
     keywords = KEYWORDS,
     packages=find_packages(),
-    install_requires=REQUIRED,
     include_package_data=True,
     license=LICENSE,
     classifiers=[

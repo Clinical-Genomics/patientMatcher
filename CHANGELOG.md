@@ -1,3 +1,9 @@
+## [2.3] - 2020-10-28
+
+### Added
+- New Dockerfile and instructions to run on docker
+
+
 ## [2.2] - 2020-10-19
 
 ### Added

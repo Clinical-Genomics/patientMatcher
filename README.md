@@ -58,6 +58,7 @@ git clone https://github.com/Clinical-Genomics/patientMatcher.git
 
 Change directory to the cloned folder and from there install the software using the following command:
 ```bash
+pip install -r requirements.txt
 pip install -e .
 ```
 
