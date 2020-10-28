@@ -1,3 +1,8 @@
+## [] -
+
+### Added
+- Display error message and raise exception when Ensembl Rest API is needed but offline
+
 ## [2.2] - 2020-10-19
 
 ### Added
