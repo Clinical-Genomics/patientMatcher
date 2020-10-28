@@ -125,7 +125,7 @@ To add these patients to the database run the following command:
 pmatcher add demodata --ensembl_genes
 ```
 Please note that the list of benchmarking patients all gene ids are represented as HGNC gene symbols.
-The command above, with the `--ensembl_genes` option, will convert gene symbols to Ensembl ids, in accordance to the Ga4GH API: https://github.com/ga4gh/mme-apis/blob/master/search-api.md.
+The command above, with the `--ensembl_genes` option, will convert gene symbols to Ensembl ids, in accordance to the GA4GH API: https://github.com/ga4gh/mme-apis/blob/master/search-api.md.
 &nbsp;&nbsp;
 
 <a name="cli_remove_patient"></a>
