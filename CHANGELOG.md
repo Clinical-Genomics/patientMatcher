@@ -1,6 +1,7 @@
 ## [] -
-###
-- Display error message and exit when Ensmbl Rest API is needed but offline
+
+### Added
+- Display error message and raise exception when Ensembl Rest API is needed but offline
 
 ## [2.2] - 2020-10-19
 
