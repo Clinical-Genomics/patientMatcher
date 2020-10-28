@@ -2,9 +2,8 @@
 [![Build Status](https://travis-ci.com/Clinical-Genomics/patientMatcher.svg?branch=master)](https://travis-ci.com/Clinical-Genomics/patientMatcher) [![Coverage Status](https://coveralls.io/repos/github/Clinical-Genomics/patientMatcher/badge.svg?branch=master)](https://coveralls.io/github/Clinical-Genomics/patientMatcher?branch=master)
 
 Table of Contents:
-1. [ Prerequisites ](#prerequisites)
-2. [ Installation ](#installation)
-    - [ Using docker ](#installation-docker)
+1. [ Running the app using Docker ](#docker)
+2. [ Installing the app on a virtual environment with a running instance of MongoDB ](#installation)
 3. [ Data types ](#data_types)
 4. [ Command line interface](#cli)
     - [ Adding demo data to server](#cli_add_demo)
@@ -24,8 +23,35 @@ Table of Contents:
     - [ Phenotyping matching algorithm ](#pheno_matching)
 7. [ Enabling matching notifications ](#notify)
 
-<a name="prerequisites"></a>
-## Prerequisites
+<a name="docker"></a>
+## Running the app using Docker
+An example containing demo setup for the app is included in the docker-compose file. Note that this file is not intended for use in production and it's just to illustrate how the backend and frontend of the app could be connected to a mongodb instance store in an external docker image. Start the docker-compose demo using this command:
+
+```
+docker-compose up -d
+```
+The command will create 3 containers:
+- mongodb: starting a mongodb server with support for user authentication (--auth option)
+- pmatcher-cli: the a command-line app, which will connect to the server and populates it with demo data
+- pmatcher-web: a web server running on localhost and port 27017.
+
+The server will be running and accepting requests sent from outside the containers (another terminal or a web browser). Read further down to find out about requests and commands.
+
+To test a server response try to invoke the `metrics` endpoint with the following command:
+```
+curl localhost:5000/metrics
+```
+
+To stop the containers (and the server), run:
+```
+docker-compose down
+```
+
+
+<a name="installation"></a>
+## Installing the app on a virtual environment with a running instance of MongoDB
+
+### Prerequisites
 To use this server you'll need to have a working instance of **MongoDB**. from the mongo shell you can create a database and an authenticated user to handle connections using this syntax:
 
 ```bash
@@ -42,9 +68,6 @@ After setting up the restricted access to the server you'll just have to launch 
 ```bash
 mongod --auth --dbpath path_to_database_data
 ```
-
-<a name="installation"></a>
-## Installation
 The phenotype scoring algorithm of patientMatcher is dependent on [patient-similarity](https://github.com/buske/patient-similarity), which should be installed using this script:
 
 ```bash
@@ -71,37 +94,6 @@ pmatcher run -h custom_host -p custom_port
 ```
 Please note that the code is NOT guaranteed to be bug-free and it must be adapted to be used in production.
 
-<a name="installation-docker"></a>
-### Using Docker
-A simple Dockerfile has been included for testing purposes. It uses the sample `instance/config.py` and
-should not be used in production.
-
-#### Build the image
-From the repo directory:
-
-```bash
-# note: docker does not allow upper case in image tags
-$ docker build -t local/patientmatcher .
-```
-
-#### Running the image
-To run the image in the foreground use:
-```bash
-$ docker run -p 5000 --name patientMatcher local/patientmatcher
-```
-
-You can then `curl localhost:5000/...` to the appropriate resources from another terminal. The database is
-initialized with a test token (`test_token`) that can be used. e.g.,
-
-```bash
-$ curl localhost:5000/metrics
-```
-
-To run with your own settings, mount an `instance` directory containing a `config.py`:
-
-```bash
-$ docker run -p 5000 -v /some/local/path/instance:/opt/patientMatcher/instance local/patientmatcher
-```
 
 <a name="data_types"></a>
 ## Data types
