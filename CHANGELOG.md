@@ -1,3 +1,7 @@
+## [] -
+###
+- Display error message and exit when Ensmbl Rest API is needed but offline
+
 ## [2.2] - 2020-10-19
 
 ### Added

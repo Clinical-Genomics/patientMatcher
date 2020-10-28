@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import logging
 import patientMatcher.utils.ensembl_rest_client as ensembl_client
 
 def entrez_to_symbol(entrez_id):
@@ -48,5 +47,5 @@ def ensembl_to_symbol(ensembl_id):
 
     client = ensembl_client.EnsemblRestApiClient()
     url = ''.join([client.server, '/lookup/id/', ensembl_id])
-    result = client.send_request(url)
-    return result.get('display_name', None)
+    results = client.send_request(url)
+    return results.get('display_name', None)

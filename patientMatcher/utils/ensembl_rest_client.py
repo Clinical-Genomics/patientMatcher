@@ -40,6 +40,13 @@ class EnsemblRestApiClient:
         data = self.send_request(url)
         return data
 
+    def _abort_on_invalid_response(self, resp):
+        """Checks if Ensembl service returned a valid resposed. If not (service is down) abort with informative message"""
+
+        # If service returned error
+        if resp.status != 200:
+            LOG.error(f"Ensembl Rest API server returned error {str(resp.status_code)} (it's probably down) and gene info could not be converted. Please try again later.")
+            quit()
 
     def send_request(self, url):
         """Sends the actual request to the server and returns the response
@@ -54,6 +61,7 @@ class EnsemblRestApiClient:
         try:
             request = Request(url, headers=HEADERS)
             response = urlopen(request)
+            self._abort_on_invalid_response(response)
             content = response.read()
             if content:
                 data = json.loads(content)
