@@ -1,0 +1,34 @@
+version: '3'
+# usage:
+# sudo docker-compose build
+# sudo docker-compose up
+services:
+  mongodb:
+    image: mvertes/alpine-mongo
+    container_name: mongodb
+    ports:
+      - '27017:27017'
+    expose:
+      - '27017'
+
+  pmatcher-cli:
+    environment:
+      MONGODB_HOST: mongodb
+    image: northwestwitch/patientmatcher
+    container_name: pmatcher-cli
+    links:
+      - mongodb
+    command: bash -c 'pmatcher add demodata --ensembl_genes'
+
+  pmatcher-web:
+    environment:
+      MONGODB_HOST: mongodb
+    image: northwestwitch/patientmatcher
+    container_name: pmatcher-web
+    links:
+      - mongodb
+    expose:
+      - '5000'
+    ports:
+      - '9020:5000'
+    command: bash -c 'pmatcher run --host 0.0.0.0'
