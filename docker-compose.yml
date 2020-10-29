@@ -1,6 +1,6 @@
 version: '3'
 # usage:
-# docker-compose up
+# sudo docker-compose up
 services:
   mongodb:
     # Docker image for MongoDB which makes it easy to create:
@@ -8,15 +8,15 @@ services:
     # - database
     # - database user with password
     # when the container is first launched.
-    image: aashreys/mongo-auth
+    image: vepo/mongo
     container_name: mongo
     environment:
-      - AUTH=yes
-      - MONGODB_ADMIN_USER=root
-      - MONGODB_ADMIN_PASS=admin123
-      - MONGODB_APPLICATION_DATABASE=pmatcher
-      - MONGODB_APPLICATION_USER=pmUser
-      - MONGODB_APPLICATION_PASS=pmPassword
+      - AUTH=y
+      - ADMIN_USER=root
+      - ADMIN_PASS=admin123
+      - APPLICATION_DATABASE=pmatcher
+      - APPLICATION_USER=pmUser
+      - APPLICATION_PASS=pmPassword
     ports:
       - '27017:27017'
     expose:
@@ -41,5 +41,5 @@ services:
     expose:
       - '5000'
     ports:
-      - '5000:5000'
+      - '9020:5000'
     command: bash -c 'pmatcher run --host 0.0.0.0'
