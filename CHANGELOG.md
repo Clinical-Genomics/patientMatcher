@@ -1,7 +1,9 @@
-## [] -
+## [] - 
 
 ### Added
 - Display error message and raise exception when Ensembl Rest API is needed but offline
+- New Dockerfile and instructions to run on docker
+
 
 ## [2.2] - 2020-10-19
 

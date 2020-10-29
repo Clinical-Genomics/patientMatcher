@@ -1,0 +1,45 @@
+version: '3'
+# usage:
+# sudo docker-compose up
+services:
+  mongodb:
+    # Lightweight Docker image for MongoDB which makes it easy to create:
+    # - admin
+    # - database
+    # - database user with password
+    # when the container is first launched.
+    image: vepo/mongo
+    container_name: mongo
+    environment:
+      - AUTH=y
+      - ADMIN_USER=root
+      - ADMIN_PASS=admin123
+      - APPLICATION_DATABASE=pmatcher
+      - APPLICATION_USER=pmUser
+      - APPLICATION_PASS=pmPassword
+    ports:
+      - '27017:27017'
+    expose:
+      - '27017'
+
+  pmatcher-cli:
+    image: northwestwitch/patientmatcher
+    environment:
+      MONGODB_HOST: mongodb
+    container_name: pmatcher-cli
+    links:
+      - mongodb
+    command: bash -c 'pmatcher add demodata --ensembl_genes'
+
+  pmatcher-web:
+    image: northwestwitch/patientmatcher
+    environment:
+      MONGODB_HOST: mongodb
+    container_name: pmatcher-web
+    links:
+      - mongodb
+    expose:
+      - '5000'
+    ports:
+      - '5000:5000'
+    command: bash -c 'pmatcher run --host 0.0.0.0'

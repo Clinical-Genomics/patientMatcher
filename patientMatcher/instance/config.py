@@ -10,7 +10,6 @@ DB_PASSWORD = 'pmPassword'
 DB_NAME = 'pmatcher'
 DB_HOST = '127.0.0.1'
 DB_PORT = 27017
-DB_URI = "mongodb://{}:{}@{}:{}/{}".format(DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME)
 
 # Matching Algorithms scores
 # sum of MAX_GT_SCORE and MAX_PHENO_SCORE should be 1
