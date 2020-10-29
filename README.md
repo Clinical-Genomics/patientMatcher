@@ -46,6 +46,14 @@ To stop the containers (and the server), run:
 ```
 docker-compose down
 ```
+Make sure to remove the mongo container from the list of all available containers before running the command again.
+Commands:
+```
+docker ps -a
+docker rm <id of the vepo/mongo container>
+```
+
+
 
 
 <a name="installation"></a>

@@ -41,5 +41,5 @@ services:
     expose:
       - '5000'
     ports:
-      - '9020:5000'
+      - '5000:5000'
     command: bash -c 'pmatcher run --host 0.0.0.0'
