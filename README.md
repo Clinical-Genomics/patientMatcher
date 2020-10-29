@@ -53,9 +53,6 @@ docker ps -a
 docker rm <id of the vepo/mongo container>
 ```
 
-
-
-
 <a name="installation"></a>
 ## Installing the app on a virtual environment with a running instance of MongoDB
 

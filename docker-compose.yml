@@ -3,7 +3,7 @@ version: '3'
 # sudo docker-compose up
 services:
   mongodb:
-    # Docker image for MongoDB which makes it easy to create:
+    # Lightweight Docker image for MongoDB which makes it easy to create:
     # - admin
     # - database
     # - database user with password
