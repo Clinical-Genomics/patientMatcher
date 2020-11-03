@@ -1,0 +1,21 @@
+name: flake8 Lint
+
+on: [pull_request]
+
+jobs:
+  flake8-lint:
+    runs-on: ubuntu-18.04
+    name: Flake8
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@master
+        with:
+          python-version: 3.8
+      - name: install flake8
+        run: |
+          pip install flake8
+      - name: run flake8
+        run: |
+          flake8 . --max-line-length=100
+        continue-on-error: true

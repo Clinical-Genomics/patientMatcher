@@ -1,0 +1,20 @@
+name: Black check
+
+on: [pull_request]
+
+jobs:
+  black-check:
+    runs-on: ubuntu-18.04
+    name: black
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@master
+        with:
+          python-version: 3.8
+      - name: install black
+        run: |
+          pip install black==20.8b1
+      - name: run black
+        run: |
+          black . --check --line-length 100

@@ -4,6 +4,7 @@ import logging
 
 LOG = logging.getLogger(__name__)
 
+
 def patients(database, ids=None):
     """Get all patients in the database
 
@@ -16,12 +17,12 @@ def patients(database, ids=None):
     """
     results = None
     query = {}
-    if ids: # if only specified patients should be returned
-        LOG.info('Querying patients for IDs {}'.format(ids))
-        query['_id'] = {'$in' : ids}
+    if ids:  # if only specified patients should be returned
+        LOG.info("Querying patients for IDs {}".format(ids))
+        query["_id"] = {"$in": ids}
 
     else:
-        LOG.info('Return all patients in database')
+        LOG.info("Return all patients in database")
 
-    results = database['patients'].find(query)
+    results = database["patients"].find(query)
     return results
