@@ -48,7 +48,7 @@ def test_send_gene_request():
 
 def test_send_request_wrong_url():
     """Successful requests are tested by other tests in this file.
-       This test will trigger errors instead.
+    This test will trigger errors instead.
     """
     url = "fakeyurl"
     client = ensembl_api.EnsemblRestApiClient()

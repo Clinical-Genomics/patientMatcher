@@ -14,11 +14,17 @@ from patientMatcher import __version__
 
 
 @click.version_option(__version__)
-@click.group(cls=FlaskGroup, create_app=create_app, invoke_without_command=False, add_default_commands=True,
-    add_version_option=False)
+@click.group(
+    cls=FlaskGroup,
+    create_app=create_app,
+    invoke_without_command=False,
+    add_default_commands=True,
+    add_version_option=False,
+)
 def cli(**_):
     """Base command for invoking the command line"""
     pass
+
 
 @click.group()
 def test():
@@ -30,19 +36,25 @@ def test():
 @with_appcontext
 def name():
     """Returns the app name, for testing purposes, mostly"""
-    app_name = current_app.name.split('.')[0]
+    app_name = current_app.name.split(".")[0]
     click.echo(app_name)
     return app_name
 
 
 @test.command()
 @with_appcontext
-@click.option('-recipient', type=click.STRING, nargs=1, required=True, help="Email address to send the test email to")
+@click.option(
+    "-recipient",
+    type=click.STRING,
+    nargs=1,
+    required=True,
+    help="Email address to send the test email to",
+)
 def email(recipient):
     """Sends a test email using config settings"""
     click.echo(recipient)
 
-    subj = 'Test email from patientMatcher'
+    subj = "Test email from patientMatcher"
     body = """
         ***This is an automated message, please do not reply to this email.***<br><br>
         If you receive this email it means that email settings are working fine and the
@@ -71,13 +83,19 @@ def email(recipient):
         Kind regards,<br>
         The PatientMatcher team
     """
-    kwargs = dict(subject=subj, html=body, sender=current_app.config.get('MAIL_USERNAME'), recipients=[recipient])
+    kwargs = dict(
+        subject=subj,
+        html=body,
+        sender=current_app.config.get("MAIL_USERNAME"),
+        recipients=[recipient],
+    )
     message = Message(**kwargs)
     try:
         current_app.mail.send(message)
-        click.echo('Mail correctly sent. Check your inbox!')
+        click.echo("Mail correctly sent. Check your inbox!")
     except Exception as err:
         click.echo('An error occurred while sending test email: "{}"'.format(err))
+
 
 cli.add_command(test)
 test.add_command(name)

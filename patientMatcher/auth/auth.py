@@ -8,6 +8,7 @@ from flask import request
 
 LOG = logging.getLogger(__name__)
 
+
 def authorize(database, request):
     """Validate request's token against database client collection
 
@@ -18,9 +19,13 @@ def authorize(database, request):
     Returns:
         authorized(bool): True or False
     """
-    token = request.headers.get('X-Auth-Token')
-    query = {'auth_token' : token}
-    authorized = database['clients'].find_one(query)
+    token = request.headers.get("X-Auth-Token")
+    query = {"auth_token": token}
+    authorized = database["clients"].find_one(query)
     if bool(authorized):
-        LOG.info('Authorized client with id "{0}" submits a {1} request'.format(authorized['_id'], request.method))
+        LOG.info(
+            'Authorized client with id "{0}" submits a {1} request'.format(
+                authorized["_id"], request.method
+            )
+        )
     return bool(authorized)

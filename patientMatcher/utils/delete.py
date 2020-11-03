@@ -5,6 +5,7 @@ from pymongo import MongoClient
 
 LOG = logging.getLogger(__name__)
 
+
 def delete_by_query(query, mongo_db, mongo_collection):
     """Deletes one or more entries matching a query from a database collection
 
@@ -17,7 +18,11 @@ def delete_by_query(query, mongo_db, mongo_collection):
         deleted_entries(int): the number of deleted deleted entries or the error
     """
 
-    LOG.info('Removing entries from collection "{0}" using the following parameters:{1}'.format(mongo_collection, query))
+    LOG.info(
+        'Removing entries from collection "{0}" using the following parameters:{1}'.format(
+            mongo_collection, query
+        )
+    )
     deleted_entries = 0
 
     try:
