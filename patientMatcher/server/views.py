@@ -10,7 +10,6 @@ from patientMatcher.utils.add import backend_add_patient
 from patientMatcher.utils.notify import notify_match_external, notify_match_internal
 from patientMatcher.auth.auth import authorize
 from patientMatcher.match.handler import internal_matcher, patient_matches, async_match
-from patientMatcher.parse.patient import validate_api, mme_patient
 from patientMatcher.constants import STATUS_CODES
 from . import controllers
 

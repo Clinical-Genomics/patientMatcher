@@ -6,7 +6,7 @@ from patientMatcher.constants import STATUS_CODES
 from patientMatcher.utils.stats import general_metrics
 from patientMatcher.utils.delete import delete_by_query
 from patientMatcher.utils.patient import patients
-from patientMatcher.parse.patient import json_patient, validate_api, mme_patient
+from patientMatcher.parse.patient import validate_api, mme_patient
 from patientMatcher.auth.auth import authorize
 from patientMatcher.match.handler import external_matcher
 from patientMatcher.__version__ import __version__
@@ -69,7 +69,6 @@ def check_request(database, request):
     """Check if request is valid, if it is return MME formatted patient
     Otherwise return error code.
     """
-    check_result = None
 
     # check that request is using a valid auth token
     if not authorize(database, request):

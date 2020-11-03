@@ -1,13 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import logging
-import requests
-
-import pymongo
-from flask import request
 
 LOG = logging.getLogger(__name__)
-
 
 def authorize(database, request):
     """Validate request's token against database client collection
