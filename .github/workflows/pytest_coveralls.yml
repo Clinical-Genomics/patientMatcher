@@ -4,7 +4,7 @@ jobs:
   Pytest_Coveralls:
     runs-on: ubuntu-18.04
     env:
-      CGBEACON2_CONFIG: ../instance/config.py
+      PMATCHER_CONFIG: ../instance/config.py
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python
