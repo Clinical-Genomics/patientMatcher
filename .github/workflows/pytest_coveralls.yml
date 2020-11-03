@@ -1,0 +1,27 @@
+name: Tests and coverage
+on: [pull_request]
+jobs:
+  Pytest_Coveralls:
+    runs-on: ubuntu-18.04
+    env:
+      CGBEACON2_CONFIG: ../instance/config.py
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@master
+      with:
+        python-version: 3.8
+    - name: Install repo and its dependencies
+      run: |
+        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
+        pip install git+https://github.com/Clinical-Genomics/patient-similarity
+        pip install -e .
+        pip install pytest
+        pip install coveralls
+    - name: Run pytest and coveralls
+      run: |
+        pytest --cov=patientMatcher tests/
+        coveralls
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
