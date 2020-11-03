@@ -4,6 +4,7 @@ import logging
 
 LOG = logging.getLogger(__name__)
 
+
 def authorize(database, request):
     """Validate request's token against database client collection
 
