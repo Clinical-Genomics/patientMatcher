@@ -25,7 +25,7 @@ Table of Contents:
 
 <a name="docker"></a>
 ## Running the app using Docker
-An example containing demo setup for the app is included in the docker-compose file. Note that this file is not intended for use in production and it's just to illustrate how the backend and frontend of the app could be connected to a mongodb instance store in an external docker image. Start the docker-compose demo using this command:
+An example containing a demo setup for the app is included in the docker-compose file. Note that this file is not intended for use in production and is onpy provided to illustrate how the backend and frontend of the app could be connected to a mongodb instance stored on an external image. Start the docker-compose demo using this command:
 
 ```
 docker-compose up -d
@@ -37,7 +37,7 @@ The command will create 3 containers:
 
 The server will be running and accepting requests sent from outside the containers (another terminal or a web browser). Read further down to find out about requests and commands.
 
-To test a server response try to invoke the `metrics` endpoint with the following command:
+To test server responses try to invoke the `metrics` endpoint with the following command:
 ```
 curl localhost:5000/metrics
 ```
@@ -46,11 +46,11 @@ To stop the containers (and the server), run:
 ```
 docker-compose down
 ```
-Make sure to remove the mongo container from the list of all available containers before running the command again.
+Make sure that there are no mongo containers running before before running the command again.
 Commands:
 ```
 docker ps -a
-docker rm <id of the vepo/mongo container>
+docker rm <id of the eventual vepo/mongo container>
 ```
 
 <a name="installation"></a>

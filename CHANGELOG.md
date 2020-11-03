@@ -1,6 +1,7 @@
 ## [] -
 ### Changed
 - Pulling Docker images in docker-compose from clinicalgenomics Docker Hub
+- Switched from Travis CI to github actions
 
 ### Added
 - Display error message and raise exception when Ensembl Rest API is needed but offline
