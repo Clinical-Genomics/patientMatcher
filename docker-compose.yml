@@ -23,7 +23,7 @@ services:
       - '27017'
 
   pmatcher-cli:
-    image: northwestwitch/patientmatcher
+    image: clinicalgenomics/patientmatcher
     environment:
       MONGODB_HOST: mongodb
     container_name: pmatcher-cli
@@ -32,7 +32,7 @@ services:
     command: bash -c 'pmatcher add demodata --ensembl_genes'
 
   pmatcher-web:
-    image: northwestwitch/patientmatcher
+    image: clinicalgenomics/patientmatcher
     environment:
       MONGODB_HOST: mongodb
     container_name: pmatcher-web
