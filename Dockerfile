@@ -1,10 +1,9 @@
 FROM python:3.8-alpine3.12
 
-LABEL version="1"
+LABEL base_image="python:3.8-alpine3.12"
 LABEL about.license="MIT License (MIT)"
-LABEL software.version="2.3"
+LABEL about.tags="WGS,WES,Rare diseases,VCF,variants,phenotype,OMIM,HPO,variants"
 LABEL about.home="https://github.com/Clinical-Genomics/patientMatcher"
-LABEL maintainer="Chiara Rasi <chiara.rasi@scilifelab.se>"
 
 RUN apk update
 # Install required libs
