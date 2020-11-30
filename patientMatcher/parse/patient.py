@@ -109,22 +109,25 @@ def format_genes(patient_obj):
         symbol = None
         if "gene" in feature and feature["gene"].get("id"):
             gene = feature["gene"]["id"]
-            if gene.isdigit() or gene.startswith("ENSG") is False:
-                if gene.isdigit():  # Likely an entrez gene ID
-                    LOG.info("Converting entrez gene {} to symbol".format(gene))
-                    symbol = entrez_to_symbol(gene)
-                else:  # It's a gene symbol
-                    symbol = gene
-                if symbol:
-                    LOG.info("Converting gene symbol {} to Ensembl".format(symbol))
-                    ensembl_id = symbol_to_ensembl(symbol)
-                    if ensembl_id:
-                        feature["gene"]["id"] = ensembl_id
-            else:  # gene id is Ensembl id
-                symbol = ensembl_to_symbol(gene)
+            try:
+                if gene.isdigit() or gene.startswith("ENSG") is False:
+                    if gene.isdigit():  # Likely an entrez gene ID
+                        LOG.info("Converting entrez gene {} to symbol".format(gene))
+                        symbol = entrez_to_symbol(gene)
+                    else:  # It's a gene symbol
+                        symbol = gene
+                    if symbol:
+                        LOG.info("Converting gene symbol {} to Ensembl".format(symbol))
+                        ensembl_id = symbol_to_ensembl(symbol)
+                        if ensembl_id:
+                            feature["gene"]["id"] = ensembl_id
+                else:  # gene id is Ensembl id
+                    symbol = ensembl_to_symbol(gene)
 
-            if symbol:
-                feature["gene"]["_geneName"] = symbol  # add non-standard but informative field
+                if symbol:
+                    feature["gene"]["_geneName"] = symbol  # add non-standard but informative field
+            except Exception as ex:
+                LOG.error(f"An error occurred while using the Ensembl Rest API: {ex}")
 
         formatted_features.append(feature)
 
