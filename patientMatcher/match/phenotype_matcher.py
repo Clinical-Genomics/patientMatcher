@@ -33,15 +33,12 @@ def match(database, max_score, features, disorders):
     hpoic = None
     hpo = None
 
-    LOG.info("\n\n###### Running phenotype matcher module ######")
-
     if features:  # at least one HPO term is specified
         hpo_terms = features_to_hpo(features)
         # compare against all cases which also have features (HPO terms)
         query_fields.append({"features": {"$exists": True, "$ne": []}})
 
         # Create the information-content functionality for the HPO
-        LOG.info("Creating HPO information content")
         hpo = HPO(path_to_hpo_terms, new_root=PHENOTYPE_ROOT)
         diseases = Diseases(path_to_phenotype_annotations)
         hpoic = HPOIC(
@@ -61,17 +58,15 @@ def match(database, max_score, features, disorders):
     # build a database query taking into account patient features (HPO terms) and disorders (omim)
     if len(query_fields) > 0:
         query = {"$or": query_fields}
-        LOG.info("Searching for patients in database with the following query:{}".format(query))
         pheno_matching_patients = list(database["patients"].find(query))
         LOG.info(
-            "\n\nFOUND {} patients matching patients's phenotype tracts\n\n".format(
-                len(pheno_matching_patients)
+            "\n\nFOUND {} patients matching query: {}\n\n".format(
+                len(pheno_matching_patients), query
             )
         )
 
         for i in range(len(pheno_matching_patients)):
             patient = pheno_matching_patients[i]
-            LOG.info("## Evaluating phenotype similarity with patient {} ##".format(i + 1))
             similarity = evaluate_pheno_similariy(
                 hpoic, hpo, hpo_terms, omim_terms, patient, max_score
             )
@@ -114,10 +109,9 @@ def evaluate_pheno_similariy(
 
     # If both query patient and matching patient contain features to compare (HPO terms)
     if hpo_terms and matching_hpo_terms:
-        LOG.info("HPO terms available for comparison")
         # If both query patient and matching patient contain OMIM diagnoses
         if disorders and matching_omim_terms:
-            LOG.info("OMIM diagnoses available for comparison")
+            # LOG.info("OMIM diagnoses available for comparison")
             max_omim_score = max_similarity / 2
             max_hpo_score = max_similarity / 2
 
@@ -129,7 +123,6 @@ def evaluate_pheno_similariy(
     else:  # HPO terms missing
         # similarity is computed using OMIM terms,
         # Penalty for missing HPO terms: max_omim_score = max_similarity/2
-        LOG.debug("Missing HPO terms, phenotype comparison based on OMIM diagnoses.")
         max_omim_score = max_similarity / 2
 
     if max_omim_score:  # OMIM terms can be compared
@@ -180,7 +173,6 @@ def similarity_wrapper(hpoic, hpo, max_hpo_score, hpo_terms_q, hpo_terms_m):
         hpoic=hpoic, patient1=query_patient, patient2=match_patient, scores=["simgic"]
     )
     simgic_score = score_obj.get("simgic")
-    LOG.info("patient-similarity module returned a simgic score of {}".format(simgic_score))
     relative_simgic_score = simgic_score * max_hpo_score
     return relative_simgic_score
 
