@@ -124,7 +124,7 @@ def _convert_gene(gene):
     Args:
         gene(str): can be either be:
             - a string representing an entrez id. example: "4556"
-            - a non-Ensembl gene symbol, example: "GPX4"
+            - a HGNC gene symbol, example: "GPX4"
             - An Ensembl gene ID, example: "ENSG00000167468"
 
     Returns:
@@ -138,7 +138,7 @@ def _convert_gene(gene):
             return gene, symbol
         if gene.isdigit():  # Entrez id
             symbol = entrez_to_symbol(gene)
-        else:  # non-Ensembl gene symbol
+        else:  # HGNC gene symbol
             symbol = gene
         if symbol:
             gene = symbol_to_ensembl(symbol) or gene
