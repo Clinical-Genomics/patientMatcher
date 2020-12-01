@@ -7,6 +7,10 @@
 - Display error message and raise exception when Ensembl Rest API is needed but offline
 - New Dockerfile and instructions to run on docker
 - Github action to build and push Docker image when a new software release is created
+- Try to match patients based on gene symbol (gene._geneName) if gene.id doesn't match
+
+### Fixed
+- Do not crash trying to convert genes when Ensembl REST API isn't available
 
 
 ## [2.2] - 2020-10-19
