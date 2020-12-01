@@ -119,7 +119,7 @@ def format_genes(patient_obj):
 
 
 def _convert_gene(gene):
-    """Convert a gene ID to a gene symbol
+    """Convert provided gene id to Ensembl gene id and include eventual symbol
 
     Args:
         gene(str): can be either be:
@@ -136,12 +136,10 @@ def _convert_gene(gene):
         if gene.startswith("ENSG"):  # Ensembl gene ID
             symbol = ensembl_to_symbol(gene)
             return gene, symbol
-
         if gene.isdigit():  # Entrez id
             symbol = entrez_to_symbol(gene)
         else:  # non-Ensembl gene symbol
             symbol = gene
-
         if symbol:
             gene = symbol_to_ensembl(symbol) or gene
 
