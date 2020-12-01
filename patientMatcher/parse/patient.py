@@ -106,33 +106,52 @@ def format_genes(patient_obj):
     """
     formatted_features = []
     for feature in patient_obj.get("genomicFeatures", []):
-        symbol = None
         if "gene" in feature and feature["gene"].get("id"):
             gene = feature["gene"]["id"]
-            if gene.isdigit() or gene.startswith("ENSG") is False:
-                if gene.isdigit():  # Likely an entrez gene ID
-                    LOG.info("Converting entrez gene {} to symbol".format(gene))
-                    symbol = entrez_to_symbol(gene)
-                else:  # It's a gene symbol
-                    symbol = gene
-                if symbol:
-                    LOG.info("Converting gene symbol {} to Ensembl".format(symbol))
-                    ensembl_id = symbol_to_ensembl(symbol)
-                    if ensembl_id:
-                        feature["gene"]["id"] = ensembl_id
-            else:  # gene id is Ensembl id
-                symbol = ensembl_to_symbol(gene)
-
+            gene_id, symbol = _convert_gene(gene)
             if symbol:
                 feature["gene"]["_geneName"] = symbol  # add non-standard but informative field
-
+            feature["gene"]["id"] = gene_id
         formatted_features.append(feature)
 
     if formatted_features:
         patient_obj["genomicFeatures"] = formatted_features
 
 
-def gtfeatures_to_genes(gtfeatures):
+def _convert_gene(gene):
+    """Convert provided gene id to Ensembl gene id return it with eventual HGNC gene symbol
+
+    Args:
+        gene(str): can be either be:
+            - a string representing an entrez id. example: "4556"
+            - a HGNC gene symbol, example: "GPX4"
+            - An Ensembl gene ID, example: "ENSG00000167468"
+
+    Returns:
+        gene(str): An Ensembl gene ID, example: "ENSG00000167468"
+        symbol(str): HGNC gene symbol, example: "GPX4"
+    """
+    symbol = None
+    try:
+        if gene.startswith("ENSG"):  # Ensembl gene ID
+            symbol = ensembl_to_symbol(gene)
+            return gene, symbol
+        if gene.isdigit():  # Entrez id
+            symbol = entrez_to_symbol(gene)
+        else:  # HGNC gene symbol
+            symbol = gene
+        if symbol:
+            gene = symbol_to_ensembl(symbol) or gene
+
+    except Exception as ex:
+        LOG.error(
+            f"An error occurred while converting gene format using the Ensembl Rest API: {ex}"
+        )
+
+    return gene, symbol
+
+
+def gtfeatures_to_genes_symbols(gtfeatures):
     """Extracts all gene names from a list of genomic features
     Args:
         gtfeatures(list): a list of genomic features objects
@@ -141,11 +160,19 @@ def gtfeatures_to_genes(gtfeatures):
         gene_set(list): a list of unique gene names contained in the features
     """
     genes = []
+    symbols = []
     for feature in gtfeatures:
-        if "gene" in feature and feature["gene"].get("id"):  # collect non-null gene IDs
-            genes.append(feature["gene"]["id"])
+        if "gene" in feature:
+            gene = feature["gene"].get("id")
+            gene, symbol = _convert_gene(gene)
+            if gene:
+                genes.append(gene)
+            if symbol:
+                symbols.append(symbol)
+
     gene_set = list(set(genes))
-    return gene_set
+    symbol_set = list(set(symbols))
+    return gene_set, symbol_set
 
 
 def gtfeatures_to_variants(gtfeatures):

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import logging
 
-from patientMatcher.parse.patient import gtfeatures_to_genes, gtfeatures_to_variants
+from patientMatcher.parse.patient import gtfeatures_to_genes_symbols, gtfeatures_to_variants
 
 LOG = logging.getLogger(__name__)
 
@@ -36,9 +36,11 @@ def match(database, gt_features, max_score):
         query = {}
         query_fields = []
 
-        genes = gtfeatures_to_genes(gt_features)
+        genes, symbols = gtfeatures_to_genes_symbols(gt_features)
         if genes:
             query_fields.append({"genomicFeatures.gene.id": {"$in": genes}})
+        if symbols:
+            query_fields.append({"genomicFeatures.gene._geneName": {"$in": symbols}})
 
         variants = gtfeatures_to_variants(gt_features)
         if variants:
@@ -96,31 +98,31 @@ def evaluate_GT_similarity(query_features, db_patient_features, max_feature_simi
     # loop over the query patient's features
     for feature in query_features:
         matched_features.append(0)  # score for matching of every feature is initially 0
-        q_gene = feature["gene"]  # query feature's gene id
-        q_variant = feature.get("variant", None)  # query feature's variant. Not mandatory.
+        q_gene_id = feature["gene"]["id"]  # query feature's gene id
+        q_gene_symbol = feature["gene"].get("_geneName")  # query feature's gene symbol
+        q_variant = feature.get("variant")  # query feature's variant. Not mandatory.
 
         # loop over the database patient's features:
         for matching_feature in db_patient_features:
-            m_gene = matching_feature["gene"]  # matching feature's gene id
+            m_gene_id = matching_feature["gene"]["id"]  # matching feature's gene id
+            m_gene_symbol = matching_feature["gene"].get(
+                "_geneName"
+            )  # matching feature's gene symbol
             m_variant = matching_feature.get(
                 "variant"
             )  # matching feature's variant. Not mandatory.
 
-            # variant in same gene in both patients, variant specified in both patient
-            if q_gene == m_gene and q_variant and m_variant:
-                if q_variant == m_variant:  # variants are matching
-                    matched_features[n_feature] = max_feature_similarity
+            if q_variant == m_variant:  # variants are matching -> Assign max score
+                matched_features[n_feature] = max_feature_similarity
 
-                else:  # matching genes, at least
-                    matched_features[n_feature] = (
-                        max_feature_similarity / 4
-                    )  # (0.25 of the max_feature_similarity)
-
-            elif q_gene == m_gene:
+            elif q_gene_id == m_gene_id:  # matching genes
                 matched_features[n_feature] = (
                     max_feature_similarity / 4
                 )  # (0.25 of the max_feature_similarity)
-
+            elif q_gene_symbol and q_gene_symbol == m_gene_symbol:
+                matched_features[n_feature] = (
+                    max_feature_similarity / 4
+                )  # (0.25 of the max_feature_similarity)
         n_feature += 1
 
     features_sum = sum(matched_features)
