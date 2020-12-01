@@ -119,7 +119,7 @@ def format_genes(patient_obj):
 
 
 def _convert_gene(gene):
-    """Convert provided gene id to Ensembl gene id and include eventual symbol
+    """Convert provided gene id to Ensembl gene id return it with eventual HGNC gene symbol
 
     Args:
         gene(str): can be either be:
@@ -128,8 +128,8 @@ def _convert_gene(gene):
             - An Ensembl gene ID, example: "ENSG00000167468"
 
     Returns:
-        gene(str): An Ensembl gene
-        symbol(str): Ensembl gene ID. Example: "ENSG00000167468"
+        gene(str): An Ensembl gene ID, example: "ENSG00000167468"
+        symbol(str): HGNC gene symbol, example: "GPX4"
     """
     symbol = None
     try:

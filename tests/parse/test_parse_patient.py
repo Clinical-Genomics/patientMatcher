@@ -16,21 +16,23 @@ def test_disorders_to_omim_no_omim():
 
 
 def test_mme_patient_gene_symbol(gpx4_patients, database):
-    # Test format a patient with gene symbol
+    # Test format a patient with HGNC gene symbol
 
     test_patient = gpx4_patients[0]
+    gene_name = test_patient["genomicFeatures"][0]["gene"]["id"]  # "GPX4"
     # Before conversion patient's gene id is a gene symbol
-    assert test_patient["genomicFeatures"][0]["gene"]["id"].startswith("ENSG") is False
+    assert gene_name.startswith("ENSG") is False
     mme_formatted_patient = mme_patient(test_patient, True)  # Convert gene symbol to Ensembl
     # After conversion formatted patient's gene id should be an Ensembl id
     assert mme_formatted_patient["genomicFeatures"][0]["gene"]["id"].startswith("ENSG")
+    assert mme_formatted_patient["genomicFeatures"][0]["gene"]["_geneName"] == gene_name
 
 
 def test_mme_patient_entrez_gene(entrez_gene_patient, database):
     # Test format a patient with entrez gene
-
     # Before conversion patient's gene id is an entrez gene ID
     assert entrez_gene_patient["genomicFeatures"][0]["gene"]["id"] == "3735"
     mme_formatted_patient = mme_patient(entrez_gene_patient, True)  # convert genes to Ensembl
     # After conversion formatted patient's gene id should be an Ensembl id
     assert mme_formatted_patient["genomicFeatures"][0]["gene"]["id"].startswith("ENSG")
+    assert mme_formatted_patient["genomicFeatures"][0]["gene"]["_geneName"]  # it's "KARS"
