@@ -151,7 +151,7 @@ def _convert_gene(gene):
     return gene, symbol
 
 
-def gtfeatures_to_genes(gtfeatures):
+def gtfeatures_to_genes_symbols(gtfeatures):
     """Extracts all gene names from a list of genomic features
     Args:
         gtfeatures(list): a list of genomic features objects
@@ -160,11 +160,19 @@ def gtfeatures_to_genes(gtfeatures):
         gene_set(list): a list of unique gene names contained in the features
     """
     genes = []
+    symbols = []
     for feature in gtfeatures:
-        if "gene" in feature and feature["gene"].get("id"):  # collect non-null gene IDs
-            genes.append(feature["gene"]["id"])
+        if "gene" in feature:
+            gene = feature["gene"].get("id")
+            gene, symbol = _convert_gene(gene)
+            if gene:
+                genes.append(gene)
+            if symbol:
+                symbols.append(symbol)
+
     gene_set = list(set(genes))
-    return gene_set
+    symbol_set = list(set(symbols))
+    return gene_set, symbol_set
 
 
 def gtfeatures_to_variants(gtfeatures):
