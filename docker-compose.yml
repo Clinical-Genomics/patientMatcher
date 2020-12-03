@@ -10,6 +10,8 @@ services:
     # when the container is first launched.
     image: vepo/mongo
     container_name: mongo
+    networks:
+      - pmatcher-net
     environment:
       - AUTH=y
       - ADMIN_USER=root
@@ -23,23 +25,44 @@ services:
       - '27017'
 
   pmatcher-cli:
+    container_name: pmatcher-cli
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: clinicalgenomics/patientmatcher
     environment:
       MONGODB_HOST: mongodb
+      PMATCHER_CONFIG: '/home/worker/app/patientMatcher/patientMatcher/instance/config.py'
     container_name: pmatcher-cli
-    links:
+    depends_on:
       - mongodb
-    command: bash -c 'pmatcher add demodata --ensembl_genes'
+    networks:
+      - pmatcher-net
+    command: bash -c "pmatcher add client -id test_client -token custom_token -url custom_url && pmatcher add demodata --ensembl_genes"
 
   pmatcher-web:
-    image: clinicalgenomics/patientmatcher
+    container_name: pmatcher-web
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pmatcher-web
     environment:
       MONGODB_HOST: mongodb
-    container_name: pmatcher-web
-    links:
+      PMATCHER_CONFIG: '/home/worker/app/patientMatcher/patientMatcher/instance/config.py'
+    depends_on:
       - mongodb
+    networks:
+      - pmatcher-net
     expose:
       - '5000'
     ports:
       - '5000:5000'
     command: bash -c 'pmatcher run --host 0.0.0.0'
+
+networks:
+  pmatcher-net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.21.0.0/24
