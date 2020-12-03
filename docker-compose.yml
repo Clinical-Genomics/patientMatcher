@@ -33,7 +33,6 @@ services:
     environment:
       MONGODB_HOST: mongodb
       PMATCHER_CONFIG: '/home/worker/app/patientMatcher/patientMatcher/instance/config.py'
-    container_name: pmatcher-cli
     depends_on:
       - mongodb
     networks:
@@ -45,7 +44,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: pmatcher-web
     environment:
       MONGODB_HOST: mongodb
       PMATCHER_CONFIG: '/home/worker/app/patientMatcher/patientMatcher/instance/config.py'
