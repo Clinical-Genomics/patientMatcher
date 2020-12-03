@@ -1,3 +1,5 @@
+import os
+
 # Turns on debugging features in Flask
 DEBUG = True
 
@@ -8,8 +10,11 @@ SECRET_KEY = "MySuperSecretKey"
 DB_USERNAME = "pmUser"
 DB_PASSWORD = "pmPassword"
 DB_NAME = "pmatcher"
-DB_HOST = "127.0.0.1"
+DB_HOST = (
+    os.getenv("MONGODB_HOST") or "127.0.0.1"
+)  # simply substitute with 'mongodb' if connecting to MongoDB running in a container
 DB_PORT = 27017
+DB_URI = "mongodb://{}:{}@{}:{}/{}".format(DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME)
 
 # Matching Algorithms scores
 # sum of MAX_GT_SCORE and MAX_PHENO_SCORE should be 1

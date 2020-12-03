@@ -1,7 +1,10 @@
-## [] -
+## [2.3.1] - 2020-12-04
+### Added
 ### Changed
-### Changed
+- Install requirements in setup
+- Improved Dockerfile and docker-compose files
 ### Fixed
+- Connection string to database when creating the app
 
 ## [2.3] - 2020-12-01
 ### Changed
