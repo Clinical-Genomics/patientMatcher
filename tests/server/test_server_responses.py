@@ -33,14 +33,7 @@ def test_match_async_request(mock_app, database, async_response_obj, json_patien
     data = {
         "query_id": async_response_obj["query_id"],
         "source": "fakey node",
-        "response": {
-            "results": [
-                {
-                    "score": {"patient": 0.8},
-                    "patient": json_patients[1],
-                }
-            ]
-        },
+        "response": {"results": [{"score": {"patient": 0.8}, "patient": json_patients[1],}]},
     }
 
     response = mock_app.test_client().post(

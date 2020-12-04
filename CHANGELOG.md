@@ -4,6 +4,14 @@
 ### Fixed
 - removed unused docker folder
 
+## [2.3.1] - 2020-12-04
+### Added
+### Changed
+- Install requirements in setup
+- Improved Dockerfile and docker-compose files
+### Fixed
+- Connection string to database when creating the app
+
 ## [2.3] - 2020-12-01
 ### Changed
 - Pulling Docker images in docker-compose from clinicalgenomics Docker Hub
