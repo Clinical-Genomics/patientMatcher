@@ -226,6 +226,9 @@ def gtfeatures_to_variants(gtfeatures):
     variants = []
     for feature in gtfeatures:
         if "variant" in feature:
+            variant = feature["variant"]
+            if variant is None:
+                continue
             # Add variant to search terms
             variants.append(feature["variant"])
             # Add also corresponding variant in another genome build (GRCh38 if original variant was GRCh37, and the other way around)
