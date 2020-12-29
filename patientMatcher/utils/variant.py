@@ -12,14 +12,8 @@ def liftover(build, chrom, start, end):
         stop(int): stop coordinate
 
     Returns
-        mappings(list of dict): example: [{
-            "end": 1039365,
-            "seq_region_name": "X",
-            "coord_system": "chromosome",
-            "assembly": "GRCh38",
-            "start": 1039265,
-            "strand": 1
-          }]
+        mappings(list of dict):
+            example: https://rest.ensembl.org/map/human/GRCh37/X:1000000..1000100:1/GRCh38?content-type=application/json
     """
     assembly2 = "GRCh38"
     if build == "GRCh38":
