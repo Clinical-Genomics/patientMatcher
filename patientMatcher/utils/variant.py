@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import patientMatcher.utils.ensembl_rest_client as ensembl_client
 
 
