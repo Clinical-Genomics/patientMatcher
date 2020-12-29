@@ -107,7 +107,7 @@ def evaluate_GT_similarity(query_features, db_patient_features, max_feature_simi
 
         # Do liftover for query variant in order to maximize perfect matching chances
         q_variant = feature.get("variant")  # query feature's variant. Not mandatory.
-        lifted_q_variant = lift_variant(q_variant)
+        lifted_q_variant = lift_variant(q_variant) if q_variant else []
 
         # loop over the database patient's features:
         for matching_feature in db_patient_features:
