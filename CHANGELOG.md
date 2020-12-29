@@ -1,5 +1,6 @@
 ## [] -
 ### Added
+- Code for performing coordinate liftover using Ensembl REST API
 ### Changed
 ### Fixed
 - removed unused docker folder
