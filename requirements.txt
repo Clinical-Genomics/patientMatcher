@@ -1,7 +1,8 @@
 ## server
+coloredlogs
 Flask
-Flask-Mail
-flask-negotiate
+Flask - Mail
+flask - negotiate
 requests
 jsonschema
 

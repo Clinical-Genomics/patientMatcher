@@ -204,7 +204,34 @@ def patient_38():
                         "assembly": "GRCh38",
                         "referenceName": "12",
                         "start": 14641142,
-                        "end": 14641142,
+                        "end": 14641143,
+                        "referenceBases": "C",
+                        "alternateBases": "T",
+                    },
+                }
+            ],
+        }
+    }
+    return patient
+
+
+@pytest.fixture()
+def patient_37():
+    """A patient with a variant in genome assembly GRCh38"""
+
+    patient = {
+        "patient": {
+            "id": "patient_id",
+            "contact": {"name": "Contact Name", "href": "mailto:contact_name@mail.com"},
+            "features": [{"id": "HP:0009623"}],
+            "genomicFeatures": [
+                {
+                    "gene": {"id": "GUCY2C"},
+                    "variant": {
+                        "assembly": "GRCh37",
+                        "referenceName": "12",
+                        "start": 14794075,
+                        "end": 14794076,
                         "referenceBases": "C",
                         "alternateBases": "T",
                     },

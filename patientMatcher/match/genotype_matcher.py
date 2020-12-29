@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import logging
-
-from patientMatcher.parse.patient import gtfeatures_to_genes_symbols, gtfeatures_to_variants
+from patientMatcher.parse.patient import (
+    gtfeatures_to_genes_symbols,
+    gtfeatures_to_variants,
+    lift_variant,
+)
 
 LOG = logging.getLogger(__name__)
 
@@ -42,6 +45,7 @@ def match(database, gt_features, max_score):
         if symbols:
             query_fields.append({"genomicFeatures.gene._geneName": {"$in": symbols}})
 
+        # Obtain variants and the coresponding variants in the other genome build from the genotype features
         variants = gtfeatures_to_variants(gt_features)
         if variants:
             query_fields.append({"genomicFeatures.variant": {"$in": variants}})
@@ -100,7 +104,10 @@ def evaluate_GT_similarity(query_features, db_patient_features, max_feature_simi
         matched_features.append(0)  # score for matching of every feature is initially 0
         q_gene_id = feature["gene"]["id"]  # query feature's gene id
         q_gene_symbol = feature["gene"].get("_geneName")  # query feature's gene symbol
+
+        # Do liftover for query variant in order to maximize perfect matching chances
         q_variant = feature.get("variant")  # query feature's variant. Not mandatory.
+        lifted_q_variant = lift_variant(q_variant)
 
         # loop over the database patient's features:
         for matching_feature in db_patient_features:
@@ -112,7 +119,8 @@ def evaluate_GT_similarity(query_features, db_patient_features, max_feature_simi
                 "variant"
             )  # matching feature's variant. Not mandatory.
 
-            if q_variant == m_variant:  # variants are matching -> Assign max score
+            # variants are matching -> Assign max score
+            if q_variant == m_variant or m_variant in lifted_q_variant:
                 matched_features[n_feature] = max_feature_similarity
 
             elif q_gene_id == m_gene_id:  # matching genes

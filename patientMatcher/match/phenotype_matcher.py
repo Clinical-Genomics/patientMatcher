@@ -129,11 +129,6 @@ def evaluate_pheno_similariy(
         omim_score = evaluate_subcategories(disorders, matching_omim_terms, max_omim_score)
 
     patient_similarity = hpo_score + omim_score
-    LOG.info(
-        "patient phenotype score: {0} (OMIM:{1}, HPO:{2})".format(
-            patient_similarity, omim_score, hpo_score
-        )
-    )
     return patient_similarity
 
 

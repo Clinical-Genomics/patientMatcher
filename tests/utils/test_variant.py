@@ -70,8 +70,8 @@ def test_liftover_bad_request():
 
     # WHEN sending a liftover request with non-standard chromosome (M instead of MT)
     chromosome = "M"
-    start = 7278
-    end = 7278
+    start = 1000000
+    end = 1000000
 
     # THEN the service should not return mappings
     mappings = liftover("GRCh37", chromosome, start, end)
