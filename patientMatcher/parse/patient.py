@@ -192,7 +192,7 @@ def lift_variant(variant):
     mappings = liftover(
         variant.get("assembly"),
         variant.get("referenceName"),
-        variant.get("start") + 1,  # coordinates are 0-based in Matchmaker
+        variant.get("start") + 1,  # coordinates are 0-based in MatchMaker
         variant.get("end") + 1,
     )
 
@@ -228,7 +228,7 @@ def gtfeatures_to_variants(gtfeatures):
         if "variant" in feature:
             # Add variant to search terms
             variants.append(feature["variant"])
-            # Add also coresponding variant in another genome build (GRCh38 if original variant was GRCh37, and the other way around)
+            # Add also corresponding variant in another genome build (GRCh38 if original variant was GRCh37, and the other way around)
             lifted_variants = lift_variant(feature["variant"])
             if not lifted_variants:
                 continue  # Variant could not be lifted to the other build

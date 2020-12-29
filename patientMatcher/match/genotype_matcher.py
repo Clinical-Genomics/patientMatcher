@@ -45,7 +45,7 @@ def match(database, gt_features, max_score):
         if symbols:
             query_fields.append({"genomicFeatures.gene._geneName": {"$in": symbols}})
 
-        # Obtain variants and the coresponding variants in the other genome build from the genotype features
+        # Obtain variants and the corresponding variants in the other genome build from the genotype features
         variants = gtfeatures_to_variants(gt_features)
         if variants:
             query_fields.append({"genomicFeatures.variant": {"$in": variants}})
@@ -119,7 +119,8 @@ def evaluate_GT_similarity(query_features, db_patient_features, max_feature_simi
                 "variant"
             )  # matching feature's variant. Not mandatory.
 
-            # variants are matching -> Assign max score
+            # if variants are matching or lifted query variant matches with matched patients variant
+            # ->assign max matching score
             if q_variant == m_variant or m_variant in lifted_q_variant:
                 matched_features[n_feature] = max_feature_similarity
 
