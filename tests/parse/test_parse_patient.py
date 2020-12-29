@@ -44,7 +44,7 @@ def test_mme_patient_entrez_gene(entrez_gene_patient, database):
 
 
 def test_gtfeatures_to_variants(patient_37):
-    """Test the function that parses variants dictionaries from patient's genotyle features"""
+    """Test the function that parses variants dictionaries from patient's genomic features"""
 
     # GIVEN a patient containing 1 genomic feature (and one variant)
     gt_features = patient_37["patient"]["genomicFeatures"]
