@@ -189,33 +189,6 @@ def match_objs():
 
 
 @pytest.fixture()
-def patient_38():
-    """A patient with a variant in genome assembly GRCh38"""
-
-    patient = {
-        "patient": {
-            "id": "patient_id",
-            "contact": {"name": "Contact Name", "href": "mailto:contact_name@mail.com"},
-            "features": [{"id": "HP:0009623"}],
-            "genomicFeatures": [
-                {
-                    "gene": {"id": "GUCY2C"},
-                    "variant": {
-                        "assembly": "GRCh38",
-                        "referenceName": "12",
-                        "start": 14641142,
-                        "end": 14641143,
-                        "referenceBases": "C",
-                        "alternateBases": "T",
-                    },
-                }
-            ],
-        }
-    }
-    return patient
-
-
-@pytest.fixture()
 def patient_37():
     """A patient with a variant in genome assembly GRCh38"""
 

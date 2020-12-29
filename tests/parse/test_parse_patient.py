@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from patientMatcher.parse.patient import features_to_hpo, disorders_to_omim, mme_patient
+from patientMatcher.parse.patient import (
+    features_to_hpo,
+    disorders_to_omim,
+    mme_patient,
+    gtfeatures_to_variants,
+)
 
 
 def test_features_to_hpo_no_features():
@@ -36,3 +41,22 @@ def test_mme_patient_entrez_gene(entrez_gene_patient, database):
     # After conversion formatted patient's gene id should be an Ensembl id
     assert mme_formatted_patient["genomicFeatures"][0]["gene"]["id"].startswith("ENSG")
     assert mme_formatted_patient["genomicFeatures"][0]["gene"]["_geneName"]  # it's "KARS"
+
+
+def test_gtfeatures_to_variants(patient_37):
+    """Test the function that parses variants dictionaries from patient's genotyle features"""
+
+    # GIVEN a patient containing 1 genomic feature (and one variant)
+    gt_features = patient_37["patient"]["genomicFeatures"]
+    assert len(gt_features) == 1
+
+    # WHEN gtfeatures_to_variants is used to extract variants from gt_features
+    variants = gtfeatures_to_variants(gt_features)
+
+    # THEN it should return 2 variants
+    assert len(variants) == 2
+
+    # One with genome build GRCh37
+    assert variants[0]["assembly"] == "GRCh37"
+    # And one with genome build GRCh38
+    assert variants[1]["assembly"] == "GRCh38"
