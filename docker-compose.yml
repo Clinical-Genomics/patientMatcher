@@ -26,9 +26,6 @@ services:
 
   pmatcher-cli:
     container_name: pmatcher-cli
-    build:
-      context: .
-      dockerfile: Dockerfile
     image: clinicalgenomics/patientmatcher
     environment:
       MONGODB_HOST: mongodb
@@ -41,9 +38,7 @@ services:
 
   pmatcher-web:
     container_name: pmatcher-web
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: clinicalgenomics/patientmatcher
     environment:
       MONGODB_HOST: mongodb
       PMATCHER_CONFIG: '/home/worker/app/patientMatcher/patientMatcher/instance/config.py'
