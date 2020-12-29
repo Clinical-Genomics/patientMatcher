@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import coloredlogs
 import os
 from pymongo import MongoClient
 import logging
@@ -6,7 +7,6 @@ from flask import Flask
 from flask_mail import Mail
 from . import views
 
-logging.basicConfig(level=logging.INFO)
 LOG = logging.getLogger(__name__)
 
 
@@ -27,6 +27,9 @@ def create_app():
 
         app = Flask(__name__, instance_path=instance_path, instance_relative_config=True)
         app.config.from_pyfile("config.py")
+
+    current_log_level = LOG.getEffectiveLevel()
+    coloredlogs.install(level="DEBUG" if app.debug else current_log_level)
 
     client = MongoClient(app.config["DB_URI"])
     app.client = client

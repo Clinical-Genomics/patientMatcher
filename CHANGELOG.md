@@ -1,7 +1,9 @@
 ## [] -
 ### Added
 - Code for performing coordinate liftover using Ensembl REST API
+- Variant liftover when comparing genotype features
 ### Changed
+- Using coloredlogs for app logs
 ### Fixed
 - removed unused docker folder
 

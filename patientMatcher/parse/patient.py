@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import json
+from copy import deepcopy
 from jsonschema import validate, RefResolver, FormatChecker
 from patientMatcher.utils.gene import symbol_to_ensembl, entrez_to_symbol, ensembl_to_symbol
+from patientMatcher.utils.variant import liftover
 from pkgutil import get_data
 import logging
 
@@ -175,6 +177,43 @@ def gtfeatures_to_genes_symbols(gtfeatures):
     return gene_set, symbol_set
 
 
+def lift_variant(variant):
+    """Perform a variant liftover using Ensebl REST API and return eventual variant in the other genome build
+
+    Args:
+        variant(dict): example:
+            {'assembly': 'GRCh38', 'referenceName': '12', 'start': 14641142, 'end': 14641142, 'referenceBases': 'C', 'alternateBases': 'T'}
+
+    Returns:
+        lifted_variants(list of dict): example:
+            [{'assembly': 'GRCh37', 'referenceName': '12', 'start': 14794076, 'end': 14794076, 'referenceBases': 'C', 'alternateBases': 'T'}]
+    """
+    lifted_vars = []
+    mappings = liftover(
+        variant.get("assembly"),
+        variant.get("referenceName"),
+        variant.get("start") + 1,  # coordinates are 0-based in MatchMaker
+        variant.get("end") + 1,
+    )
+
+    if mappings is None:
+        return lifted_vars
+
+    for res in mappings:
+        # Create a variant which is the copy of the original variant
+        lifted = deepcopy(variant)
+        mapped = res["mapped"]
+        # Modify coordinates of this variant according to mapping results
+        lifted["assembly"] = mapped["assembly"]
+        lifted["referenceName"] = mapped["seq_region_name"]
+        lifted["start"] = mapped["start"] - 1  # conver back to 0-based coordinates
+        lifted["end"] = mapped["end"] - 1
+
+        lifted_vars.append(lifted)
+
+    return lifted_vars
+
+
 def gtfeatures_to_variants(gtfeatures):
     """Extracts all variants from a list of genomic features
 
@@ -187,7 +226,17 @@ def gtfeatures_to_variants(gtfeatures):
     variants = []
     for feature in gtfeatures:
         if "variant" in feature:
+            variant = feature["variant"]
+            if variant is None:
+                continue
+            # Add variant to search terms
             variants.append(feature["variant"])
+            # Add also corresponding variant in another genome build (GRCh38 if original variant was GRCh37, and the other way around)
+            lifted_variants = lift_variant(feature["variant"])
+            if not lifted_variants:
+                continue  # Variant could not be lifted to the other build
+            for lifted in lifted_variants:
+                variants.append(lifted)
 
     return variants
 

@@ -1,4 +1,5 @@
 ## server
+coloredlogs
 Flask
 Flask-Mail
 flask-negotiate
