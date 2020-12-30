@@ -1,5 +1,10 @@
 ## [] -
 ### Added
+### Changed
+### Fixed
+
+## [2.4] - 2020-12-30
+### Added
 - Code for performing coordinate liftover using Ensembl REST API
 - Variant liftover when comparing genotype features
 ### Changed
