@@ -2,14 +2,14 @@
 import patientMatcher.utils.ensembl_rest_client as ensembl_client
 
 
-def liftover(build, chrom, start, end):
+def liftover(build, chrom, start, end=None):
     """Perform variant liftover using Ensembl REST API
 
     Accepts:
         build(str): genome build: GRCh37 or GRCh38
         chrom(str): 1-22,X,Y,MT
         start(int): start coordinate
-        stop(int): stop coordinate
+        stop(int): stop coordinate or None
 
     Returns
         mappings(list of dict):
@@ -25,7 +25,7 @@ def liftover(build, chrom, start, end):
             client.server,
             "map/human",
             build,
-            f"{chrom}:{start}..{end}",
+            f"{chrom}:{start}..{end or start}",  # End variant provided is not required
             f"{assembly2}?content-type=application/json",
         ]
     )
