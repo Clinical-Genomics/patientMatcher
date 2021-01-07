@@ -193,7 +193,7 @@ def lift_variant(variant):
         variant.get("assembly"),
         variant.get("referenceName"),
         variant.get("start") + 1,  # coordinates are 0-based in MatchMaker
-        variant.get("end") + 1,
+        variant.get("end") + 1 if variant.get("end") else variant.get("end"),
     )
 
     if mappings is None:
@@ -207,6 +207,8 @@ def lift_variant(variant):
         lifted["assembly"] = mapped["assembly"]
         lifted["referenceName"] = mapped["seq_region_name"]
         lifted["start"] = mapped["start"] - 1  # conver back to 0-based coordinates
+        if variant.get("end") is None:
+            continue
         lifted["end"] = mapped["end"] - 1
 
         lifted_vars.append(lifted)
