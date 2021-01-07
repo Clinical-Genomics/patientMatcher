@@ -2,6 +2,11 @@
 ### Added
 ### Changed
 ### Fixed
+
+## [2.4.1] - 2020-01-07
+### Added
+### Changed
+### Fixed
 - Liftover crashing when no end coordinate is not provided
 
 ## [2.4] - 2020-12-30
