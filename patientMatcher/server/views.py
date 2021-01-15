@@ -18,6 +18,11 @@ blueprint = Blueprint("server", __name__)
 API_MIME_TYPE = "application/vnd.ga4gh.matchmaker.v1.0+json"
 
 
+@blueprint.route("/error")
+def raise_error():
+    raise Exception
+
+
 @blueprint.route("/patient/add", methods=["POST"])
 @consumes(API_MIME_TYPE, "application/json")
 @produces("application/json")

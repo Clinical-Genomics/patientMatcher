@@ -6,8 +6,27 @@ import logging
 from flask import Flask
 from flask_mail import Mail
 from . import views
+from patientMatcher.utils.notify import SMTPErrorHandler
 
 LOG = logging.getLogger(__name__)
+
+
+def configure_email_logging(app):
+    """Configure email logging to notify admins when app crashes"""
+
+    mail_handler = SMTPErrorHandler(
+        mailhost=app.config["MAIL_SERVER"],
+        fromaddr=app.config["MAIL_USERNAME"],
+        toaddrs=app.config["ADMINS"],
+        subject="O_ops... {} failed!".format(app.name),
+        credentials=(app.config["MAIL_USERNAME"], app.config["MAIL_PASSWORD"]),
+    )
+    mail_handler.setFormatter(
+        logging.Formatter(
+            "%(asctime)s - %(name)s - %(levelname)s: %(message)s " "[in %(pathname)s:%(lineno)d]"
+        )
+    )
+    app.logger.addHandler(mail_handler)
 
 
 def create_app():
@@ -39,6 +58,10 @@ def create_app():
     if app.config.get("MAIL_SERVER"):
         mail = Mail(app)
         app.mail = mail
+
+        # Configure email logging of errors
+        if not app.debug and app.config.get("ADMINS"):
+            configure_email_logging(app)
 
     app.register_blueprint(views.blueprint)
     return app

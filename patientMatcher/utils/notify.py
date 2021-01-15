@@ -1,8 +1,31 @@
 # -*- coding: utf-8 -*-
 import logging
+from logging.handlers import SMTPHandler
 from flask_mail import Message
 
 LOG = logging.getLogger(__name__)
+
+
+class SMTPErrorHandler(SMTPHandler):
+    """Handles the email notifications when the app crashes"""
+
+
+def notify_app_error(admin_email, app_admins_emails, mail, error):
+    """Send an email to server admin when the app crashes
+
+    Args:
+        admin_email(str): email of the server admin
+        app_admins_emails(list): email of app admins
+        mail(flask_mail.Mail): an email instance
+        error(str): log error text
+    """
+    sender = admin_email
+    recipients = app_admins_emails
+    email_subject = "MatchMaker Exchange app failed!"
+    email_body = None
+    LOG.error(
+        f"The following error occurred: {error}. Notifying admins {app_admins_emails} via email."
+    )
 
 
 def notify_match_internal(database, match_obj, admin_email, mail, notify_complete):
