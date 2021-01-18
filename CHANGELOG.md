@@ -1,6 +1,7 @@
 ## [] -
 ### Added
 ### Changed
+- Use codecov instead of coveralls in github actions
 ### Fixed
 
 ## [2.4.1] - 2020-01-07
