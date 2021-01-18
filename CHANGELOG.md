@@ -1,5 +1,6 @@
 ## [] -
 ### Added
+- Notify admins via email when app crashes
 ### Changed
 ### Fixed
 
