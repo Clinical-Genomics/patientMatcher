@@ -6,26 +6,44 @@ from flask_mail import Message
 LOG = logging.getLogger(__name__)
 
 
-class SMTPErrorHandler(SMTPHandler):
-    """Handles the email notifications when the app crashes"""
+class TlsSMTPHandler(SMTPHandler):
+    """Class for handling error logging system"""
 
+    def emit(self, record):
+        """Emit a record.
+        Format the record and send it to the specified admin addressees.
+        """
+        try:
+            import smtplib
 
-def notify_app_error(admin_email, app_admins_emails, mail, error):
-    """Send an email to server admin when the app crashes
+            try:
+                from email.utils import formatdate
+            except ImportError:
+                formatdate = self.date_time
 
-    Args:
-        admin_email(str): email of the server admin
-        app_admins_emails(list): email of app admins
-        mail(flask_mail.Mail): an email instance
-        error(str): log error text
-    """
-    sender = admin_email
-    recipients = app_admins_emails
-    email_subject = "MatchMaker Exchange app failed!"
-    email_body = None
-    LOG.error(
-        f"The following error occurred: {error}. Notifying admins {app_admins_emails} via email."
-    )
+            port = self.mailport
+            if not port:
+                port = smtplib.SMTP_PORT
+            smtp = smtplib.SMTP(self.mailhost, port)
+            msg = self.format(record)
+            msg = "From: %s\r\nTo: %s\r\nSubject: %s\r\nDate: %s\r\n\r\n%s" % (
+                self.fromaddr,
+                ",".join(self.toaddrs),
+                self.getSubject(record),
+                formatdate(),
+                msg,
+            )
+            if self.username:
+                smtp.ehlo()  # For 'tls', add this line
+                smtp.starttls()  # For 'tls', add this line
+                smtp.ehlo()  # For 'tls', add this line
+                smtp.login(self.username, self.password)
+
+            smtp.sendmail(self.fromaddr, self.toaddrs, msg)
+            smtp.quit()
+
+        except Exception as ex:
+            LOG.warning(ex)
 
 
 def notify_match_internal(database, match_obj, admin_email, mail, notify_complete):
