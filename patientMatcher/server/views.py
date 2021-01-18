@@ -20,7 +20,7 @@ API_MIME_TYPE = "application/vnd.ga4gh.matchmaker.v1.0+json"
 
 @blueprint.route("/error")
 def raise_error():
-    raise Exception
+    raise InvalidUsage("This view is gone", status_code=410)
 
 
 @blueprint.route("/patient/add", methods=["POST"])
