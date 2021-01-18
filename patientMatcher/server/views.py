@@ -18,11 +18,6 @@ blueprint = Blueprint("server", __name__)
 API_MIME_TYPE = "application/vnd.ga4gh.matchmaker.v1.0+json"
 
 
-@blueprint.route("/error")
-def raise_error():
-    raise InvalidUsage("This view is gone", status_code=410)
-
-
 @blueprint.route("/patient/add", methods=["POST"])
 @consumes(API_MIME_TYPE, "application/json")
 @produces("application/json")
@@ -104,11 +99,14 @@ def heartbeat():
 @blueprint.route("/metrics", methods=["GET"])
 def metrics():
     """Get database metrics"""
+    """
     LOG.info("Receiving a requests for server metrics.")
     results = controllers.metrics(database=current_app.db)
     resp = jsonify({"metrics": results, "disclaimer": current_app.config.get("DISCLAIMER")})
     resp.status_code = 200
     return resp
+    """
+    raise Error("Raise a general error", status_code=410)
 
 
 @blueprint.route("/nodes", methods=["GET"])
