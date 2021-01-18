@@ -1,7 +1,7 @@
 name: Tests and coverage
 on: [pull_request]
 jobs:
-  Pytest_Coveralls:
+  Pytest_Codecov:
     runs-on: ubuntu-18.04
     env:
       PMATCHER_CONFIG: ../instance/config.py
@@ -18,10 +18,14 @@ jobs:
         pip install git+https://github.com/Clinical-Genomics/patient-similarity
         pip install -e .
         pip install pytest
-        pip install coveralls
-    - name: Run pytest and coveralls
+        pip install pytest-cov
+    - name: Run pytest and codecov
       run: |
-        pytest --cov=patientMatcher tests/
-        coveralls
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
+        pytest --cov=./ --cov-report=xml
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        flags: unittests
+        env_vars: OS,PYTHON
+        name: codecov-umbrella
+        fail_ci_if_error: true
