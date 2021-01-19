@@ -28,7 +28,6 @@ def configure_email_error_logging(app):
         )
     )
     app.logger.addHandler(mail_handler)
-    app.logger.exception(Exception("hello"))
 
 
 def create_app():

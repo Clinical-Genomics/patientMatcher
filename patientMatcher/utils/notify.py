@@ -20,7 +20,6 @@ class TlsSMTPHandler(SMTPHandler):
                 from email.utils import formatdate
             except ImportError:
                 formatdate = self.date_time
-
             port = self.mailport
             if not port:
                 port = smtplib.SMTP_PORT
@@ -38,7 +37,6 @@ class TlsSMTPHandler(SMTPHandler):
                 smtp.starttls()  # For 'tls', add this line
                 smtp.ehlo()  # For 'tls', add this line
                 smtp.login(self.username, self.password)
-
             smtp.sendmail(self.fromaddr, self.toaddrs, msg)
             smtp.quit()
 
