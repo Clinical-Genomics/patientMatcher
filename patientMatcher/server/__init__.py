@@ -15,7 +15,7 @@ def configure_email_error_logging(app):
     """Setup logging of error/exceptions to email."""
 
     mail_handler = TlsSMTPHandler(
-        mailhost=app.config["MAIL_SERVER"],
+        mailhost=(app.config["MAIL_SERVER"], app.config["MAIL_PORT"]),
         fromaddr=app.config["MAIL_USERNAME"],
         toaddrs=app.config["ADMINS"],
         subject=f"{app.name} log error",
@@ -28,6 +28,7 @@ def configure_email_error_logging(app):
         )
     )
     app.logger.addHandler(mail_handler)
+    app.logger.exception(Exception("hello"))
 
 
 def create_app():
