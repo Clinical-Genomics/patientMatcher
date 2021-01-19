@@ -35,9 +35,13 @@ DISCLAIMER = "patientMatcher provides data in good faith as a research tool. pat
 # Required only if you want to send match notifications to patients contacts
 # MAIL_SERVER = mail_port
 # MAIL_PORT = email_port
+# MAIL_USE_TLS = True or False
 # MAIL_USE_SSL = True or False
 # MAIL_USERNAME = 'user_email@mail.se'
 # MAIL_PASSWORD = 'mail_password'
+
+# ADMINS will receive email notification is app crashes
+# ADMINS = []
 
 # Set NOTIFY_COMPLETE to False if you don't want to notify variants and phenotypes by email
 # This way only contact info and matching patients ID will be notified in email body
