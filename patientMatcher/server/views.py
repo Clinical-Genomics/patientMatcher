@@ -99,14 +99,11 @@ def heartbeat():
 @blueprint.route("/metrics", methods=["GET"])
 def metrics():
     """Get database metrics"""
-    """
     LOG.info("Receiving a requests for server metrics.")
     results = controllers.metrics(database=current_app.db)
     resp = jsonify({"metrics": results, "disclaimer": current_app.config.get("DISCLAIMER")})
     resp.status_code = 200
     return resp
-    """
-    raise Error("Raise a general error", status_code=410)
 
 
 @blueprint.route("/nodes", methods=["GET"])
