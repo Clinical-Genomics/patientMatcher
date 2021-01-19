@@ -3,6 +3,7 @@
 - Notify admins via email when app crashes
 ### Changed
 - Use codecov instead of coveralls in github actions
+- Send notification emails using TLS instead of SSL
 ### Fixed
 
 ## [2.4.1] - 2020-01-07
