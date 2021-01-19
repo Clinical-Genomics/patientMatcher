@@ -30,7 +30,7 @@ def test_error_log_email(mock_app):
 
     # Then a TlsSMTPHandler should be among the app loggers
     handler = mock_app.logger.handlers[0]
-    assert type(handler) == TlsSMTPHandler
+    assert isinstance(handler, TlsSMTPHandler)
     # And should contain the given settings
     assert handler.mailhost == mail_host
     assert handler.mailport == mail_port
