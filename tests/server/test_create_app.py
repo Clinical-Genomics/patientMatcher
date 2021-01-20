@@ -37,4 +37,3 @@ def test_error_log_email(mock_app):
     assert handler.fromaddr == server_email
     assert handler.password == server_pw
     assert handler.toaddrs == mock_app.config["ADMINS"]
-    # assert handler.level
