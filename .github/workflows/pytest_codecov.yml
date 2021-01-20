@@ -1,5 +1,5 @@
 name: Tests and coverage
-on: [pull_request]
+on: [push, pull_request]
 jobs:
   Pytest_Codecov:
     runs-on: ubuntu-18.04
@@ -25,6 +25,7 @@ jobs:
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
+        token: ${{ secrets.CODECOV_TOKEN }}
         flags: unittests
         env_vars: OS,PYTHON
         name: codecov-umbrella

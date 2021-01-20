@@ -6,8 +6,28 @@ import logging
 from flask import Flask
 from flask_mail import Mail
 from . import views
+from patientMatcher.utils.notify import TlsSMTPHandler
 
 LOG = logging.getLogger(__name__)
+
+
+def configure_email_error_logging(app):
+    """Setup logging of error/exceptions to email."""
+
+    mail_handler = TlsSMTPHandler(
+        mailhost=(app.config["MAIL_SERVER"], app.config["MAIL_PORT"]),
+        fromaddr=app.config["MAIL_USERNAME"],
+        toaddrs=app.config["ADMINS"],
+        subject=f"{app.name} log error",
+        credentials=(app.config["MAIL_USERNAME"], app.config["MAIL_PASSWORD"]),
+    )
+    mail_handler.setLevel(logging.ERROR)
+    mail_handler.setFormatter(
+        logging.Formatter(
+            "%(asctime)s - %(name)s - %(levelname)s: %(message)s " "[in %(pathname)s:%(lineno)d]"
+        )
+    )
+    app.logger.addHandler(mail_handler)
 
 
 def create_app():
@@ -39,6 +59,10 @@ def create_app():
     if app.config.get("MAIL_SERVER"):
         mail = Mail(app)
         app.mail = mail
+
+        # Configure email logging of errors
+        if app.debug and app.config.get("ADMINS"):
+            configure_email_error_logging(app)
 
     app.register_blueprint(views.blueprint)
     return app
