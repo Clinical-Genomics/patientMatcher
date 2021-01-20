@@ -3,7 +3,7 @@
 ### Changed
 ### Fixed
 
-## [4.5] - 2021-01-20
+## [2.5] - 2021-01-20
 ### Added
 - Notify admins via email when app crashes
 ### Changed
