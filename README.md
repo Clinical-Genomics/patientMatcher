@@ -1,5 +1,6 @@
 # patientMatcher
-[![Build Status](https://travis-ci.com/Clinical-Genomics/patientMatcher.svg?branch=master)](https://travis-ci.com/Clinical-Genomics/patientMatcher) [![Coverage Status](https://coveralls.io/repos/github/Clinical-Genomics/patientMatcher/badge.svg?branch=master)](https://coveralls.io/github/Clinical-Genomics/patientMatcher?branch=master)
+[![Build Status](https://travis-ci.com/Clinical-Genomics/patientMatcher.svg?branch=master)](https://travis-ci.com/Clinical-Genomics/patientMatcher) [![codecov](https://codecov.io/gh/Clinical-Genomics/patientMatcher/branch/master/graph/badge.svg?token=WXHDu9U8qk)](https://codecov.io/gh/Clinical-Genomics/patientMatcher)
+
 
 Table of Contents:
 1. [ Running the app using Docker ](#docker)
@@ -22,6 +23,7 @@ Table of Contents:
     - [ Genotyping matching algorithm ](#geno_matching)
     - [ Phenotyping matching algorithm ](#pheno_matching)
 7. [ Enabling matching notifications ](#notify)
+8. [ Enabling log errors notifications ](#log_errors)
 
 <a name="docker"></a>
 ## Running the app using Docker
@@ -365,6 +367,11 @@ Once these parameters are set to valid values a notification email will be sent 
  - An internal search is submitted to the server using a patient from the database (/match endpoint) and this search returns at least one match. In this case contact users of all patients involved will be notified (contact from query patient and contacts from the result list of patients).
 
  You can stop server notification any time by commenting the MAIL_SERVER parameter in config file and rebooting the server.
+
+
+<a name="log_errors"></a>
+## Enabling log errors notifications
+App email notifications might be enabled by providing one or more email addresses as values for the ADMINS parameter in the configuration file. Note that the email handler will only notify app errors (LOG level = error).
 
 
 
