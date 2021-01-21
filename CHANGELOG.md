@@ -1,6 +1,8 @@
 ## [] -
 ### Added
+- Email logging of errors howto in readme
 ### Changed
+- Removed coveralls badge and added codecov badge
 ### Fixed
 
 ## [2.5] - 2021-01-20
