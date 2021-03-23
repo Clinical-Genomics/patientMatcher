@@ -7,8 +7,19 @@ from flask import Flask
 from flask_mail import Mail
 from . import views
 from patientMatcher.utils.notify import TlsSMTPHandler
+from patientMatcher.resources import path_to_hpo_terms, path_to_phenotype_annotations
 
 LOG = logging.getLogger(__name__)
+
+
+def available_phenotype_resources():
+    """Check that necessary resources (HPO terms and phenotype annotations) were downloaded and available"""
+    if (
+        os.path.isfile(path_to_hpo_terms) is False
+        or os.path.isfile(path_to_phenotype_annotations) is False
+    ):
+        return False
+    return True
 
 
 def configure_email_error_logging(app):
@@ -63,6 +74,14 @@ def create_app():
         # Configure email logging of errors
         if app.debug and app.config.get("ADMINS"):
             configure_email_error_logging(app)
+
+    # If it's not a test app and phenotype resources are missing
+    # Display message and exit
+    if not any([app.config.get("TESTING"), available_phenotype_resources()]):
+        LOG.error(
+            "Required files hp.obo.txt and phenotype_annotation.tab.txt not found on the server. Please download them with the command 'pmatcher update resources'."
+        )
+        exit()
 
     app.register_blueprint(views.blueprint)
     return app
