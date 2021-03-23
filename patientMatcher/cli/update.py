@@ -19,7 +19,7 @@ def resources(test):
     """Updates HPO terms and disease ontology from the web.
     Specifically collect files from:
     http://purl.obolibrary.org/obo/hp.obo
-    https://raw.githubusercontent.com/monarch-initiative/hpo-survey-analysis/master/data/phenotype_annotation.tab
+    https://ci.monarchinitiative.org/view/hpo/job/hpo.annotations/lastSuccessfulBuild/artifact/rare-diseases/misc/phenotype_annotation.tab
     """
     files = {}
     for key, item in PHENOTYPE_TERMS.items():
