@@ -3,8 +3,10 @@
 - Email logging of errors howto in readme
 ### Changed
 - Removed coveralls badge and added codecov badge
+- Required downloading of hp.obo.txt and phenotype_annotation.tab.txt to run a non-test app
 ### Fixed
 - downloading phenotype_annotation.tab file from Monarch Initiative
+
 
 ## [2.5] - 2021-01-20
 ### Added
