@@ -1,7 +1,6 @@
 ## [] -
 ### Added
 - Email logging of errors howto in readme
-- Check the availability of
 ### Changed
 - Removed coveralls badge and added codecov badge
 - Required downloading of hp.obo.txt and phenotype_annotation.tab.txt to run a non-test app
