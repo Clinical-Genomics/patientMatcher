@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
+import os
 from patientMatcher.server import configure_email_error_logging
 from smtplib import SMTP
 from patientMatcher.utils.notify import TlsSMTPHandler
+from patientMatcher.resources import path_to_hpo_terms
+from patientMatcher.server import create_app
 
 
 def test_create_app(mock_app):
@@ -9,6 +12,22 @@ def test_create_app(mock_app):
 
     assert mock_app.client
     assert mock_app.db
+
+
+def test_create_app_missing_requirement(mock_app):
+    """Tests the function that creates the app when phenotype_annotation.tab.txt and hp.obo.txt
+    resources are missing"""
+
+    # GIVEN one of the required files missing / it's been renamed
+    temp_file = ".".join([path_to_hpo_terms, "temp"])
+    os.rename(path_to_hpo_terms, temp_file)
+
+    # THEN the app should not be created
+    app = create_app()
+    assert app is None
+
+    # Revert original resource name
+    os.rename(temp_file, path_to_hpo_terms)
 
 
 def test_error_log_email(mock_app):

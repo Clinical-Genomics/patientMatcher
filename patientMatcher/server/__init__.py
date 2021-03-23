@@ -81,7 +81,7 @@ def create_app():
         LOG.error(
             "Required files hp.obo.txt and phenotype_annotation.tab.txt not found on the server. Please download them with the command 'pmatcher update resources'."
         )
-        exit()
+        return
 
     app.register_blueprint(views.blueprint)
     return app
