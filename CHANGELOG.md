@@ -4,6 +4,7 @@
 ### Changed
 - Removed coveralls badge and added codecov badge
 ### Fixed
+- downloading phenotype_annotation.tab file from Monarch Initiative
 
 ## [2.5] - 2021-01-20
 ### Added
