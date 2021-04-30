@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
 import logging
-from patientMatcher.parse.patient import features_to_hpo, disorders_to_omim
-from patientMatcher.resources import path_to_hpo_terms, path_to_phenotype_annotations
-from patient_similarity import HPO, Diseases, HPOIC, Patient
+import os
+
+from patient_similarity import HPO, HPOIC, Diseases, Patient
 from patient_similarity.__main__ import compare_patients
+from patientMatcher.parse.patient import disorders_to_omim, features_to_hpo
+from patientMatcher.resources import path_to_hpo_terms, path_to_phenotype_annotations
+from patientMatcher.utils.hpo import HPO
 
 LOG = logging.getLogger(__name__)
 PHENOTYPE_ROOT = "HP:0000001"
@@ -39,7 +41,8 @@ def match(database, max_score, features, disorders):
         query_fields.append({"features": {"$exists": True, "$ne": []}})
 
         # Create the information-content functionality for the HPO
-        hpo = HPO(path_to_hpo_terms, new_root=PHENOTYPE_ROOT)
+        hpo = HPO()
+
         diseases = Diseases(path_to_phenotype_annotations)
         hpoic = HPOIC(
             hpo,
