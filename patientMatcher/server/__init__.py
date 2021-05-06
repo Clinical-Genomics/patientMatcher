@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
-import coloredlogs
-import os
-from pymongo import MongoClient
 import logging
+import os
+
+import coloredlogs
 from flask import Flask
 from flask_mail import Mail
-from . import views
-from patientMatcher.utils.notify import TlsSMTPHandler
 from patientMatcher.resources import path_to_hpo_terms, path_to_phenotype_annotations
+from patientMatcher.utils.notify import TlsSMTPHandler
+from pymongo import MongoClient
+
+from . import extensions, views
 
 LOG = logging.getLogger(__name__)
 
@@ -67,6 +69,8 @@ def create_app():
     app.db = client[app.config["DB_NAME"]]
     LOG.info("database connection info:{}".format(app.db))
 
+    extensions.hpo.init_app(app)
+
     if app.config.get("MAIL_SERVER"):
         mail = Mail(app)
         app.mail = mail
@@ -84,4 +88,5 @@ def create_app():
         return
 
     app.register_blueprint(views.blueprint)
+
     return app
