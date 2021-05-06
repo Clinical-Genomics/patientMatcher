@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import requests
-from patientMatcher.utils.add import backend_add_patient
+from patientMatcher.match.handler import external_matcher, internal_matcher, save_async_response
 from patientMatcher.parse.patient import mme_patient
-from patientMatcher.match.handler import internal_matcher, save_async_response, external_matcher
+from patientMatcher.utils.add import backend_add_patient
 
 
 def test_internal_matching(database, gpx4_patients):

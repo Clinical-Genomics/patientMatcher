@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
 import os
-from patientMatcher.server import configure_email_error_logging
 from smtplib import SMTP
-from patientMatcher.utils.notify import TlsSMTPHandler
+
 from patientMatcher.resources import path_to_hpo_terms
-from patientMatcher.server import create_app
+from patientMatcher.server import configure_email_error_logging, create_app
+from patientMatcher.utils.notify import TlsSMTPHandler
 
 
-def test_create_app(mock_app):
+def test_create_app():
     """Tests the function that creates the app"""
 
-    assert mock_app.client
-    assert mock_app.db
+    assert create_app()
 
 
 def test_create_app_missing_requirement(mock_app):

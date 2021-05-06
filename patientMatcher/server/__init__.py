@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
-import coloredlogs
-import os
-from pymongo import MongoClient
 import logging
+import os
+
+import coloredlogs
 from flask import Flask
 from flask_mail import Mail
-from . import views
-from patientMatcher.utils.notify import TlsSMTPHandler
 from patientMatcher.resources import path_to_hpo_terms, path_to_phenotype_annotations
+from patientMatcher.utils.notify import TlsSMTPHandler
+from pymongo import MongoClient
+
+from . import extensions, views
 
 LOG = logging.getLogger(__name__)
 
@@ -67,14 +69,6 @@ def create_app():
     app.db = client[app.config["DB_NAME"]]
     LOG.info("database connection info:{}".format(app.db))
 
-    if app.config.get("MAIL_SERVER"):
-        mail = Mail(app)
-        app.mail = mail
-
-        # Configure email logging of errors
-        if app.debug and app.config.get("ADMINS"):
-            configure_email_error_logging(app)
-
     # If it's not a test app and phenotype resources are missing
     # Display message and exit
     if not any([app.config.get("TESTING"), available_phenotype_resources()]):
@@ -83,5 +77,16 @@ def create_app():
         )
         return
 
+    extensions.hpo.init_app(app)
+
+    if app.config.get("MAIL_SERVER"):
+        mail = Mail(app)
+        app.mail = mail
+
+        # Configure email logging of errors
+        if app.debug and app.config.get("ADMINS"):
+            configure_email_error_logging(app)
+
     app.register_blueprint(views.blueprint)
+
     return app
