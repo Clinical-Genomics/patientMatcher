@@ -5,7 +5,7 @@ from patientMatcher.parse.patient import mme_patient
 from patientMatcher.utils.add import backend_add_patient
 
 
-def test_internal_matching(mock_app, database, gpx4_patients):
+def test_internal_matching(database, gpx4_patients):
     """Testing the combined matching algorithm"""
 
     # load 2 test patients in mock database
@@ -20,15 +20,14 @@ def test_internal_matching(mock_app, database, gpx4_patients):
     # test matching of one of the 2 patients against both patients in database
     proband_patient = mme_patient(gpx4_patients[0], True)
 
-    with mock_app.app_context():
-        match = internal_matcher(database, proband_patient, 0.5, 0.5)
-        match_patients = match["results"][0]["patients"]
-        assert len(match_patients) == 2
+    match = internal_matcher(database, proband_patient, 0.5, 0.5)
+    match_patients = match["results"][0]["patients"]
+    assert len(match_patients) == 2
 
-        higest_scored_patient = match_patients[0]  # first returned patient has higher score
-        lowest_scored_patient = match_patients[-1]  # last returned patient has lower score
+    higest_scored_patient = match_patients[0]  # first returned patient has higher score
+    lowest_scored_patient = match_patients[-1]  # last returned patient has lower score
 
-        assert higest_scored_patient["score"]["patient"] > lowest_scored_patient["score"]["patient"]
+    assert higest_scored_patient["score"]["patient"] > lowest_scored_patient["score"]["patient"]
 
 
 def test_internal_matching_with_threshold(database, gpx4_patients):
