@@ -69,6 +69,14 @@ def create_app():
     app.db = client[app.config["DB_NAME"]]
     LOG.info("database connection info:{}".format(app.db))
 
+    # If it's not a test app and phenotype resources are missing
+    # Display message and exit
+    if not any([app.config.get("TESTING"), available_phenotype_resources()]):
+        LOG.error(
+            "Required files hp.obo.txt and phenotype_annotation.tab.txt not found on the server. Please download them with the command 'pmatcher update resources'."
+        )
+        return
+
     extensions.hpo.init_app(app)
 
     if app.config.get("MAIL_SERVER"):
@@ -78,14 +86,6 @@ def create_app():
         # Configure email logging of errors
         if app.debug and app.config.get("ADMINS"):
             configure_email_error_logging(app)
-
-    # If it's not a test app and phenotype resources are missing
-    # Display message and exit
-    if not any([app.config.get("TESTING"), available_phenotype_resources()]):
-        LOG.error(
-            "Required files hp.obo.txt and phenotype_annotation.tab.txt not found on the server. Please download them with the command 'pmatcher update resources'."
-        )
-        return
 
     app.register_blueprint(views.blueprint)
 

@@ -8,6 +8,15 @@ LOG = logging.getLogger(__name__)
 ROOT = "HP:0000001"
 
 
+def get_ancestors(root, acc=None):
+    if acc is None:
+        acc = set()
+    acc.add(root)
+    for parent in root.parents:
+        get_ancestors(parent, acc)
+    return acc
+
+
 class HPNode(object):
     """Populate an HPO object node from a list of lines in the HPO intology file"""
 
@@ -37,9 +46,9 @@ class HPNode(object):
             if field == "is_obsolete":
                 self.obsolete = True
 
-    def is_root(self):
-        """returns True if node is root"""
-        return self.id == ROOT
+    def ancestors(self):
+        """return all node ancestors"""
+        return get_ancestors(self)
 
     def validate(self):
         """Make sure a node has an ID, a name and parents (if node is not root)"""
@@ -52,15 +61,18 @@ class HPNode(object):
             self.parents.add(parent)
             parent.children.add(self)
 
+    def __str__(self):
+        return str(self.id)
+
 
 class HPO(object):
     """Parse and HPO ontology to make it available for phenotype matching"""
 
     def init_app(self, app):
         """Initialize the HPO ontology when the app is launched."""
-        self.root = ROOT
         self.hps = {}
         self.parse_ontolology()
+        self.root = self.hps[ROOT]
 
     def parse_ontolology(self):
         """Parse HPO ontology file, that is available under patientMatcher/resources"""
@@ -77,6 +89,12 @@ class HPO(object):
                     if hp_node.validate() is True:
                         self.hps[hp_node.id] = hp_node
 
+                    # Include also alternate node IDs in hps dictionary
+                    for hpid in hp_node.alts:
+                        if hpid in self.hps:
+                            continue
+                        self.hps[hpid] = hp_node
+
                     hpo_lines = []  # Reset lines for next HPO term
                     continue
                 hpo_lines.append(line)
@@ -88,3 +106,9 @@ class HPO(object):
             node.link(self.hps)
 
         LOG.info(f"Parsed {len(nodes)} HP terms into HPO nodes from resource file")
+
+    def __getitem__(self, key):
+        return self.hps[key]
+
+    def __len__(self):
+        return len(set(self.hps.values()))
