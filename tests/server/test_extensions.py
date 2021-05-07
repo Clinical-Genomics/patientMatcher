@@ -10,7 +10,7 @@ def test_hpo(mock_app):
     # GIVEN the hpo extension of an app
     assert hpo
     # THEN the hpo should countain HPO terms in a dictionary
-    assert type(hpo.hps) == dict
+    assert isinstance(hpo.hps, dict)
     # THEN the HPO should contain ontology root term
     assert hpo[root_term]
     assert hpo[root_term].id == root_term
@@ -28,7 +28,7 @@ def test_diseases(mock_app):
     assert diseases
 
     # THEN the hpo should countain disease terms in a dictionary
-    assert type(diseases.diseases) == dict
+    assert isinstance(diseases.diseases, dict)
 
     # GIVEN a specific term
     test_db = "OMIM"
