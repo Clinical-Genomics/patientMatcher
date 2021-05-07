@@ -4,6 +4,8 @@
 ### Changed
 - Removed coveralls badge and added codecov badge
 - Required downloading of hp.obo.txt and phenotype_annotation.tab.txt to run a non-test app
+- Integrate HPO parsing and handling into the software (decouple from Patient-similarity for HPO)
+- Integrate OMIM parsing and handling into the software (decouple from Patient-similarity for OMIM)
 ### Fixed
 - downloading phenotype_annotation.tab file from Monarch Initiative
 
