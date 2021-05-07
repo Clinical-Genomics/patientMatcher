@@ -77,7 +77,7 @@ class Diseases:
             try:
                 num, denom = fraction_frequency_re.split(field)
             except Exception as ex:
-                LOG.error(f"Error parsing frequency: {field} -> {ex}")
+                LOG.warning(f"Error parsing frequency: {field} -> {ex}")
                 freq = default
             else:
                 freq = float(num) / float(denom)
