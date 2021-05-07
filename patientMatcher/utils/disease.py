@@ -33,9 +33,9 @@ FREQUENCIES = {
 class Disease:
     """An object representing a single disease"""
 
-    def __init__(self, db, id, phenotypes):
+    def __init__(self, db, db_id, phenotypes):
         self.db = db
-        self.id = id
+        self.id = db_id
         self.phenotype_freqs = phenotypes
 
     def __str__(self):
@@ -65,7 +65,7 @@ class Diseases:
 
         if field in FREQUENCIES:
             return FREQUENCIES[field]
-        elif field.endswith("%"):
+        if field.endswith("%"):
             field = field.replace("%", "")
             if "-" in field:
                 # Average any frequency ranges
@@ -76,8 +76,8 @@ class Diseases:
         else:
             try:
                 num, denom = fraction_frequency_re.split(field)
-            except:
-                LOG.error("Error parsing frequency: {!r}".format(field))
+            except Exception as ex:
+                LOG.error(f"Error parsing frequency: {field} -> {ex}")
                 freq = default
             else:
                 freq = float(num) / float(denom)
@@ -124,6 +124,6 @@ class Diseases:
                         phenotypes[hpo_term] = freq
                     # phenotypes[hpo_term] = None  # Do not populate disease frequencies
 
-        for (db, id), phenotypes in disease_phenotypes.items():
-            disease = Disease(db, id, phenotypes)
-            self.diseases[(db, id)] = disease
+        for (db, db_id), phenotypes in disease_phenotypes.items():
+            disease = Disease(db, db_id, phenotypes)
+            self.diseases[(db, db_id)] = disease
