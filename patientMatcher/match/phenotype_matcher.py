@@ -41,9 +41,13 @@ def match(database, max_score, features, disorders):
         # compare against all cases which also have features (HPO terms)
         query_fields.append({"features": {"$exists": True, "$ne": []}})
 
+        # Create the information-content functionality for the HPO
+        hpo = hpo_extension
+
+        diseases = diseases_extension
         hpoic = HPOIC(
-            hpo=hpo_extension,
-            diseases=diseases_extension,
+            hpo,
+            diseases,
             orphanet=None,
             patients=False,
             use_disease_prevalence=False,

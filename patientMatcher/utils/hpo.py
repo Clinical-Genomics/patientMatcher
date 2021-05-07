@@ -104,7 +104,7 @@ class HPO(object):
         for node in nodes:
             node.link(self.hps)
 
-        LOG.info(f"Parsed {len(nodes)} HP0 terms into HPO nodes from resource file")
+        LOG.info(f"Parsed {len(nodes)} HPO terms into HPO nodes from resource file")
 
     def __getitem__(self, key):
         return self.hps[key]
