@@ -71,13 +71,12 @@ class HPO(object):
     def init_app(self, app):
         """Initialize the HPO ontology when the app is launched."""
         self.hps = {}
-        self.parse_ontolology()
+        self._parse_ontolology()
         self.root = self.hps[ROOT]
 
-    def parse_ontolology(self):
+    def _parse_ontolology(self):
         """Parse HPO ontology file, that is available under patientMatcher/resources"""
         with open(path_to_hpo_terms, encoding="utf-8") as hpofile:
-            counter = 0
             hpo_lines = []  # A group of lines containing data for an HPO term
             for line in hpofile:
                 line = line.strip()
@@ -105,7 +104,7 @@ class HPO(object):
         for node in nodes:
             node.link(self.hps)
 
-        LOG.info(f"Parsed {len(nodes)} HP terms into HPO nodes from resource file")
+        LOG.info(f"Parsed {len(nodes)} HP0 terms into HPO nodes from resource file")
 
     def __getitem__(self, key):
         return self.hps[key]

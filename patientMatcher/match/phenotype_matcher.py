@@ -4,10 +4,11 @@
 import logging
 import os
 
-from patient_similarity import HPOIC, Diseases, Patient
+from patient_similarity import HPOIC, Patient
 from patient_similarity.__main__ import compare_patients
 from patientMatcher.parse.patient import disorders_to_omim, features_to_hpo
 from patientMatcher.resources import path_to_hpo_terms, path_to_phenotype_annotations
+from patientMatcher.server.extensions import diseases as diseases_extension
 from patientMatcher.server.extensions import hpo as hpo_extension
 
 LOG = logging.getLogger(__name__)
@@ -40,13 +41,9 @@ def match(database, max_score, features, disorders):
         # compare against all cases which also have features (HPO terms)
         query_fields.append({"features": {"$exists": True, "$ne": []}})
 
-        # Create the information-content functionality for the HPO
-        hpo = hpo_extension
-
-        diseases = Diseases(path_to_phenotype_annotations)
         hpoic = HPOIC(
-            hpo,
-            diseases,
+            hpo=hpo_extension,
+            diseases=diseases_extension,
             orphanet=None,
             patients=False,
             use_disease_prevalence=False,
