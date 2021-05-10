@@ -1,6 +1,7 @@
 ## [] -
 ### Added
 - Email logging of errors howto in readme
+- Inclusive-language check using [woke](https://github.com/get-woke/woke) github action
 ### Changed
 - Removed coveralls badge and added codecov badge
 - Required downloading of hp.obo.txt and phenotype_annotation.tab.txt to run a non-test app
