@@ -20,9 +20,9 @@ services:
       - APPLICATION_USER=pmUser
       - APPLICATION_PASS=pmPassword
     ports:
-      - '27013:27013'
+      - '27013:27017'
     expose:
-      - '27013'
+      - '27017'
 
   pmatcher-cli:
     container_name: pmatcher-cli
