@@ -20,7 +20,7 @@ services:
       - APPLICATION_USER=pmUser
       - APPLICATION_PASS=pmPassword
     ports:
-      - '27017:27017'
+      - '27013:27017'
     expose:
       - '27017'
 
@@ -46,11 +46,11 @@ services:
       - mongodb
     networks:
       - pmatcher-net
-    expose:
-      - '5000'
     ports:
-      - '5000:5000'
-    command: bash -c 'pmatcher run --host 0.0.0.0'
+      - '9020:9020'
+    expose:
+      - '9020'
+    command: bash -c 'pmatcher run --host 0.0.0.0 -p 9020'
 
 networks:
   pmatcher-net:
