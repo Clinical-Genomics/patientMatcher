@@ -7,6 +7,8 @@
 - Required downloading of hp.obo.txt and phenotype_annotation.tab.txt to run a non-test app
 - Integrate HPO parsing and handling into the software (decouple from Patient-similarity for HPO)
 - Integrate OMIM parsing and handling into the software (decouple from Patient-similarity for OMIM)
+- Use app port 9020 instead of 5000 in docker-compose
+- Use MongoDB port 27013 instead of 27017 in docker-compose
 ### Fixed
 - downloading phenotype_annotation.tab file from Monarch Initiative
 
