@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+# These classes are a simplified version of Disease and Diseases classes
+# originally developed by Orion Buske in patient-similarity (https://github.com/buske/patient-similarity)
+
 import logging
 import re
 from collections import defaultdict

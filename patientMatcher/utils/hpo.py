@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
+# These classes are a simplified version of HPO and HPOIC classes
+# originally developed by Orion Buske in patient-similarity (https://github.com/buske/patient-similarity)
+
 import logging
+from collections import defaultdict
+from math import log
 
 from patientMatcher.resources import path_to_hpo_terms
 
@@ -7,7 +12,7 @@ LOG = logging.getLogger(__name__)
 
 ROOT = "HP:0000001"
 
-
+### Code required by the HPO class ###
 def get_ancestors(root, acc=None):
     if acc is None:
         acc = set()
@@ -18,7 +23,7 @@ def get_ancestors(root, acc=None):
 
 
 class HPNode(object):
-    """Populate an HPO object node from a list of lines in the HPO intology file"""
+    """Populate an HPO object node from a list of lines in the HPO ontology file"""
 
     def __init__(self, hpo_lines):
         self.id = None
@@ -111,3 +116,113 @@ class HPO(object):
 
     def __len__(self):
         return len(set(self.hps.values()))
+
+
+### End of  code required by the HPO class ###
+
+
+### Code required by the HPOIC class ###
+EPS = 1e-9
+
+
+def _bound(p, eps=EPS):
+    return min(max(p, eps), 1 - eps)
+
+
+###  Class handling the information-content functionality for the HPO
+class HPOIC(object):
+    def init_app(self, app, hpo, diseases):
+        """Initialize the HPO ontology when the app is launched."""
+        LOG.info("Initializing the HPO information content")
+        term_freq = self._get_term_frequencies(diseases, hpo)
+        LOG.info("Total term frequency mass: {}".format(sum(term_freq.values())))
+        term_ic = self._get_ics(hpo.root, term_freq)
+        LOG.info("IC calculated for {}/{} terms".format(len(term_ic), len(hpo)))
+        lss = self._get_link_strengths(hpo.root, term_ic)
+        LOG.info("Link strength calculated for {}/{} terms".format(len(lss), len(hpo)))
+        self.term_ic = term_ic
+        self.lss = lss
+
+        for term, ic in term_ic.items():
+            for p in term.parents:
+                assert ic >= term_ic[p] - EPS, str((term, ic, term_ic[p], p))
+
+        LOG.info("HPO information content initialized")
+
+    def _get_term_frequencies(self, diseases, hpo):
+        """Populate term frequencies"""
+        raw_freq = defaultdict(float)
+
+        for disease in diseases.diseases.values():
+            for hp_term, freq in disease.phenotype_freqs.items():
+                # Try to resolve term
+                try:
+                    term = hpo[hp_term]
+                except KeyError:
+                    continue
+
+                prevalence = 1
+                freq = 1
+                raw_freq[term] += freq * prevalence
+
+        # Normalize all frequencies to sum to 1
+        term_freq = {}
+        total_freq = sum(raw_freq.values())
+        for term in raw_freq:
+            assert term not in term_freq
+            term_freq[term] = _bound(raw_freq[term] / total_freq)
+
+        return term_freq
+
+    def _get_descendant_lookup(self, root, accum=None):
+        if accum is None:
+            accum = {}
+        if root in accum:
+            return
+
+        descendants = set([root])
+        for child in root.children:
+            self._get_descendant_lookup(child, accum)
+            descendants.update(accum[child])
+        accum[root] = descendants
+        return accum
+
+    def _get_ics(self, root, term_freq):
+        term_descendants = self._get_descendant_lookup(root)
+
+        term_ic = {}
+        for node, descendants in term_descendants.items():
+            prob_mass = 0.0
+            for descendant in descendants:
+                prob_mass += term_freq.get(descendant, 0)
+
+            if prob_mass > EPS:
+                prob_mass = _bound(prob_mass)
+                term_ic[node] = -log(prob_mass)
+
+        return term_ic
+
+    def _get_link_strengths(self, root, term_ic):
+        lss = {}
+
+        # P(term&parents) = P(term|parents) P(parents)
+        # P(term|parents) = P(term&parents) / P(parents)
+        # P(parents) = probmass(descendants)
+        for term, ic in term_ic.items():
+            assert term not in lss
+            if term.parents:
+                max_parent_ic = max([term_ic[parent] for parent in term.parents])
+                ls = max(ic - max_parent_ic, 0.0)
+            else:
+                ls = 0.0
+
+            lss[term] = ls
+
+        return lss
+
+    def information_content(self, terms):
+        """Return the information content of the given terms, without backoff"""
+        return sum([self.term_ic.get(term, 0) for term in terms])
+
+
+### END of Code required by the HPOIC class ###
