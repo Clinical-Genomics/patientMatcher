@@ -150,10 +150,10 @@ class HPOIC(object):
         LOG.info("HPO information content initialized")
 
     def _get_term_frequencies(self, diseases, hpo):
-
+        """Populate term frequencies"""
         raw_freq = defaultdict(float)
 
-        for id, disease in diseases.diseases.items():
+        for disease in diseases.diseases.values():
             for hp_term, freq in disease.phenotype_freqs.items():
                 # Try to resolve term
                 try:
