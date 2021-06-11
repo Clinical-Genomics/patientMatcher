@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
+# These classes are a simplified version of HPO and HPOIC classes
+# originally developed by Orion Buske in patient-similarity (https://github.com/buske/patient-similarity)
+
 import logging
 from collections import defaultdict
+from math import log
 
 from patientMatcher.resources import path_to_hpo_terms
 
@@ -115,6 +119,9 @@ class HPO(object):
 
 
 ### End of  code required by the HPO class ###
+
+
+### Code required by the HPOIC class ###
 EPS = 1e-9
 
 
@@ -129,6 +136,16 @@ class HPOIC(object):
         LOG.info("Initializing the HPO information content")
         term_freq = self._get_term_frequencies(diseases, hpo)
         LOG.info("Total term frequency mass: {}".format(sum(term_freq.values())))
+        term_ic = self._get_ics(hpo.root, term_freq)
+        LOG.info("IC calculated for {}/{} terms".format(len(term_ic), len(hpo)))
+        lss = self._get_link_strengths(hpo.root, term_ic)
+        LOG.info("Link strength calculated for {}/{} terms".format(len(lss), len(hpo)))
+        self.term_ic = term_ic
+        self.lss = lss
+
+        for term, ic in term_ic.items():
+            for p in term.parents:
+                assert ic >= term_ic[p] - EPS, str((term, ic, term_ic[p], p))
 
         LOG.info("HPO information content initialized")
 
@@ -148,8 +165,6 @@ class HPOIC(object):
                 freq = 1
                 raw_freq[term] += freq * prevalence
 
-                # Normalize all frequencies to sum to 1
-
         # Normalize all frequencies to sum to 1
         term_freq = {}
         total_freq = sum(raw_freq.values())
@@ -159,5 +174,55 @@ class HPOIC(object):
 
         return term_freq
 
+    def _get_descendant_lookup(self, root, accum=None):
+        if accum is None:
+            accum = {}
+        if root in accum:
+            return
 
-#    dev __init__():
+        descendants = set([root])
+        for child in root.children:
+            self._get_descendant_lookup(child, accum)
+            descendants.update(accum[child])
+        accum[root] = descendants
+        return accum
+
+    def _get_ics(self, root, term_freq):
+        term_descendants = self._get_descendant_lookup(root)
+
+        term_ic = {}
+        for node, descendants in term_descendants.items():
+            prob_mass = 0.0
+            for descendant in descendants:
+                prob_mass += term_freq.get(descendant, 0)
+
+            if prob_mass > EPS:
+                prob_mass = _bound(prob_mass)
+                term_ic[node] = -log(prob_mass)
+
+        return term_ic
+
+    def _get_link_strengths(self, root, term_ic):
+        lss = {}
+
+        # P(term&parents) = P(term|parents) P(parents)
+        # P(term|parents) = P(term&parents) / P(parents)
+        # P(parents) = probmass(descendants)
+        for term, ic in term_ic.items():
+            assert term not in lss
+            if term.parents:
+                max_parent_ic = max([term_ic[parent] for parent in term.parents])
+                ls = max(ic - max_parent_ic, 0.0)
+            else:
+                ls = 0.0
+
+            lss[term] = ls
+
+        return lss
+
+    def information_content(self, terms):
+        """Return the information content of the given terms, without backoff"""
+        return sum([self.term_ic.get(term, 0) for term in terms])
+
+
+### END of Code required by the HPOIC class ###

@@ -10,6 +10,7 @@
 - Use app port 9020 instead of 5000 in docker-compose
 - Use MongoDB port 27013 instead of 27017 in docker-compose
 - Subnet address used in bridge of docker-compose file
+- Integrate HPOIC (HPO info content) creation in HPO extensions (decouple from Patient-similarity for HPOIC)
 ### Fixed
 - downloading phenotype_annotation.tab file from Monarch Initiative
 
