@@ -127,7 +127,8 @@ class HPOIC(object):
     def init_app(self, app, hpo, diseases):
         """Initialize the HPO ontology when the app is launched."""
         LOG.info("Initializing the HPO information content")
-        self.term_freq = self._get_term_frequencies(diseases, hpo)
+        term_freq = self._get_term_frequencies(diseases, hpo)
+        LOG.info("Total term frequency mass: {}".format(sum(term_freq.values())))
 
         LOG.info("HPO information content initialized")
 
@@ -156,7 +157,6 @@ class HPOIC(object):
             assert term not in term_freq
             term_freq[term] = _bound(raw_freq[term] / total_freq)
 
-        LOG.error(term_freq)
         return term_freq
 
 
