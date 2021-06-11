@@ -12,7 +12,6 @@ from patientMatcher.server.extensions import diseases as diseases_extension
 from patientMatcher.server.extensions import hpo as hpo_extension
 
 LOG = logging.getLogger(__name__)
-PHENOTYPE_ROOT = "HP:0000001"
 
 
 def match(database, max_score, features, disorders):
@@ -41,19 +40,17 @@ def match(database, max_score, features, disorders):
         # compare against all cases which also have features (HPO terms)
         query_fields.append({"features": {"$exists": True, "$ne": []}})
 
-        # Create the information-content functionality for the HPO
-        hpo = hpo_extension
-
-        diseases = diseases_extension
         hpoic = HPOIC(
-            hpo,
-            diseases,
+            hpo_extension,
+            diseases_extension,
             orphanet=None,
             patients=False,
             use_disease_prevalence=False,
             use_phenotype_frequency=False,
             distribute_ic_to_leaves=False,
         )
+
+        LOG.error(hpoic.__dict__)
 
     if disorders:  # at least one OMIM term was provided
         omim_terms = disorders_to_omim(disorders)
@@ -72,7 +69,7 @@ def match(database, max_score, features, disorders):
         for i in range(len(pheno_matching_patients)):
             patient = pheno_matching_patients[i]
             similarity = evaluate_pheno_similariy(
-                hpoic, hpo, hpo_terms, omim_terms, patient, max_score
+                hpoic, hpo_extension, hpo_terms, omim_terms, patient, max_score
             )
 
             match = {
