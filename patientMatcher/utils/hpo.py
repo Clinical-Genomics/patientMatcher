@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
+from collections import defaultdict
 
 from patientMatcher.resources import path_to_hpo_terms
 
@@ -18,7 +19,7 @@ def get_ancestors(root, acc=None):
 
 
 class HPNode(object):
-    """Populate an HPO object node from a list of lines in the HPO intology file"""
+    """Populate an HPO object node from a list of lines in the HPO ontology file"""
 
     def __init__(self, hpo_lines):
         self.id = None
@@ -114,7 +115,49 @@ class HPO(object):
 
 
 ### End of  code required by the HPO class ###
+EPS = 1e-9
 
-# class HPOIC(object):
+
+def _bound(p, eps=EPS):
+    return min(max(p, eps), 1 - eps)
+
+
+###  Class handling the information-content functionality for the HPO
+class HPOIC(object):
+    def init_app(self, app, hpo, diseases):
+        """Initialize the HPO ontology when the app is launched."""
+        LOG.info("Initializing the HPO information content")
+        self.term_freq = self._get_term_frequencies(diseases, hpo)
+
+        LOG.info("HPO information content initialized")
+
+    def _get_term_frequencies(self, diseases, hpo):
+
+        raw_freq = defaultdict(float)
+
+        for id, disease in diseases.diseases.items():
+            for hp_term, freq in disease.phenotype_freqs.items():
+                # Try to resolve term
+                try:
+                    term = hpo[hp_term]
+                except KeyError:
+                    continue
+
+                prevalence = 1
+                freq = 1
+                raw_freq[term] += freq * prevalence
+
+                # Normalize all frequencies to sum to 1
+
+        # Normalize all frequencies to sum to 1
+        term_freq = {}
+        total_freq = sum(raw_freq.values())
+        for term in raw_freq:
+            assert term not in term_freq
+            term_freq[term] = _bound(raw_freq[term] / total_freq)
+
+        LOG.error(term_freq)
+        return term_freq
+
 
 #    dev __init__():
