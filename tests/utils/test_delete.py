@@ -12,4 +12,5 @@ def test_drop_all_collections(demo_data_path, database):
     # WHEN drop_all_collections is invoked
     drop_all_collections(database)
     collections = database.collection_names()
+    # THEN no collections should be found in database
     assert collections == []
