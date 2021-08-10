@@ -5,6 +5,12 @@ import logging
 LOG = logging.getLogger(__name__)
 
 
+class Patient(object):
+    def __init__(self, id, hp_terms):
+        self.id = id
+        self.hp_terms = hp_terms
+
+
 def patients(database, ids=None):
     """Get all patients in the database
 

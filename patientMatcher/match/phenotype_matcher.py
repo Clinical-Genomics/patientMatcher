@@ -4,13 +4,13 @@
 import logging
 import os
 
-from patient_similarity import Patient
 from patient_similarity.__main__ import compare_patients
 from patientMatcher.parse.patient import disorders_to_omim, features_to_hpo
 from patientMatcher.resources import path_to_hpo_terms, path_to_phenotype_annotations
 from patientMatcher.server.extensions import diseases as diseases_extension
 from patientMatcher.server.extensions import hpo as hpo_extension
 from patientMatcher.server.extensions import hpoic
+from patientMatcher.utils.patient import Patient
 
 LOG = logging.getLogger(__name__)
 
