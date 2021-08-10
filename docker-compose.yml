@@ -34,7 +34,7 @@ services:
       - mongodb
     networks:
       - pmatcher-net
-    command: bash -c "pmatcher add client -id test_client -token custom_token -url custom_url && pmatcher add demodata --ensembl_genes"
+    command: bash -c "pmatcher add demodata --ensembl_genes"
 
   pmatcher-web:
     container_name: pmatcher-web
