@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 
-import logging
-from bson import json_util
 import json
-from flask import Blueprint, request, current_app, jsonify
-from flask_negotiate import consumes, produces
+import logging
 
+from bson import json_util
+from flask import Blueprint, current_app, jsonify, request
+from flask_negotiate import consumes, produces
+from patientMatcher.auth.auth import authorize
+from patientMatcher.constants import STATUS_CODES
+from patientMatcher.match.handler import async_match, internal_matcher, patient_matches
 from patientMatcher.utils.add import backend_add_patient
 from patientMatcher.utils.notify import notify_match_external, notify_match_internal
-from patientMatcher.auth.auth import authorize
-from patientMatcher.match.handler import internal_matcher, patient_matches, async_match
-from patientMatcher.constants import STATUS_CODES
+
 from . import controllers
 
 LOG = logging.getLogger(__name__)

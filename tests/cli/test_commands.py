@@ -3,7 +3,6 @@
 
 import pymongo
 from flask_mail import Message
-
 from patientMatcher.cli.commands import cli
 from patientMatcher.parse.patient import mme_patient
 
@@ -223,6 +222,9 @@ def test_cli_add_demo_data(mock_app, database):
     # check that the 50 demo patients where inserted into database
     results = database["patients"].find()
     assert len(list(results)) == 50
+
+    # check that one demo client has been created
+    assert database["clients"].find_one()
 
 
 def test_cli_remove_patient(mock_app, database, gpx4_patients, match_objs):

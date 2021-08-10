@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import click
 import datetime
-from flask.cli import with_appcontext, current_app
 
+import click
+from flask.cli import current_app, with_appcontext
 from patientMatcher.resources import path_to_benchmark_patients
-from patientMatcher.utils.add import load_demo, add_node
+from patientMatcher.utils.add import add_node, load_demo_patients
+from patientMatcher.utils.delete import drop_all_collections
 
 
 @click.group()
@@ -85,14 +86,25 @@ def client(id, token, url, contact=None):
 @click.option("--ensembl_genes", is_flag=True, help="Convert gene symbols to Ensembl IDs")
 def demodata(ensembl_genes):
     """Adds a set of 50 demo patients to database"""
+    mongo_db = current_app.db
+    drop_all_collections(mongo_db)
     click.echo("Adding 50 test patients to database..")
     click.echo("ENSEMBL GENES IS {}".format(ensembl_genes))
-    inserted_ids = load_demo(
+    inserted_ids = load_demo_patients(
         path_to_json_data=path_to_benchmark_patients,
-        mongo_db=current_app.db,
+        mongo_db=mongo_db,
         convert_to_ensembl=ensembl_genes,
     )
     click.echo("inserted {} patients into db".format(len(inserted_ids)))
+
+    click.echo("Loading demo client: DExter MOrgan with token:DEMO")
+    demo_client = dict(
+        _id="DExterMOrgan",
+        token="DEMO",
+        url="Demo client URL",
+        contact="demo@patientMatcher.se",
+    )
+    add_node(mongo_db=mongo_db, obj=demo_client, is_client=True)
 
 
 add.add_command(node)

@@ -1,9 +1,21 @@
 # -*- coding: utf-8 -*-
 
 import logging
+
 from pymongo import MongoClient
 
 LOG = logging.getLogger(__name__)
+
+
+def drop_all_collections(mongo_db):
+    """Deletes all collections from the database. Most likely involked when a demo instance is created.
+
+    Args:
+        mongo_db(pymongo.database.Database)
+    """
+    LOG.warning(f"Dropping all existing collections in database")
+    for collection in mongo_db.collection_names():
+        mongo_db[collection].drop()
 
 
 def delete_by_query(query, mongo_db, mongo_collection):

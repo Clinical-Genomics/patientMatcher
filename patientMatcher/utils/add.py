@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 
-import sys
-import enlighten
 import json
 import logging
-from pymongo import MongoClient
+import sys
 
-from patientMatcher.parse.patient import mme_patient
+import enlighten
 from patientMatcher.match.handler import external_matcher
+from patientMatcher.parse.patient import mme_patient
+from pymongo import MongoClient
 
 LOG = logging.getLogger(__name__)
 
 
-def load_demo(path_to_json_data, mongo_db, convert_to_ensembl=False):
+def load_demo_patients(path_to_json_data, mongo_db, convert_to_ensembl=False):
     """Inserts demo patient data into database
     Demo data consists of a set of 50 patients from this paper: http://onlinelibrary.wiley.com/doi/10.1002/humu.22850
 
@@ -28,7 +28,7 @@ def load_demo(path_to_json_data, mongo_db, convert_to_ensembl=False):
 
     # open json file and try to insert one patient at the time
     try:
-        LOG.info("reading patients file")
+        LOG.info("Loading demo patients from file")
         with open(path_to_json_data) as json_data:
             patients = json.load(json_data)
             # create a progress bar
