@@ -132,7 +132,11 @@ setup(
         "Operating System :: MacOS",
         "Operating System :: Unix",
     ],
-    entry_points={"console_scripts": ["pmatcher = patientMatcher.cli.commands:cli"],},
+    entry_points={
+        "console_scripts": ["pmatcher = patientMatcher.cli.commands:cli"],
+    },
     # $ setup.py publish support.
-    cmdclass={"upload": UploadCommand,},
+    cmdclass={
+        "upload": UploadCommand,
+    },
 )
