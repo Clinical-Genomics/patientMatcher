@@ -125,6 +125,8 @@ pmatcher add demodata --ensembl_genes
 ```
 Please note that the list of benchmarking patients all gene ids are represented as HGNC gene symbols.
 The command above, with the `--ensembl_genes` option, will convert gene symbols to Ensembl ids, in accordance to the GA4GH API: https://github.com/ga4gh/mme-apis/blob/master/search-api.md.
+
+The above command will also load a demo client with token `DEMO` into the database
 &nbsp;&nbsp;
 
 <a name="cli_remove_patient"></a>
@@ -190,7 +192,7 @@ pmatcher remove node -id node_id
 &nbsp;To add patients using a **POST** request. Example:
 ```bash
 curl -X POST \
-  -H 'X-Auth-Token: custom_token' \
+  -H 'X-Auth-Token: DEMO' \
   -H 'Content-Type: application/vnd.ga4gh.matchmaker.v1.0+json' \
   -H 'Accept: application/json' \
   -d '{"patient":{
@@ -212,7 +214,7 @@ If there are no connected nodes in the database or you are uploading demo data n
 &nbsp;You can delete a patient from the database by sending a **DELETE** request with its ID to the server. Example:
 ```bash
 curl -X DELETE \
-  -H 'X-Auth-Token: custom_token' \
+  -H 'X-Auth-Token: DEMO' \
   localhost:9020/patient/delete/patient_id
 ```
 Please note that when a patient is deleted all its match results will be also deleted from the database. This is valid for **matches where the patient was used as the query patient** in searches performed on other nodes or the internal patientMatcher database (internal search).
@@ -236,7 +238,7 @@ curl -X GET \
 &nbsp;**GET** the list of connected nodes. Example:
 ```bash
 curl -X GET \
-  -H 'X-Auth-Token: custom_token' \
+  -H 'X-Auth-Token: DEMO' \
   localhost:9020/nodes
 ```
 The response will return a list like this : [ { 'id' : node_1_id, 'description' : node1_description }, .. ] or an empty list if the server is not connected to external nodes.
@@ -248,7 +250,7 @@ The response will return a list like this : [ { 'id' : node_1_id, 'description' 
 &nbsp;**POST** a request with a query patient to patientMatcher and get a response with the patients in the server which are most similar to your query. Example:
 ```bash
 curl -X POST \
-  -H 'X-Auth-Token: custom_token' \
+  -H 'X-Auth-Token: DEMO' \
   -H 'Content-Type: application/vnd.ga4gh.matchmaker.v1.0+json' \
   -H 'Accept: application/vnd.ga4gh.matchmaker.v1.0+json' \
   -d '{"patient":{
@@ -269,13 +271,13 @@ Another customizable parameter is the minimum patient score threshold for return
 &nbsp;Trigger a search in external nodes for patients similar to the one specified by the ID. Example:
 ```bash
 curl -X POST \
-  -H 'X-Auth-Token: custom_token' \
+  -H 'X-Auth-Token: DEMO' \
   localhost:9020/match/external/patient_id
 ```
 It is possible to search for matching patients on a specific node. To do so specify the node id in the request args. Example:
 ```bash
 curl -X POST \
-  -H 'X-Auth-Token: custom_token' \
+  -H 'X-Auth-Token: DEMO' \
   localhost:9020/match/external/patient_id?node=specific_node_id
 ```
 Read [here](#node_list) how to get a list with the ID of the connected nodes.
@@ -287,7 +289,7 @@ Read [here](#node_list) how to get a list with the ID of the connected nodes.
 &nbsp;Return all matches (internal and external) with positive results for a patient specified by an ID. Example:
 ```bash
 curl -X GET \
-  -H 'X-Auth-Token: custom_token' \
+  -H 'X-Auth-Token: DEMO' \
   localhost:9020/matches/patient_id
 ```
 &nbsp;&nbsp;

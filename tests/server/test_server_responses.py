@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
-import requests
 import json
+
 import pymongo
 import pytest
-from werkzeug.datastructures import Headers
-from patientMatcher.utils.add import add_node, load_demo, backend_add_patient
-from patientMatcher.auth.auth import authorize
-from patientMatcher.server.controllers import validate_response
-from patientMatcher.parse.patient import mme_patient
-from patientMatcher.match.handler import patient_matches
+import requests
 from patientMatcher.__version__ import __version__
+from patientMatcher.auth.auth import authorize
+from patientMatcher.match.handler import patient_matches
+from patientMatcher.parse.patient import mme_patient
+from patientMatcher.server.controllers import validate_response
+from patientMatcher.utils.add import add_node, backend_add_patient, load_demo_patients
+from werkzeug.datastructures import Headers
 
 
 def test_match_async_request(mock_app, database, async_response_obj, json_patients, test_node):
@@ -33,7 +34,14 @@ def test_match_async_request(mock_app, database, async_response_obj, json_patien
     data = {
         "query_id": async_response_obj["query_id"],
         "source": "fakey node",
-        "response": {"results": [{"score": {"patient": 0.8}, "patient": json_patients[1],}]},
+        "response": {
+            "results": [
+                {
+                    "score": {"patient": 0.8},
+                    "patient": json_patients[1],
+                }
+            ]
+        },
     }
 
     response = mock_app.test_client().post(
@@ -273,7 +281,7 @@ def test_metrics(mock_app, database, test_client, demo_data_path, match_objs):
     """Testing viewing the list of patients on server for authorized users"""
 
     # load demo data of 50 test patients
-    inserted_ids = load_demo(demo_data_path, database)
+    inserted_ids = load_demo_patients(demo_data_path, database)
     assert len(inserted_ids) == 50  # 50 test cases should be loaded
 
     # load mock matches into database

@@ -11,6 +11,8 @@
 - Use MongoDB port 27013 instead of 27017 in docker-compose
 - Subnet address used in bridge of docker-compose file
 - Integrate HPOIC (HPO info content) creation in HPO extensions (decouple from Patient-similarity for HPOIC)
+- All collections are removed and recreated on `add demodata` rerun
+- Demo client with token `DEMO` is created when `add demodata` command is run
 ### Fixed
 - downloading phenotype_annotation.tab file from Monarch Initiative
 
