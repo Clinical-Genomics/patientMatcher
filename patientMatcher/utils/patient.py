@@ -9,6 +9,15 @@ class Patient(object):
     def __init__(self, id, hp_terms):
         self.id = id
         self.hp_terms = hp_terms
+        self._ancestors = None
+
+    def ancestors(self):
+        if self._ancestors is None:
+            ancestors = set()
+            for term in self.hp_terms:
+                ancestors.update(term.ancestors())
+            self._ancestors = ancestors
+        return self._ancestors
 
 
 def patients(database, ids=None):
