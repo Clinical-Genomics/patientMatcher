@@ -9,10 +9,6 @@ RUN apk update
 # Install required libs
 RUN apk --no-cache add git bash
 
-# Install patient_similarity from a fork @ClinicalGenomics
-# Original repo: https://github.com/buske/patient-similarity
-RUN pip install git+https://github.com/Clinical-Genomics/patient-similarity
-
 WORKDIR /home/worker/app
 COPY . /home/worker/app
 

@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 
+from patient_similarity import HPO, HPOIC, Diseases, Patient
+from patient_similarity.__main__ import compare_patients
 from patientMatcher.match.phenotype_matcher import match, similarity_wrapper
 from patientMatcher.parse.patient import mme_patient
 from patientMatcher.resources import path_to_hpo_terms, path_to_phenotype_annotations
-from patient_similarity import HPO, Diseases, HPOIC, Patient
-from patient_similarity.__main__ import compare_patients
 
 PHENOTYPE_ROOT = "HP:0000118"
 
 
 def test_patient_similarity_wrapper():
-    """test the wrapper around this repo: https://github.com/buske/patient-similarity"""
+    """Test the function that calculates the HPO similarity between 2 patients"""
 
     # Create the information-content functionality for the HPO
     hpo = HPO(path_to_hpo_terms, new_root=PHENOTYPE_ROOT)

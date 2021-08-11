@@ -13,6 +13,7 @@
 - Integrate HPOIC (HPO info content) creation in HPO extensions (decouple from Patient-similarity for HPOIC)
 - All collections are removed and recreated on `add demodata` rerun
 - Demo client with token `DEMO` is created when `add demodata` command is run
+- Remove patient-similarity dependency and replace needed functions with internal code
 ### Fixed
 - downloading phenotype_annotation.tab file from Monarch Initiative
 - document keys when a demo client is created with the command `pmatcher add demodata`

@@ -4,7 +4,6 @@
 import logging
 import os
 
-from patient_similarity.__main__ import compare_patients
 from patientMatcher.parse.patient import disorders_to_omim, features_to_hpo
 from patientMatcher.resources import path_to_hpo_terms, path_to_phenotype_annotations
 from patientMatcher.server.extensions import diseases as diseases_extension
@@ -120,8 +119,7 @@ def evaluate_pheno_similariy(
 
 
 def similarity_wrapper(hpoic, hpo, max_hpo_score, hpo_terms_q, hpo_terms_m):
-    """A wrapper around patient-similarity repository:
-    https://github.com/buske/patient-similarity.
+    """Calculate patient similarity based on HPO terms from2 patients
 
     Args:
         hpoic(class) : the information content for the HPO
