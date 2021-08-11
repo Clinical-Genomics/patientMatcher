@@ -15,6 +15,7 @@
 - Demo client with token `DEMO` is created when `add demodata` command is run
 ### Fixed
 - downloading phenotype_annotation.tab file from Monarch Initiative
+- document keys when a demo client is created with the command `pmatcher add demodata`
 
 
 ## [2.5] - 2021-01-20
