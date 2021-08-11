@@ -100,8 +100,9 @@ def demodata(ensembl_genes):
     click.echo("Loading demo client: DExter MOrgan with token:DEMO")
     demo_client = dict(
         _id="DExterMOrgan",
-        token="DEMO",
-        url="Demo client URL",
+        created=datetime.datetime.now(),
+        auth_token="DEMO",
+        base_url="Demo client URL",
         contact="demo@patientMatcher.se",
     )
     add_node(mongo_db=mongo_db, obj=demo_client, is_client=True)
