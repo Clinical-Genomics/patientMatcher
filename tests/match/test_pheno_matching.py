@@ -3,32 +3,18 @@
 from patientMatcher.match.phenotype_matcher import match, similarity_wrapper
 from patientMatcher.parse.patient import mme_patient
 from patientMatcher.resources import path_to_hpo_terms, path_to_phenotype_annotations
-from patientMatcher.server.extensions import diseases as diseases_extension
-from patientMatcher.server.extensions import hpo as hpo_extension
-from patientMatcher.server.extensions import hpoic
+from patientMatcher.server.extensions import diseases, hpo, hpoic
 from patientMatcher.utils.patient import Patient
 
 PHENOTYPE_ROOT = "HP:0000118"
 
 
-def test_patient_similarity_wrapper():
+def test_patient_similarity_wrapper(mock_app):
     """Test the function that calculates the HPO similarity between 2 patients"""
 
-    # Create the information-content functionality for the HPO
-    hpo = hpo_extension(path_to_hpo_terms, new_root=PHENOTYPE_ROOT)
     assert hpo
-    diseases = diseases_extension(path_to_phenotype_annotations)
     assert diseases
-    hpo_ic = hpoic(
-        hpo,
-        diseases,
-        orphanet=None,
-        patients=False,
-        use_disease_prevalence=False,
-        use_phenotype_frequency=False,
-        distribute_ic_to_leaves=False,
-    )
-    assert hpo_ic
+    assert hpoic
 
     query_p_terms = [
         "HP:0008058",
@@ -39,7 +25,7 @@ def test_patient_similarity_wrapper():
 
     # test wrapper by providing same terms for query patient and match patient:
     score = similarity_wrapper(
-        hpoic=hpo_ic,
+        hpoic=hpoic,
         hpo=hpo,
         max_hpo_score=1.0,
         hpo_terms_q=query_p_terms,
@@ -52,7 +38,7 @@ def test_patient_similarity_wrapper():
 
     # test wrapper by providing almost the same terms for query patient and match patient:
     related_pheno_score = similarity_wrapper(
-        hpoic=hpo_ic,
+        hpoic=hpoic,
         hpo=hpo,
         max_hpo_score=1.0,
         hpo_terms_q=query_p_terms,
@@ -65,7 +51,7 @@ def test_patient_similarity_wrapper():
     # provide completely different HPO terms for matching patient
     match_p_terms = ["HP:0003002", "HP:0000218"]  # breast cancer and high palate phenotypes
     unrelated_pheno_score = similarity_wrapper(
-        hpoic=hpo_ic,
+        hpoic=hpoic,
         hpo=hpo,
         max_hpo_score=1.0,
         hpo_terms_q=query_p_terms,
