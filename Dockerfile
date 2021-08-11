@@ -12,13 +12,10 @@ RUN apk --no-cache add git bash
 WORKDIR /home/worker/app
 COPY . /home/worker/app
 
-# Install requirements
-RUN pip install -r requirements.txt
-
 # Install the app
-RUN pip install -e .
+RUN pip install --no-cache-dir -e .
 
 # Run commands as non-root user
-RUN adduser -D worker
-RUN chown worker:worker -R /home/worker
+RUN adduser -D worker &&\
+chown worker:worker -R /home/worker
 USER worker
