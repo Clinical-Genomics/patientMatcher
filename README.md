@@ -75,12 +75,8 @@ After setting up the restricted access to the server you'll just have to launch 
 ```bash
 mongod --auth --dbpath path_to_database_data
 ```
-The phenotype scoring algorithm of patientMatcher is dependent on [patient-similarity](https://github.com/buske/patient-similarity), which should be installed using this script:
 
-```bash
-pip install git+https://github.com/Clinical-Genomics/patient-similarity
-```
-After installing patient-similarity, clone patientMatcher repository from github using this command:
+Clone patientMatcher repository from github using this command:
 
 ```bash
 git clone https://github.com/Clinical-Genomics/patientMatcher.git
@@ -342,7 +338,7 @@ Phenotype similarity is calculated by taking into account **features and disorde
 - **Patient features**
 are specified by the eventual HPO terms provided for the query patient. **Similarity between HPO features will be equal the maximum similarity score** between two patients **if no disorders (OMIM terms) are provided** for one or both patients.   
 **Otherwise feature similarity score will make up 1/2 of the maximum similarity score**.
-Feature similarity is calculated as the simgic score obtained by comparing HPO terms of a query patient with those from a matching patient using the [patient-similarity software package](https://github.com/buske/patient-similarity).
+Feature similarity is calculated as the simgic score obtained by comparing HPO terms of a query patient with those from a matching patient.
 You can find more information on semantic similarity comparison algorithms in [this paper](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-9-S5-S4)
 
 - **Disorders**

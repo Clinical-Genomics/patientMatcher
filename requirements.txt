@@ -2,7 +2,7 @@
 coloredlogs
 Flask
 Flask-Mail
-Flask-Negotiate
+flask-negotiate
 requests
 jsonschema
 
