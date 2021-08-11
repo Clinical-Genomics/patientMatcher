@@ -137,7 +137,7 @@ def similarity_wrapper(hpoic, hpo, max_hpo_score, hpo_terms_q, hpo_terms_m):
         term = hpo[term_id]
         if term:
             terms.add(term)
-    query_patient = Patient(id="q", hp_terms=terms)
+    query_patient = Patient(pat_id="q", hp_terms=terms)
 
     # create Patient object from match patient data:
     terms = set()
@@ -145,7 +145,7 @@ def similarity_wrapper(hpoic, hpo, max_hpo_score, hpo_terms_q, hpo_terms_m):
         term = hpo[term_id]
         if term:
             terms.add(term)
-    match_patient = Patient(id="m", hp_terms=terms)
+    match_patient = Patient(pat_id="m", hp_terms=terms)
 
     # Get simgic similarity score for HPO terms comparison
     # Range is 0 to 1, with 0=no similarity and 1=highest similarity
