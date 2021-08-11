@@ -6,8 +6,8 @@ LOG = logging.getLogger(__name__)
 
 
 class Patient(object):
-    def __init__(self, id, hp_terms):
-        self.id = id
+    def __init__(self, pat_id, hp_terms):
+        self.id = pat_id
         self.hp_terms = hp_terms
         self._ancestors = None
 

@@ -1,6 +1,5 @@
 FROM python:3.8-alpine3.12
 
-LABEL base_image="python:3.8-alpine3.12"
 LABEL about.license="MIT License (MIT)"
 LABEL about.tags="WGS,WES,Rare diseases,VCF,variants,phenotype,OMIM,HPO,variants"
 LABEL about.home="https://github.com/Clinical-Genomics/patientMatcher"
