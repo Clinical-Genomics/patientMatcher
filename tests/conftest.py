@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-import os
-import pytest
-import mongomock
 import json
+import os
 from pathlib import Path
-from patientMatcher.server import create_app
+
+import mongomock
+import pytest
 from patientMatcher.resources import path_to_benchmark_patients
+from patientMatcher.server import create_app
 
 DATABASE = "testdb"
 
@@ -235,7 +236,7 @@ def gpx4_patients(json_patients):
 
 @pytest.fixture(scope="function")
 def json_patients(demo_data_path):
-    """ Returns a list of 50 MME test patients from demo data"""
+    """Returns a list of 50 MME test patients from demo data"""
     patients = {}
     with open(demo_data_path) as json_data:
         patients = json.load(json_data)
