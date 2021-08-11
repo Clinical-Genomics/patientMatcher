@@ -1,5 +1,10 @@
 ## [] -
 ### Added
+### Changed
+### Fixed
+
+## [2.6] - 2021-08-11
+### Added
 - Email logging of errors howto in readme
 - Inclusive-language check using [woke](https://github.com/get-woke/woke) github action
 ### Changed
@@ -17,7 +22,6 @@
 ### Fixed
 - downloading phenotype_annotation.tab file from Monarch Initiative
 - document keys when a demo client is created with the command `pmatcher add demodata`
-
 
 ## [2.5] - 2021-01-20
 ### Added
