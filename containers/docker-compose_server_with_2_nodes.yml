@@ -26,7 +26,7 @@ services:
 
   pmatcher-cli:
     container_name: pmatcher-cli
-    build: .
+    build: ../.
     environment:
       MONGODB_HOST: mongodb
       PMATCHER_CONFIG: '/home/worker/app/patientMatcher/patientMatcher/instance/config.py'
@@ -39,7 +39,7 @@ services:
   # Simulate an external MME server connected to pmatcher-web
   mme-server-1:
     container_name: server-1
-    build: .
+    build: ../.
     environment:
       MONGODB_HOST: mongodb
       PMATCHER_CONFIG: '/home/worker/app/patientMatcher/patientMatcher/instance/config.py'
@@ -58,7 +58,7 @@ services:
   # Simulate a second external MME server connected to pmatcher-web
   mme-server-2:
     container_name: server-2
-    build: .
+    build: ../.
     environment:
       MONGODB_HOST: mongodb
       PMATCHER_CONFIG: '/home/worker/app/patientMatcher/patientMatcher/instance/config.py'
@@ -76,7 +76,7 @@ services:
 
   pmatcher-web:
     container_name: pmatcher-web
-    build: .
+    build: ../.
     environment:
       MONGODB_HOST: mongodb
       PMATCHER_CONFIG: '/home/worker/app/patientMatcher/patientMatcher/instance/config.py'
