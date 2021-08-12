@@ -1,5 +1,6 @@
 ## [] -
 ### Added
+- A demo docker-compose file with a MME server connected to 2 other nodes under `/containers`
 ### Changed
 ### Fixed
 
