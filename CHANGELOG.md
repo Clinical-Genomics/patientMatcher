@@ -3,6 +3,7 @@
 - A demo docker-compose file with a MME server connected to 2 other nodes under `/containers`
 ### Changed
 ### Fixed
+- Assign 2 different ids to the demo connected nodes in docker-compose
 
 ## [2.6] - 2021-08-11
 ### Added

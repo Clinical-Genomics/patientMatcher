@@ -71,7 +71,7 @@ services:
     expose:
       - '9022'
     command: bash -c "
-      pmatcher add client -id pmatcher_demo -token pmatcher_token2 -url pmatcher_url
+      pmatcher add client -id pmatcher_demo2 -token pmatcher_token2 -url pmatcher_url2
       && pmatcher run --host 0.0.0.0 -p 9022"
 
   pmatcher-web:
