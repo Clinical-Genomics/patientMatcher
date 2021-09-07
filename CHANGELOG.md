@@ -1,3 +1,9 @@
+## [] -
+### Added
+- .cff citation file and doi badge on readme page
+### Changed
+### Fixed
+
 ## [2.7] - 2021-09-07
 ### Added
 - A demo docker-compose file with a MME server connected to 2 other nodes under `/containers`

@@ -1,5 +1,6 @@
 # patientMatcher
 [![Build Status](https://travis-ci.com/Clinical-Genomics/patientMatcher.svg?branch=master)](https://travis-ci.com/Clinical-Genomics/patientMatcher) [![codecov](https://codecov.io/gh/Clinical-Genomics/patientMatcher/branch/master/graph/badge.svg?token=WXHDu9U8qk)](https://codecov.io/gh/Clinical-Genomics/patientMatcher)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5482517.svg)](https://doi.org/10.5281/zenodo.5482517)
 
 
 Table of Contents:

@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: Rasi
+    given-names: Chiara
+    orcid: https://orcid.org/0000-0002-7001-3988
+title: PatientMatcher
+abstract: A Flask and MongoDB - based MatchMaker Exchange server
+version: 2.7
+doi: 10.5281/zenodo.5482517
+date-released: 2021-09-07
