@@ -1,6 +1,9 @@
-name: Publish to PyPi on a new release event
+name: Publish to PyPI on a new release event
 
-on: [pull_request]
+on:
+ release:
+  types:
+   - created
 
 jobs:
  build-n-publish:
@@ -22,13 +25,16 @@ jobs:
         wheel
         twine
         --user
+
    - name: Build a binary wheel and a source tarball
      run: >-
         python
         setup.py
         sdist
         bdist_wheel
+
    - name: Publish distribution 📦 to PyPI
      uses: pypa/gh-action-pypi-publish@master
      with:
+       user: __token__
        password: ${{ secrets.PMATCHER_PYPI_TOKEN }}
