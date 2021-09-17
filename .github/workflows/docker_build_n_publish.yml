@@ -1,6 +1,9 @@
 name: Publish to Docker Hub
 
-on: [pull_request]
+on:
+ release:
+  types:
+   - created
 
 jobs:
   docker-image-CI:
