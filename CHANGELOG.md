@@ -5,6 +5,7 @@
 ### Changed
 ### Fixed
 - Fixed in README file the server port used by the web server container launched from docker-compose
+- Provide a content type description for long_description in setup file
 
 ## [2.7] - 2021-09-07
 ### Added

@@ -8,12 +8,13 @@ import io
 import os
 import sys
 from shutil import rmtree
+
 from patientMatcher import __version__ as version
-from setuptools import find_packages, setup, Command
+from setuptools import Command, find_packages, setup
 
 # Package meta-data.
 NAME = "patientMatcher"
-DESCRIPTION = "a python-based Matchmaker Exchange server"
+DESCRIPTION = "A python and MongoDB-based Matchmaker Exchange server"
 URL = "https://github.com/Clinical-Genomics/patientMatcher"
 EMAIL = "chiara.rasi@scilifelab.se"
 AUTHOR = "Chiara Rasi"
@@ -111,6 +112,7 @@ setup(
     version=version,
     description=DESCRIPTION,
     long_description=long_description,
+    long_description_content_type="text/markdown",
     author=AUTHOR,
     author_email=EMAIL,
     url=URL,
