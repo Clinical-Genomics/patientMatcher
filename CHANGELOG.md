@@ -1,5 +1,10 @@
 ## [] -
 ### Added
+### Changed
+### Fixed
+
+## [2.8] - 2021-09-17
+### Added
 - .cff citation file and doi badge on readme page
 - GitHub action to publish repo to PyPI when a new release is created
 ### Changed
