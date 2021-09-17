@@ -1,8 +1,10 @@
 ## [] -
 ### Added
 - .cff citation file and doi badge on readme page
+- GitHub action to publish repo to PyPI when a new release is created
 ### Changed
 ### Fixed
+- Fixed in README file the server port used by the web server container launched from docker-compose
 
 ## [2.7] - 2021-09-07
 ### Added
@@ -10,7 +12,6 @@
 ### Changed
 ### Fixed
 - Assign 2 different ids to the demo connected nodes in docker-compose
-- Fixed in README file the server port used by the web server container launched from docker-compose
 
 ## [2.6] - 2021-08-11
 ### Added
