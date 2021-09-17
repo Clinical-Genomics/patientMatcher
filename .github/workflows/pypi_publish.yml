@@ -1,6 +1,9 @@
 name: Publish to PyPI on a new release event
 
-on: [pull_request]
+on:
+ release:
+  types:
+   - created
 
 jobs:
  build-n-publish:
