@@ -36,7 +36,7 @@ docker-compose up -d
 The command will create 3 containers:
 - mongodb: starting a mongodb server with support for user authentication (--auth option)
 - pmatcher-cli: the a command-line app, which will connect to the server and populates it with demo data
-- pmatcher-web: a web server running on localhost and port 27017.
+- pmatcher-web: a web server running on localhost and port 9020.
 
 The server will be running and accepting requests sent from outside the containers (another terminal or a web browser). Read further down to find out about requests and commands.
 
