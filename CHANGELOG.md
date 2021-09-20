@@ -2,7 +2,7 @@
 ### Added
 ### Changed
 - Save Ensembl ids for demo patient data genes automatically
-- Mock the Ensembl REST API convering gene symbols to Ensembl IDs in tests
+- Mock the Ensembl REST API converting gene symbols to Ensembl IDs in tests
 ### Fixed
 - Syntax in the disclaimer
 
