@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
 import pymongo
+import responses
 from flask_mail import Message
 from patientMatcher.cli.commands import cli
 from patientMatcher.parse.patient import mme_patient
@@ -208,7 +208,17 @@ def test_cli_update_resources(mock_app):
     assert result.exit_code == 0
 
 
-def test_cli_add_demo_data(mock_app, database):
+@responses.activate
+def test_cli_add_demo_data(mock_app, database, mock_symbol_2_ensembl):
+
+    # GIVEN a mocked Ensembl REST API:
+    for hgnc_symbol, ensembl_id in mock_symbol_2_ensembl.items():
+        responses.add(
+            responses.GET,
+            f"https://grch37.rest.ensembl.org/xrefs/symbol/homo_sapiens/{hgnc_symbol}?external_db=HGNC",
+            json=[{"id": ensembl_id}],
+            status=200,
+        )
 
     runner = mock_app.test_cli_runner()
 
@@ -219,9 +229,13 @@ def test_cli_add_demo_data(mock_app, database):
     result = runner.invoke(cli, ["add", "demodata"])
     assert result.exit_code == 0
 
-    # check that the 50 demo patients where inserted into database
-    results = database["patients"].find()
-    assert len(list(results)) == 50
+    # check that demo patients are inserted into database
+    demo_patients = database["patients"].find()
+    assert len(list(demo_patients)) == 50
+
+    # check that genomic features contain genes described by HGNC gene symbols and Ensmbl IDs
+    assert demo_patients[0]["genomicFeatures"][0]["gene"]["id"]
+    assert demo_patients[0]["genomicFeatures"][0]["gene"]["_geneName"]
 
     # check that one demo client has been created
     assert database["clients"].find_one()

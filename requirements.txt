@@ -4,6 +4,7 @@ Flask
 Flask-Mail
 flask-negotiate
 requests
+responses
 jsonschema
 
 
