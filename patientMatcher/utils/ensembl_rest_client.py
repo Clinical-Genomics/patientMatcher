@@ -1,7 +1,6 @@
 # -*- coding: UTF-8 -*-
 import json
 import logging
-import requests
 from urllib.error import HTTPError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
