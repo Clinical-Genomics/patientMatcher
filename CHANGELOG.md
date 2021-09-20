@@ -2,6 +2,7 @@
 ### Added
 ### Changed
 ### Fixed
+- Syntax in the disclaimer
 
 ## [2.8] - 2021-09-17
 ### Added
