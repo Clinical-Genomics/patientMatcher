@@ -89,11 +89,10 @@ def demodata(ensembl_genes):
     mongo_db = current_app.db
     drop_all_collections(mongo_db)
     click.echo("Adding 50 test patients to database..")
-    click.echo("ENSEMBL GENES IS {}".format(ensembl_genes))
     inserted_ids = load_demo_patients(
         path_to_json_data=path_to_benchmark_patients,
         mongo_db=mongo_db,
-        convert_to_ensembl=ensembl_genes,
+        convert_to_ensembl=True,  # Save Ensembl id for demo genes by default
     )
     click.echo("inserted {} patients into db".format(len(inserted_ids)))
 

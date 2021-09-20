@@ -1,6 +1,7 @@
 ## [] -
 ### Added
 ### Changed
+- Save Ensembl ids for demo patient data genes automatically
 ### Fixed
 - Syntax in the disclaimer
 
