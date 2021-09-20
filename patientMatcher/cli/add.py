@@ -92,7 +92,7 @@ def demodata(ensembl_genes):
     inserted_ids = load_demo_patients(
         path_to_json_data=path_to_benchmark_patients,
         mongo_db=mongo_db,
-        convert_to_ensembl=True,  # Save Ensembl id for demo genes by default
+        convert_to_ensembl=True,  # Save Ensembl IDs for demo genes by default
     )
     click.echo("inserted {} patients into db".format(len(inserted_ids)))
 
