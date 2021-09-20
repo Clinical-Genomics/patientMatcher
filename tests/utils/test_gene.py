@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-
-from patientMatcher.utils.gene import entrez_to_symbol, ensembl_to_symbol, symbol_to_ensembl
+import responses
+from patientMatcher.utils.gene import ensembl_to_symbol, entrez_to_symbol, symbol_to_ensembl
 
 
 def test_ensembl_to_symbol():
@@ -11,11 +11,21 @@ def test_ensembl_to_symbol():
     assert symbol == "AAGAB"
 
 
-def test_symbol_to_ensembl():
-    # Test converting official gene symbol to ensembl ID
+@responses.activate
+def test_symbol_to_ensembl(mock_symbol_2_ensembl):
+    """Test function converting official gene symbol to ensembl ID using the Ensembl REST API"""
 
-    symbol = "AAGAB"
-    ensembl_id = symbol_to_ensembl(symbol)
+    hgnc_symbol = "AAGAB"
+
+    # GIVEN a mocked Ensembl REST API
+    responses.add(
+        responses.GET,
+        f"https://grch37.rest.ensembl.org/xrefs/symbol/homo_sapiens/{hgnc_symbol}?external_db=HGNC",
+        json=[{"id": "ENSG00000103591"}],
+        status=200,
+    )
+
+    ensembl_id = symbol_to_ensembl(hgnc_symbol)
     assert ensembl_id == "ENSG00000103591"
 
 
