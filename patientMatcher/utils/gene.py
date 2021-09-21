@@ -14,13 +14,14 @@ def entrez_to_symbol(entrez_id):
     """
     client = ensembl_client.EnsemblRestApiClient()
     url = "".join([client.server, "/xrefs/name/human/", entrez_id, "?external_db=EntrezGene"])
+    return url
     results = client.send_request(url)
-    for gene in results:  # result is an array. First element is enough
-        return gene["display_id"]
+    for entry in results:  # result is an array. First element is enough
+        return entry["display_id"]
 
 
 def symbol_to_ensembl(gene_symbol):
-    """Convert gene symbol to ensembl id
+    """Convert hgnc gene symbol to Ensembl id
 
     Accepts:
         gene_symbol(str) ex. LIMS2
@@ -29,11 +30,26 @@ def symbol_to_ensembl(gene_symbol):
         ensembl_id(str) ex. ENSG00000072163
     """
     client = ensembl_client.EnsemblRestApiClient()
-    url = "".join([client.server, "/xrefs/symbol/homo_sapiens/", gene_symbol, "?external_db=HGNC"])
+    # First collect all Ensembl IDs connected to a given symbol
+    url = f"{client.server}/xrefs/symbol/homo_sapiens/{gene_symbol}?external_db=HGNC"
+
     results = client.send_request(url)
-    for gene in results:  # result is an array. First element is enough
-        if gene["id"].startswith("ENSG"):  # it's the ensembl id
-            return gene["id"]
+    ensembl_ids = []
+    for entry in results:  # result is an array. First element is enough
+        if entry["id"].startswith("ENSG") is False:
+            continue
+        ensembl_ids.append(entry["id"])
+
+    if len(ensembl_ids) == 1:
+        return ensembl_ids[0]
+
+    # In case of multiple Ensembl IDs returned by the API, return only the one which has the right HGNC symbol
+    for ensembl_id in ensembl_ids:
+        url = f"{client.server}/xrefs/id/{ensembl_id}?all_levels=1;external_db=HGNC;content-type=application/json"
+        results = client.send_request(url)
+        for entry in results:
+            if entry.get("display_id") == gene_symbol:
+                return ensembl_id
 
 
 def ensembl_to_symbol(ensembl_id):

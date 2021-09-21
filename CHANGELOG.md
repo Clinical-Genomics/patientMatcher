@@ -5,6 +5,7 @@
 - Mock the Ensembl REST API converting gene symbols to Ensembl IDs in tests
 ### Fixed
 - Syntax in the disclaimer
+- Validate the Ensembl gene ID against the Ensembl API when multiple IDs are returned by converting a HGNC symbol.
 
 ## [2.8] - 2021-09-17
 ### Added
