@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import pymongo
-import responses
 from flask_mail import Message
 from patientMatcher.cli.commands import cli
 from patientMatcher.parse.patient import mme_patient
+from patientMatcher.utils.ensembl_rest_client import requests
 
 
 def test_appname(mock_app):
@@ -204,21 +204,23 @@ def test_cli_update_resources(mock_app):
     runner = mock_app.test_cli_runner()
 
     # run resources update command with --test flag:
-    result = runner.invoke(cli, ["update", "resources"])
+    result = runner.invoke(cli, ["update", "resources", "--test"])
     assert result.exit_code == 0
 
 
-@responses.activate
-def test_cli_add_demo_data(mock_app, database, mock_symbol_2_ensembl):
+def test_cli_add_demo_data(mock_app, database, mock_symbol_2_ensembl, monkeypatch):
+    """Test the class that adds demo data"""
 
-    # GIVEN a mocked Ensembl REST API:
-    for hgnc_symbol, ensembl_id in mock_symbol_2_ensembl.items():
-        responses.add(
-            responses.GET,
-            f"https://grch37.rest.ensembl.org/xrefs/symbol/homo_sapiens/{hgnc_symbol}?external_db=HGNC",
-            json=[{"id": ensembl_id}],
-            status=200,
-        )
+    # GIVEN a mocked Ensembl REST API for conversion of gene symbols to Ensembl IDs
+    class MockResponse(object):
+        def __init__(self, url):
+            self.gene_symbol = url.split("homo_sapiens/")[1].split("?")[0]
+
+        def json(self):
+            return [{"id": self.gene_symbol, "type": "gene"}]
+
+    def mock_get(url, headers):
+        return MockResponse(url)
 
     runner = mock_app.test_cli_runner()
 

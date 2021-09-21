@@ -14,7 +14,6 @@ def entrez_to_symbol(entrez_id):
     """
     client = ensembl_client.EnsemblRestApiClient()
     url = "".join([client.server, "/xrefs/name/human/", entrez_id, "?external_db=EntrezGene"])
-    return url
     results = client.send_request(url)
     for entry in results:  # result is an array. First element is enough
         return entry["display_id"]
