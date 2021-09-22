@@ -63,7 +63,13 @@ class EnsemblRestApiClient:
                 headers=HEADERS,
             )
             data = response.json()
-        except Exception as ex:
-            LOG.error(ex)
+            if response.status_code != 200:
+                raise ValueError("The API did not return valid data")
+        except requests.exceptions.MissingSchema as ex:
+            LOG.error("Request failed for url {0}: Missing Schrma error: {1}\n".format(url, ex))
             data = ex
+        except ValueError as ex:
+            LOG.error("Request failed for url {0}. Value Error: {1}\n".format(url, ex))
+            data = ex
+
         return data

@@ -1,9 +1,7 @@
 # -*- coding: UTF-8 -*-
 import pytest
-import tempfile
-from urllib.error import HTTPError
-from urllib.parse import urlencode
 from patientMatcher.utils import ensembl_rest_client as ensembl_api
+from requests.exceptions import MissingSchema
 
 
 def test_except_on_invalid_response():
@@ -50,11 +48,11 @@ def test_send_request_wrong_url():
     """Successful requests are tested by other tests in this file.
     This test will trigger errors instead.
     """
-    url = "fakeyurl"
+    not_an_url = "foo"
     client = ensembl_api.EnsemblRestApiClient()
+    data = client.send_request(not_an_url)
+    assert type(data) == MissingSchema
+
+    url = f"https://grch37.rest.ensembl.org/{not_an_url}"
     data = client.send_request(url)
     assert type(data) == ValueError
-
-    url = "https://grch37.rest.ensembl.org/fakeyurl"
-    data = client.send_request(url)
-    assert type(data) == HTTPError

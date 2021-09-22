@@ -13,6 +13,9 @@ def test_entrez_to_symbol():
 
     # GIVEN a patched API response
     class MockResponse(object):
+        def __init__(self):
+            self.status_code = 200
+
         def json(self):
             return {"display_id": symbol}
 
@@ -35,6 +38,9 @@ def test_symbol_to_ensembl_one_ensembl_id(monkeypatch):
 
     # GIVEN a patched API response
     class MockResponse(object):
+        def __init__(self):
+            self.status_code = 200
+
         def json(self):
             return [{"id": ensembl_id, "type": "gene"}]
 
@@ -59,6 +65,7 @@ def test_symbol_to_ensembl_multiple_ensembl_id(monkeypatch):
     # GIVEN a patched API response that returns data for 2 ensembl genes
     class MockResponse(object):
         def __init__(self, url):
+            self.status_code = 200
             self.url = url
 
         def json(self):
@@ -110,6 +117,9 @@ def test_ensembl_to_symbol(monkeypatch):
 
     # GIVEN a patched API response
     class MockResponse(object):
+        def __init__(self):
+            self.status_code = 200
+
         def json(self):
             return {"display_name": symbol}
 
