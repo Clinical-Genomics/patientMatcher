@@ -1,9 +1,7 @@
 # -*- coding: UTF-8 -*-
-import json
 import logging
-from urllib.error import HTTPError
-from urllib.parse import urlencode
-from urllib.request import Request, urlopen
+
+import requests
 
 LOG = logging.getLogger(__name__)
 
@@ -60,16 +58,18 @@ class EnsemblRestApiClient:
         """
         data = {}
         try:
-            request = Request(url, headers=HEADERS)
-            response = urlopen(request)
-            self.except_on_invalid_response(response)
-            content = response.read()
-            if content:
-                data = json.loads(content)
-        except HTTPError as e:
-            LOG.info("Request failed for url {0}: Error: {1}\n".format(url, e))
-            data = e
-        except ValueError as e:
-            LOG.info("Request failed for url {0}: Error: {1}\n".format(url, e))
-            data = e
+            response = requests.get(
+                url,
+                headers=HEADERS,
+            )
+            data = response.json()
+            if response.status_code != 200:
+                raise ValueError("The API did not return valid data")
+        except requests.exceptions.MissingSchema as ex:
+            LOG.error("Request failed for url {0}: Missing Schrma error: {1}\n".format(url, ex))
+            data = ex
+        except ValueError as ex:
+            LOG.error("Request failed for url {0}. Value Error: {1}\n".format(url, ex))
+            data = ex
+
         return data

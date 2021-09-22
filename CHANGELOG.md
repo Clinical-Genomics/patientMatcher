@@ -3,8 +3,13 @@
 ### Changed
 - Save Ensembl ids for demo patient data genes automatically
 - Mock the Ensembl REST API converting gene symbols to Ensembl IDs in tests
+- Changed the tests for the gene conversion Ensembl APIs to use mocks APIs
+- Do not download resources when testing the update resources command
+- Use the requests lib instead of urllib.request to interrogate the Ensembl APIs
+- Split cli tests into 4 dedicated files (test_add, test_remove, test_update, test_commands)
 ### Fixed
 - Syntax in the disclaimer
+- Validate the Ensembl gene ID against the Ensembl API when multiple IDs are returned by converting a HGNC symbol.
 
 ## [2.8] - 2021-09-17
 ### Added
