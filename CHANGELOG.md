@@ -1,7 +1,9 @@
 ## [] -
 ### Added
 ### Changed
+- Improve docker-compose file with 2 demo connected nodes
 ### Fixed
+- Removed unused `--ensembl_genes` parameter from `add demodata` command in all docker-compose file
 
 ## [2.9] - 2021-09-22
 ### Added

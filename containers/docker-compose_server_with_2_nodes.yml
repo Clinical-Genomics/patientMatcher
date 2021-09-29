@@ -34,7 +34,7 @@ services:
       - mongodb
     networks:
       - pmatcher-net
-    command: bash -c "pmatcher add demodata --ensembl_genes"
+    command: bash -c "pmatcher add demodata"
 
   # Simulate an external MME server connected to pmatcher-web
   mme-server-1:
@@ -82,6 +82,8 @@ services:
       PMATCHER_CONFIG: '/home/worker/app/patientMatcher/patientMatcher/instance/config.py'
     depends_on:
       - mongodb
+      - mme-server-1
+      - mme-server-2
     networks:
       - pmatcher-net
     ports:
