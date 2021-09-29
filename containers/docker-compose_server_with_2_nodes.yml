@@ -82,6 +82,8 @@ services:
       PMATCHER_CONFIG: '/home/worker/app/patientMatcher/patientMatcher/instance/config.py'
     depends_on:
       - mongodb
+      - mme-server-1
+      - mme-server-2
     networks:
       - pmatcher-net
     ports:
