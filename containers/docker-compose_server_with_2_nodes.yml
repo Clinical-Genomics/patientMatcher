@@ -34,11 +34,14 @@ services:
       - mongodb
     networks:
       - pmatcher-net
-    command: bash -c "pmatcher add demodata --ensembl_genes"
+    command: bash -c "
+      pmatcher add demodata
+      && pmatcher add node -id MME-node-1 -label 'MME Node 1' -token AAAAAAA -matching_url http://mme-server-1:9021/match -accepted_content application/vnd.ga4gh.matchmaker.v1.0+json
+      && pmatcher add node -id MME-node-2 -label 'MME Node 2' -token BBBBBBB -matching_url http://mme-server-2:9022/match -accepted_content application/vnd.ga4gh.matchmaker.v1.0+json"
 
   # Simulate an external MME server connected to pmatcher-web
   mme-server-1:
-    container_name: server-1
+    container_name: MME-node-1
     build: ../.
     environment:
       MONGODB_HOST: mongodb
@@ -52,12 +55,12 @@ services:
     expose:
       - '9021'
     command: bash -c "
-      pmatcher add client -id pmatcher_demo -token pmatcher_token1 -url pmatcher_url
+      pmatcher add client -id patientMatcher -token AAAAAAA -url pmatcher_url
       && pmatcher run --host 0.0.0.0 -p 9021"
 
   # Simulate a second external MME server connected to pmatcher-web
   mme-server-2:
-    container_name: server-2
+    container_name: MME-node-2
     build: ../.
     environment:
       MONGODB_HOST: mongodb
@@ -71,7 +74,7 @@ services:
     expose:
       - '9022'
     command: bash -c "
-      pmatcher add client -id pmatcher_demo2 -token pmatcher_token2 -url pmatcher_url2
+      pmatcher add client -id patientMatcher -token BBBBBBB -url pmatcher_url
       && pmatcher run --host 0.0.0.0 -p 9022"
 
   pmatcher-web:
@@ -88,10 +91,7 @@ services:
       - '9020:9020'
     expose:
       - '9020'
-    command: bash -c "
-      pmatcher add node -id server1 -label 'Demo Server 1' -token pmatcher_token1 -matching_url http://mme-server-1:9021/match -accepted_content application/vnd.ga4gh.matchmaker.v1.0+json
-      && pmatcher add node -id server2 -label 'Demo Server 2' -token pmatcher_token2 -matching_url http://mme-server-2:9022/match -accepted_content application/vnd.ga4gh.matchmaker.v1.0+json
-      && pmatcher run --host 0.0.0.0 -p 9020"
+    command: bash -c 'pmatcher run --host 0.0.0.0 -p 9020'
 
 networks:
   pmatcher-net:
