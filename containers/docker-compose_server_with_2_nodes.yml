@@ -89,8 +89,8 @@ services:
     expose:
       - '9020'
     command: bash -c "
-      pmatcher add node -id MME-node-1 -label 'MME node 1' -token pmatcher_token1 -matching_url http://mme-server-1:9021/match -accepted_content application/vnd.ga4gh.matchmaker.v1.0+json
-      && pmatcher add node -id MME-node-2 -label 'MME node 2' -token pmatcher_token2 -matching_url http://mme-server-2:9022/match -accepted_content application/vnd.ga4gh.matchmaker.v1.0+json
+      pmatcher add node -id server1 -label 'Demo Server 1' -token pmatcher_token1 -matching_url http://mme-server-1:9021/match -accepted_content application/vnd.ga4gh.matchmaker.v1.0+json
+      && pmatcher add node -id server2 -label 'Demo Server 2' -token pmatcher_token2 -matching_url http://mme-server-2:9022/match -accepted_content application/vnd.ga4gh.matchmaker.v1.0+json
       && pmatcher run --host 0.0.0.0 -p 9020"
 
 networks:
