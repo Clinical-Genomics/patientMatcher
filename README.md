@@ -1,18 +1,19 @@
-# patientMatcher
+# patientMatcher - a Python and MongoDB -based MatchMaker Exchange server
 [![Build Status](https://travis-ci.com/Clinical-Genomics/patientMatcher.svg?branch=master)](https://travis-ci.com/Clinical-Genomics/patientMatcher) [![codecov](https://codecov.io/gh/Clinical-Genomics/patientMatcher/branch/master/graph/badge.svg?token=WXHDu9U8qk)](https://codecov.io/gh/Clinical-Genomics/patientMatcher)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5482517.svg)](https://doi.org/10.5281/zenodo.5482517)
 
 
 Table of Contents:
-1. [ Running the app using Docker ](#docker)
-2. [ Installing the app on a virtual environment with a running instance of MongoDB ](#installation)
-3. [ Data types ](#data_types)
-4. [ Command line interface](#cli)
+1. [ Intro ](#intro)
+2. [ Running the app using Docker ](#docker)
+3. [ Installing the app on a virtual environment with a running instance of MongoDB ](#installation)
+4. [ Data types ](#data_types)
+5. [ Command line interface](#cli)
     - [ Adding demo data to server](#cli_add_demo)
     - [ Removing a patient from database ](#cli_remove_patient)
     - [ Adding a client to database ](#cli_add_client)
     - [ Adding a new connected node to database ](#cli_add_node)
-5. [ Server endpoints ](#endpoints)
+6. [ Server endpoints ](#endpoints)
     - [ Add patient to server (/patient/add) ](#add)
     - [ Delete patient from server (/patient/delete/<patient_id>) ](#delete)
     - [ Get server stats (/metrics) ](#metrics)
@@ -20,11 +21,16 @@ Table of Contents:
     - [ Send a match request to server (/match) ](#match)
     - [ Send a match request to external nodes (/match/external/<patient_id>) ](#match_external)
     - [ Show all matches for a given patient (/matches/<patient_id>) ](#patient_matches)
-6. [ Patient matching algorithm ](#matching_algorithm)
+7. [ Patient matching algorithm ](#matching_algorithm)
     - [ Genotyping matching algorithm ](#geno_matching)
     - [ Phenotyping matching algorithm ](#pheno_matching)
-7. [ Enabling matching notifications ](#notify)
-8. [ Enabling log errors notifications ](#log_errors)
+8. [ Enabling matching notifications ](#notify)
+9. [ Enabling log errors notifications ](#log_errors)
+
+<a name="intro"></a>
+## Intro
+PatientMatcher is a Python and MongoDB - based implementation of a [MatchMaker Exchange](https://www.matchmakerexchange.org/)(MME) server, developed and actively maintained by [Clinical Genomics, Science For Life Laboratory in Stockholm](https://www.scilifelab.se/units/clinical-genomics-stockholm/). PatientMatcher is designed as a standalone application, but can easily communicate with external applications via REST API. The MME Stockholm node is being implemented in clinical production in collaboration with the Genomic Medicine Center Karolinska at the Karolinska University Hospital.
+
 
 <a name="docker"></a>
 ## Running the app using Docker

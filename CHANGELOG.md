@@ -1,5 +1,6 @@
 ## [] -
 ### Added
+- Software purpose and short description of developers and Stockholm MME node in README
 ### Changed
 - Improve docker-compose file with 2 demo connected nodes
 - Replaced vepo/mongo with the official MongoDB image mongo:4.4.9 in docker-compose files
