@@ -2,6 +2,8 @@
 ### Added
 ### Changed
 - Improve docker-compose file with 2 demo connected nodes
+- Replaced vepo/mongo with mongo:4.4.9 in docker-compose files
+- Created a mongo-init script for using authentication in docker-compose instances
 ### Fixed
 - Removed unused `--ensembl_genes` parameter from `add demodata` command in all docker-compose file
 
