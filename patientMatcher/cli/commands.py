@@ -5,7 +5,7 @@ import sys
 import click
 import pymongo
 from click.testing import CliRunner
-from flask import Flask
+from flask import Flask, current_app
 from flask.cli import FlaskGroup, routes_command, run_command, with_appcontext
 from flask_mail import Message
 from patientMatcher import __version__
@@ -34,15 +34,13 @@ class CustomFlaskGroup(FlaskGroup):
                 set_debug_flag=False,
                 **kwargs
             )
-            super().add_command(run_command)
-            super().add_command(routes_command)
 
         else:  # Else create an app object connected to the database
             super().__init__(
                 create_app=create_app, add_default_commands=False, set_debug_flag=False, **kwargs
             )
-            super().add_command(run_command)
-            super().add_command(routes_command)
+        super().add_command(run_command)
+        super().add_command(routes_command)
 
     def get_command(self, ctx, name):
         return super(CustomFlaskGroup, self).get_command(ctx, name)
