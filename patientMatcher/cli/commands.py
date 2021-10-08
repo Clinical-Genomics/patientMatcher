@@ -4,13 +4,11 @@ import sys
 
 import click
 import pymongo
-from click.testing import CliRunner
 from flask import Flask, current_app
 from flask.cli import FlaskGroup, routes_command, run_command, with_appcontext
 from flask_mail import Message
 from patientMatcher import __version__
 from patientMatcher.server import create_app
-from pymongo.errors import ConnectionFailure
 
 from .add import add
 from .remove import remove
@@ -32,13 +30,14 @@ class CustomFlaskGroup(FlaskGroup):
                 create_app=create_basic_app,
                 add_default_commands=False,
                 set_debug_flag=False,
-                **kwargs
+                **kwargs,
             )
 
         else:  # Else create an app object connected to the database
             super().__init__(
                 create_app=create_app, add_default_commands=False, set_debug_flag=False, **kwargs
             )
+
         super().add_command(run_command)
         super().add_command(routes_command)
 

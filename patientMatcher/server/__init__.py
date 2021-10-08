@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 import os
+import sys
 
 import coloredlogs
 from flask import Flask
@@ -8,6 +9,7 @@ from flask_mail import Mail
 from patientMatcher.resources import path_to_hpo_terms, path_to_phenotype_annotations
 from patientMatcher.utils.notify import TlsSMTPHandler
 from pymongo import MongoClient
+from pymongo.errors import ConnectionFailure, OperationFailure, ServerSelectionTimeoutError
 
 from . import extensions, views
 
@@ -64,9 +66,15 @@ def create_app():
     current_log_level = LOG.getEffectiveLevel()
     coloredlogs.install(level="DEBUG" if app.debug else current_log_level)
 
-    client = MongoClient(app.config["DB_URI"])
-    app.client = client
-    app.db = client[app.config["DB_NAME"]]
+    mongo_client = MongoClient(app.config["DB_URI"], serverSelectionTimeoutMS=5)
+    try:
+        mongo_client.server_info()
+    except (ServerSelectionTimeoutError, OperationFailure, ConnectionFailure) as err:
+        LOG.warning(f"Database connection error:{err}")
+        sys.exit()
+
+    app.client = mongo_client
+    app.db = mongo_client[app.config["DB_NAME"]]
     LOG.info("database connection info:{}".format(app.db))
 
     # If it's not a test app and phenotype resources are missing

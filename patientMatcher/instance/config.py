@@ -9,8 +9,8 @@ SECRET_KEY = "MySuperSecretKey"
 DB_NAME = "pmatcher"
 # Database connection string
 # DB_URI = "mongodb://pmUser:pmPassword@127.0.0.1:27017/pmatcher" # with authentication
-DB_URI = "mongodb://127.0.0.1:27011,127.0.0.1:27012,127.0.0.1:27013/?replicaSet=rs0&readPreference=primary"  # MongoDB replica set
-# DB_URI = "mongodb://127.0.0.1:27017/pmatcher"
+# DB_URI = "mongodb://127.0.0.1:27011,127.0.0.1:27012,127.0.0.1:27013/?replicaSet=rs0&readPreference=primary"  # MongoDB replica set
+DB_URI = "mongodb://127.0.0.1:27017/pmatcher"
 
 # Matching Algorithms scores
 # sum of MAX_GT_SCORE and MAX_PHENO_SCORE should be 1
