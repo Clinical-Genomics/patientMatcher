@@ -6,7 +6,7 @@
 - Replaced vepo/mongo with the official MongoDB image mongo:4.4.9 in docker-compose files
 - Created a mongo-init script for database authentication in docker-compose `docker-compose_auth_server_with_2_nodes.yml` development file
 - Modified docker-compose file to connect to database without authentication
-- Modified the `pytest_Codecov` GitHub action file to connect to database without authentication
+- Modified the `pytest_codecov` GitHub action file to connect to database  matrix (MongoDB 3.2, 4.4, 5.0) without authentication
 - Some cli commands don't instantiate a complete app object
 - Fixed the code to connect to a MongoDB replica set
 ### Fixed
