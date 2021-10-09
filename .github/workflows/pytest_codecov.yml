@@ -8,7 +8,6 @@ jobs:
         mongodb-version: ['3.2', '4.4', '5.0']
     env:
       PMATCHER_CONFIG: ../instance/config.py
-      MONGODB_HOST: mongodb
 
     steps:
     - name: Launch MongoDB
