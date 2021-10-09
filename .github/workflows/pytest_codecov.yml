@@ -15,8 +15,10 @@ jobs:
       uses: supercharge/mongodb-github-action@1.6.0
       with:
         mongoDBVersion: ${{ matrix.mongodb-version }}
-        mongodb-root-username: admin
-        mongodb-root-password: password
+        mongodb-root-username: root
+        mongodb-root-password: root123
+      volumes: # Invoke an init script that creates an authenticated user for the database
+        - ./containers/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
 
     - name: Set up Python
       uses: actions/setup-python@master
