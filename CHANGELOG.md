@@ -4,7 +4,11 @@
 ### Changed
 - Improve docker-compose file with 2 demo connected nodes
 - Replaced vepo/mongo with the official MongoDB image mongo:4.4.9 in docker-compose files
-- Created a mongo-init script for database authentication in docker-compose instances
+- Created a mongo-init script for database authentication in docker-compose `docker-compose_auth_server_with_2_nodes.yml` development file
+- Modified docker-compose file to connect to database without authentication
+- Modified the `pytest_Codecov` GitHub action file to connect to database without authentication
+- Some cli commands don't instantiate a complete app object
+- Fixed the code to connect to a MongoDB replica set
 ### Fixed
 - Removed unused `--ensembl_genes` parameter from `add demodata` command in all docker-compose file
 
