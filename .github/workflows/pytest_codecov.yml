@@ -17,7 +17,7 @@ jobs:
         mongoDBVersion: ${{ matrix.mongodb-version }}
         mongodb-root-username: root
         mongodb-root-password: root123
-      options: -v ./containers/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      options: -v ./containers/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro:rw
 
     - name: Set up Python
       uses: actions/setup-python@master
