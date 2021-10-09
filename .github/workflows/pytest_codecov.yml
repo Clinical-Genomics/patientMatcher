@@ -8,16 +8,21 @@ jobs:
         mongodb-version: ['3.2', '4.4', '5.0']
     env:
       PMATCHER_CONFIG: ../instance/config.py
+
     steps:
     - uses: actions/checkout@v2
     - name: Launch MongoDB
-      uses: wbari/start-mongoDB@v0.2
+      uses: supercharge/mongodb-github-action@1.6.0
       with:
         mongoDBVersion: ${{ matrix.mongodb-version }}
+        mongodb-root-username: admin
+        mongodb-root-password: password
+
     - name: Set up Python
       uses: actions/setup-python@master
       with:
         python-version: 3.8
+
     - name: Install repo and its dependencies
       run: |
         pip install -r requirements.txt
@@ -25,9 +30,11 @@ jobs:
         pip install -e .
         pip install pytest
         pip install pytest-cov
+
     - name: Run pytest and codecov
       run: |
         pytest --cov=./ --cov-report=xml
+
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
