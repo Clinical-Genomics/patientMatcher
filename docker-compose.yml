@@ -12,12 +12,7 @@ services:
       - '27013:27017'
     expose:
       - '27017'
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: root123
-      MONGO_INITDB_DATABASE: admin
-    volumes: # Invoke an init script that creates an authenticated user for the database
-      - ./containers/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+
     restart: always
 
   pmatcher-cli:
@@ -25,6 +20,7 @@ services:
     build: .
     environment:
       MONGODB_HOST: mongodb
+      MONGODB_PORT: 27017
       PMATCHER_CONFIG: '/home/worker/app/patientMatcher/patientMatcher/instance/config.py'
     depends_on:
       - mongodb
@@ -37,6 +33,7 @@ services:
     build: .
     environment:
       MONGODB_HOST: mongodb
+      MONGODB_PORT: 27017
       PMATCHER_CONFIG: '/home/worker/app/patientMatcher/patientMatcher/instance/config.py'
     depends_on:
       - mongodb

@@ -1,6 +1,8 @@
 version: '3'
 # usage:
-# sudo docker-compose up
+# Go to file instance/config.py and uncomment the DB_URI with authentication
+# (sudo) docker-compose up
+# (sudo) docker-compose down
 services:
   mongodb:
     # Using the official MongoDB image 4.4.9
