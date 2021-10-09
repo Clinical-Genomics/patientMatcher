@@ -3,10 +3,17 @@ on: [push, pull_request]
 jobs:
   Pytest_Codecov:
     runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        mongodb-version: ['3.2', '4.4', '5']
     env:
       PMATCHER_CONFIG: ../instance/config.py
     steps:
     - uses: actions/checkout@v2
+    - name: Launch MongoDB
+      uses: wbari/start-mongoDB@v0.2
+      with:
+        mongoDBVersion: ${{ matrix.mongodb-version }}
     - name: Set up Python
       uses: actions/setup-python@master
       with:
