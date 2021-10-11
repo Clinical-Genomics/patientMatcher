@@ -66,7 +66,7 @@ def create_app():
     current_log_level = LOG.getEffectiveLevel()
     coloredlogs.install(level="DEBUG" if app.debug else current_log_level)
 
-    mongo_client = MongoClient(app.config["DB_URI"], serverSelectionTimeoutMS=5)
+    mongo_client = MongoClient(app.config["DB_URI"], serverSelectionTimeoutMS=10)
     try:
         mongo_client.server_info()
     except (ServerSelectionTimeoutError, OperationFailure, ConnectionFailure) as err:
