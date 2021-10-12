@@ -13,6 +13,20 @@ def test_appname(mock_app):
     assert result.output == "patientMatcher\n"
 
 
+def test_help(mock_app):
+    """Test invoking the cli with --help argument"""
+    runner = mock_app.test_cli_runner()
+    result = runner.invoke(cli, ["add", "client", "--help"])
+    assert result.exit_code == 0
+
+
+def test_run_no_args(mock_app):
+    """Test invoking the cli without arguments"""
+    runner = mock_app.test_cli_runner()
+    result = runner.invoke(cli, [])
+    assert result.exit_code == 0
+
+
 def test_sendemail(mock_app, mock_mail):
     mock_app.mail = mock_mail
     mock_app.config["MAIL_USERNAME"] = "sender@email.com"

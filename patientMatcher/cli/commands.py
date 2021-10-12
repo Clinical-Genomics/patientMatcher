@@ -1,29 +1,64 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import sys
 
 import click
 import pymongo
-from pymongo.errors import ConnectionFailure
-from flask.cli import FlaskGroup, with_appcontext, current_app
+from flask import Flask, current_app
+from flask.cli import FlaskGroup, routes_command, run_command, with_appcontext
 from flask_mail import Message
+from patientMatcher import __version__
 from patientMatcher.server import create_app
+
 from .add import add
 from .remove import remove
 from .update import update
-from patientMatcher import __version__
+
+
+def create_basic_app():
+    return Flask(__name__)
+
+
+# Extend FlaskGroup to choose if the app should be instantiated or not when launching the cli
+class CustomFlaskGroup(FlaskGroup):
+    # If user has typed --help or launched the cli without arguments
+    def __init__(self, *args, **kwargs):
+        if (
+            "--help" in sys.argv or len(sys.argv) == 1
+        ):  # No need to create the real app to show help and exit
+            super().__init__(
+                create_app=create_basic_app,
+                add_default_commands=False,
+                set_debug_flag=False,
+                **kwargs,
+            )
+
+        else:  # Else create an app object connected to the database
+            super().__init__(
+                create_app=create_app, add_default_commands=False, set_debug_flag=False, **kwargs
+            )
+
+        super().add_command(run_command)
+        super().add_command(routes_command)
+
+    def get_command(self, ctx, name):
+        return super(CustomFlaskGroup, self).get_command(ctx, name)
+
+    def list_commands(self, ctx):
+        return super(CustomFlaskGroup, self).list_commands(ctx)
 
 
 @click.version_option(__version__)
 @click.group(
-    cls=FlaskGroup,
-    create_app=create_app,
-    invoke_without_command=False,
-    add_default_commands=True,
+    cls=CustomFlaskGroup,
     add_version_option=False,
+    invoke_without_command=True,
 )
-def cli(**_):
+@click.pass_context
+def cli(ctx):
     """Base command for invoking the command line"""
-    pass
+    if ctx.invoked_subcommand is None:
+        click.echo(ctx.get_help())
 
 
 @click.group()

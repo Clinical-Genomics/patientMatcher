@@ -6,15 +6,18 @@ DEBUG = True
 # secret key:
 SECRET_KEY = "MySuperSecretKey"
 
-# Database connection string
 DB_USERNAME = "pmUser"
 DB_PASSWORD = "pmPassword"
 DB_NAME = "pmatcher"
 DB_HOST = (
     os.getenv("MONGODB_HOST") or "127.0.0.1"
 )  # simply substitute with 'mongodb' if connecting to MongoDB running in a container
-DB_PORT = 27017
-DB_URI = "mongodb://{}:{}@{}:{}/{}".format(DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME)
+DB_PORT = os.getenv("MONGODB_PORT") or 27017
+
+# DB_URI = "mongodb://{}:{}@{}:{}/{}".format(DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME)
+DB_URI = "mongodb://{}:{}/{}".format(DB_HOST, DB_PORT, DB_NAME)  # without authentication
+# DB_URI = "mongodb://127.0.0.1:27011,127.0.0.1:27012,127.0.0.1:27013/?replicaSet=rs0&readPreference=primary"  # MongoDB replica set
+
 
 # Matching Algorithms scores
 # sum of MAX_GT_SCORE and MAX_PHENO_SCORE should be 1
