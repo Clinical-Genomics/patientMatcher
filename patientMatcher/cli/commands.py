@@ -47,10 +47,6 @@ class CustomFlaskGroup(FlaskGroup):
 @click.version_option(__version__)
 @click.group(
     cls=CustomFlaskGroup,
-    add_version_option=False,
-    add_default_commands=False,
-    invoke_without_command=True,
-    set_debug_flag=True,
 )
 @click.pass_context
 def cli(ctx):
