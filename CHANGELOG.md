@@ -1,4 +1,4 @@
-## [] -
+## [2.10.1] - 2021-10-12
 ### Fixed
 - Params passed from the command line to the custom FlaskGroup
 
