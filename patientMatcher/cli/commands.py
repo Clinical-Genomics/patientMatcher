@@ -28,15 +28,11 @@ class CustomFlaskGroup(FlaskGroup):
         ):  # No need to create the real app to show help and exit
             super().__init__(
                 create_app=create_basic_app,
-                add_default_commands=False,
-                set_debug_flag=False,
                 **kwargs,
             )
 
         else:  # Else create an app object connected to the database
-            super().__init__(
-                create_app=create_app, add_default_commands=False, set_debug_flag=False, **kwargs
-            )
+            super().__init__(create_app=create_app, **kwargs)
 
         super().add_command(run_command)
         super().add_command(routes_command)
@@ -51,8 +47,6 @@ class CustomFlaskGroup(FlaskGroup):
 @click.version_option(__version__)
 @click.group(
     cls=CustomFlaskGroup,
-    add_version_option=False,
-    invoke_without_command=True,
 )
 @click.pass_context
 def cli(ctx):

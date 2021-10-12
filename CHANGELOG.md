@@ -1,3 +1,8 @@
+## [] -
+### Fixed
+- Params passed from the command line to the custom FlaskGroup
+
+
 ## [2.10] - 2021-10-12
 ### Added
 - Software purpose and short description of developers and Stockholm MME node in README
