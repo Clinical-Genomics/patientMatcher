@@ -1,7 +1,10 @@
+## [2.10.2] - 2021-11-12
+### Fixed
+- Increase MongoDB connection serverSelectionTimeoutMS to 30K (defeult value accorfing to MongoDB socumentation)
+
 ## [2.10.1] - 2021-10-12
 ### Fixed
 - Params passed from the command line to the custom FlaskGroup
-
 
 ## [2.10] - 2021-10-12
 ### Added
