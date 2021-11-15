@@ -25,9 +25,10 @@ def update():
 )
 def contact(old_href, href, name, institution):
     """Update contact person for a group of patients"""
-    # Retrieve all patients that need to be updated
-    query = {"contact.href": {"$regex": old_href}}
+
     database = current_app.db
+    query = {"contact.href": {"$regex": old_href}}
+
     # Retrieving all patients matching the given old_href
     old_contact_patients = patients(database=database, match_query=query)
     # Retriving unique contacts for the above patients
