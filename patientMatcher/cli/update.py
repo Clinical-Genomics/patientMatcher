@@ -36,23 +36,23 @@ def contact(old_href, href, name, institution):
     if len(match_contacts) == 0:
         click.echo(f"No patients found with contact URI '{old_href}'")
         return
-    elif len(match_contacts) > 1:
+    if len(match_contacts) > 1:
         click.echo(
             f"Your search for contact url '{old_href}' is returning more than one patients' contact: {match_contacts}.\nPlease restrict your search by typing a different href."
         )
         return
-    else:  # Search is returning only one contact, ok to use it for updating patients
-        matches = list(old_contact_patients)
-        new_contact = dict(href=href, name=name)
-        if institution:
-            new_contact["institution"] = institution
+    # Search is returning only one contact, it's OK to use it for updating patients
+    matches = list(old_contact_patients)
+    new_contact = dict(href=href, name=name)
+    if institution:
+        new_contact["institution"] = institution
 
-        if click.confirm(
-            f"{len(matches)} patients with the old contact href '{matches[0]['contact']['href']}' will be updated with contact info:{new_contact}. Confirm?",
-            abort=True,
-        ):
-            result = database.patients.update_many(query, {"$set": {"contact": new_contact}})
-            click.echo(f"Contact information was updated for {result.modified_count} patients.")
+    if click.confirm(
+        f"{len(matches)} patients with the old contact href '{matches[0]['contact']['href']}' will be updated with contact info:{new_contact}. Confirm?",
+        abort=True,
+    ):
+        result = database.patients.update_many(query, {"$set": {"contact": new_contact}})
+        click.echo(f"Contact information was updated for {result.modified_count} patients.")
 
 
 @update.command()
