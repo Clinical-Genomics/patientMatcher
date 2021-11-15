@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
+from urllib.parse import urlparse
 
 from flask import jsonify
 from jsonschema import ValidationError
@@ -13,10 +14,6 @@ from patientMatcher.utils.patient import patients
 from patientMatcher.utils.stats import general_metrics
 
 LOG = logging.getLogger(__name__)
-
-
-def reassign_patients():
-    """Reassign all patients with a given contact to another contact"""
 
 
 def heartbeat(disclaimer):

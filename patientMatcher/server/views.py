@@ -19,16 +19,6 @@ blueprint = Blueprint("server", __name__)
 API_MIME_TYPE = "application/vnd.ga4gh.matchmaker.v1.0+json"
 
 
-@blueprint.route("/patient/reassign", methods=["POST"])
-def reassign():
-    """Update the contact information for one or more patients"""
-
-    if not authorize(current_app.db, request):  # not authorized, return a 401 status code
-        return controllers.bad_request(401)
-
-    controllers.reassign_patients(current_app.db, request)
-
-
 @blueprint.route("/patient/add", methods=["POST"])
 @consumes(API_MIME_TYPE, "application/json")
 @produces("application/json")

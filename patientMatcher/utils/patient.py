@@ -34,12 +34,13 @@ def pheno_similarity_score_simgic(hpoic, patient1, patient2):
     return hpoic.information_content(common_ancestors) / hpoic.information_content(all_ancestors)
 
 
-def patients(database, ids=None):
+def patients(database, ids=None, match_query=None):
     """Get all patients in the database
 
     Args:
         database(pymongo.database.Database)
         ids(list): a list of IDs to return only specified patients
+        match_query(dict): use a query to match and retrieve patients from the database
 
     Returns:
         results(Iterable[dict]): list of patients from mongodb patients collection
@@ -49,7 +50,9 @@ def patients(database, ids=None):
     if ids:  # if only specified patients should be returned
         LOG.info("Querying patients for IDs {}".format(ids))
         query["_id"] = {"$in": ids}
-
+    elif match_query:
+        LOG.info("Return patients matching query {}".format(match_query))
+        query = match_query
     else:
         LOG.info("Return all patients in database")
 
