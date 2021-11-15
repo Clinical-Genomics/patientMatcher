@@ -61,7 +61,7 @@ def test_update_contact_no_href_match(mock_app, gpx4_patients):
     assert len(contacts) == 1
     old_contact_href = contacts[0]
 
-    # GIVEN a contact matching ny href not returning matches
+    # GIVEN a contact href without matches in the patients documents
     wrong_href = "some_href"
     assert wrong_href not in old_contact_href
 
@@ -84,5 +84,39 @@ def test_update_contact_no_href_match(mock_app, gpx4_patients):
     )
 
     # THEN no patients contact should be updated
-    updated_patient = patients_collection.find({"contact.href": new_href})
-    assert len(list(updated_patient)) == 0
+    assert patients_collection.find_one({"contact.href": new_href}) is None
+
+
+def test_update_contact_multiple_href_match(mock_app, gpx4_patients):
+    """Test the command to bulk-update patients contact when old contact href is matching more than one patient contact"""
+
+    runner = mock_app.test_cli_runner()
+    patients_collection = mock_app.db.patients
+
+    assert len(gpx4_patients) == 2
+    # GIVEN a database with 2 patients with sligthly different contact href
+    gpx4_patients[0]["contact"]["href"] = "test_1@mail.com"
+    gpx4_patients[0]["contact"]["href"] = "test_2@mail.com"
+    patients_collection.insert_many(gpx4_patients)
+
+    # WHEN their contact info is updated using the cli but the search for the old href returns multiple contacts
+    old_href = "test_"
+    new_href = "test_3@mail.com"
+    result = runner.invoke(
+        cli,
+        [
+            "update",
+            "contact",
+            "-old-href",
+            old_href,
+            "-href",
+            new_href,
+            "-name",
+            "New Name",
+            "-institution",
+            "Test Institution",
+        ],
+    )
+
+    # THEN no patients contact should be updated
+    assert patients_collection.find_one({"contact.href": new_href}) is None
