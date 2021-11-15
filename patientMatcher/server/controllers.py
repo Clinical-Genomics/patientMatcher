@@ -51,7 +51,7 @@ def get_nodes(database):
 def patient(database, patient_id):
     """Return a mme-like patient from database by providing its ID"""
     query_patient = None
-    query_result = list(patients(database, ids=[patient_id]))
+    query_result = list(patients(database=database, ids=[patient_id]))
     if query_result:
         query_patient = query_result[0]
     return query_patient
