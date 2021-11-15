@@ -11,6 +11,7 @@ Table of Contents:
 5. [ Command line interface](#cli)
     - [ Adding demo data to server](#cli_add_demo)
     - [ Removing a patient from database ](#cli_remove_patient)
+    - [ Updating patients' contact info using the command line](#cli_update_contacts)
     - [ Adding a client to database ](#cli_add_client)
     - [ Adding a new connected node to database ](#cli_add_node)
 6. [ Server endpoints ](#endpoints)
@@ -144,6 +145,33 @@ Options:
 -label TEXT  label of the patient to be removed from database
 ```
 &nbsp;&nbsp;
+
+<a name="cli_update_contacts"></a>
+### Updating patients' contact info using the command line
+Contact information is a mandatory descriptor for each patient and represents the primary contact email address or URL used when looking for additional information for a patient in case of positive matches triggered by other patients from external nodes or the same database. A patient contact is described in PatientMatcher (and in the MatchMaker Exchange API) by these key/values:
+
+- **href**: a string represented by a URL (example: http://www.ncbi.nlm.nih.gov/pubmed/23542699) or the email address of the contact user (example: mailto:someone@somesite.com). This field is mandatory.
+- **name**: complete name of the contact user responsible for the patient saved in the MatchMaker. This field is mandatory.
+- **institution**: the Institution the contact person for the patients belongs to. This information is optional.
+
+The command to update patients' contact info is the following:
+```bash
+pmatcher update contact [OPTIONS]
+
+  Update contact person for a group of patients
+
+Options:
+  -old-href TEXT     Old contact href  [required]
+  -href TEXT         New contact href  [required]
+  -name TEXT         New contact name  [required]
+  -institution TEXT  New contact institution
+```
+
+Let's assume a group of patients has a contact `Peter Parker` with href `pparker@example.com`. To replace the old user contact in **all patients** with new contact, for instance `Bruce Wayne`, type:
+
+```bash
+pmatcher update contact -old-href pparker@example.com -href bwayne@example.com -name "Bruce Wayne" -institution "Wayne Enterprises, Inc."
+```
 
 <a name="cli_add_client"></a>
 ### Adding a client to the database
