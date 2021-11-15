@@ -1,17 +1,22 @@
 # -*- coding: utf-8 -*-
 import logging
+
 from flask import jsonify
 from jsonschema import ValidationError
+from patientMatcher.__version__ import __version__
+from patientMatcher.auth.auth import authorize
 from patientMatcher.constants import STATUS_CODES
-from patientMatcher.utils.stats import general_metrics
+from patientMatcher.match.handler import external_matcher
+from patientMatcher.parse.patient import mme_patient, validate_api
 from patientMatcher.utils.delete import delete_by_query
 from patientMatcher.utils.patient import patients
-from patientMatcher.parse.patient import validate_api, mme_patient
-from patientMatcher.auth.auth import authorize
-from patientMatcher.match.handler import external_matcher
-from patientMatcher.__version__ import __version__
+from patientMatcher.utils.stats import general_metrics
 
 LOG = logging.getLogger(__name__)
+
+
+def reassign_patients():
+    """Reassign all patients with a given contact to another contact"""
 
 
 def heartbeat(disclaimer):
