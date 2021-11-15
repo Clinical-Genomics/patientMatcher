@@ -1,9 +1,9 @@
 ## [] -
 ### Changed
 - Improve views code by reusing a controllers function when request auth fails
-### added
+### Added
 - Bulk replace patients' contact info using the command line
-- Documentation on how to update patients contact info using the command line
+- Documentation on how to update patients' contact info using the command line
 
 ## [2.10.2] - 2021-11-12
 ### Fixed
