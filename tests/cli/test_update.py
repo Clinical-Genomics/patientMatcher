@@ -45,3 +45,44 @@ def test_update_contact(mock_app, gpx4_patients):
     # THEN the config info should be updated
     updated_patient = patients_collection.find({"contact.href": new_href})
     assert len(list(updated_patient)) > 0
+
+
+def test_update_contact_no_href_match(mock_app, gpx4_patients):
+    """Test the command to bulk-update patients contact when old contact href is not matching any patients"""
+
+    runner = mock_app.test_cli_runner()
+    patients_collection = mock_app.db.patients
+
+    # GIVEN a database with some patients
+    patients_collection.insert_many(gpx4_patients)
+    test_patients = patients_collection.find()
+    # Sharing a contact information
+    contacts = test_patients.distinct("contact.href")
+    assert len(contacts) == 1
+    old_contact_href = contacts[0]
+
+    # GIVEN a contact matching ny href not returning matches
+    wrong_href = "some_href"
+    assert wrong_href not in old_contact_href
+
+    # WHEN their contact info is updated using the cli
+    new_href = "new.contact@mail.com"
+    result = runner.invoke(
+        cli,
+        [
+            "update",
+            "contact",
+            "-old-href",
+            wrong_href,
+            "-href",
+            new_href,
+            "-name",
+            "New Name",
+            "-institution",
+            "Test Institution",
+        ],
+    )
+
+    # THEN no patients contact should be updated
+    updated_patient = patients_collection.find({"contact.href": new_href})
+    assert len(list(updated_patient)) == 0
