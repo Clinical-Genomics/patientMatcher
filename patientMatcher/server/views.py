@@ -23,7 +23,7 @@ API_MIME_TYPE = "application/vnd.ga4gh.matchmaker.v1.0+json"
 @consumes(API_MIME_TYPE, "application/json")
 @produces("application/json")
 def add():
-    """Add patient to database"""
+    """Add a patient to the database"""
 
     formatted_patient = controllers.check_request(current_app.db, request)
     if isinstance(formatted_patient, int):  # some error must have occurred during validation
@@ -64,13 +64,11 @@ def add():
 
 @blueprint.route("/patient/delete/<patient_id>", methods=["DELETE"])
 def delete(patient_id):
+    """Delete a patient from the database using its ID"""
     # check if request is authorized
     resp = None
     if not authorize(current_app.db, request):  # not authorized, return a 401 status code
-        message = STATUS_CODES[401]["message"]
-        resp = jsonify(message)
-        resp.status_code = 401
-        return resp
+        return controllers.bad_request(401)
 
     LOG.info("Authorized client is removing patient with id {}".format(patient_id))
     message = controllers.delete_patient(current_app.db, patient_id)
@@ -112,10 +110,7 @@ def nodes():
     """Get a list of all nodes connected to this MME server"""
     resp = None
     if not authorize(current_app.db, request):
-        message = STATUS_CODES[401]["message"]
-        resp = jsonify(message)
-        resp.status_code = 401
-        return resp
+        return controllers.bad_request(401)
 
     LOG.info("Authorized client requests list of connected nodes..")
     results = controllers.get_nodes(database=current_app.db)
@@ -131,10 +126,7 @@ def matches(patient_id):
     resp = None
     message = {}
     if not authorize(current_app.db, request):  # not authorized, return a 401 status code
-        message = STATUS_CODES[401]["message"]
-        resp = jsonify(message)
-        resp.status_code = 401
-        return resp
+        return controllers.bad_request(401)
 
     # return only matches with at least one result
     results = patient_matches(current_app.db, patient_id)
@@ -155,10 +147,7 @@ def match_external(patient_id):
     resp = None
     message = {}
     if not authorize(current_app.db, request):  # not authorized, return a 401 status code
-        message["message"] = STATUS_CODES[401]["message"]
-        resp = jsonify(message)
-        resp.status_code = 401
-        return resp
+        return controllers.bad_request(401)
 
     LOG.info(
         "Authorized clients is matching patient with ID {} against external nodes".format(

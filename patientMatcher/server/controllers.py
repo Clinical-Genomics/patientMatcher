@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
 import logging
+from urllib.parse import urlparse
+
 from flask import jsonify
 from jsonschema import ValidationError
+from patientMatcher.__version__ import __version__
+from patientMatcher.auth.auth import authorize
 from patientMatcher.constants import STATUS_CODES
-from patientMatcher.utils.stats import general_metrics
+from patientMatcher.match.handler import external_matcher
+from patientMatcher.parse.patient import mme_patient, validate_api
 from patientMatcher.utils.delete import delete_by_query
 from patientMatcher.utils.patient import patients
-from patientMatcher.parse.patient import validate_api, mme_patient
-from patientMatcher.auth.auth import authorize
-from patientMatcher.match.handler import external_matcher
-from patientMatcher.__version__ import __version__
+from patientMatcher.utils.stats import general_metrics
 
 LOG = logging.getLogger(__name__)
 
@@ -49,7 +51,7 @@ def get_nodes(database):
 def patient(database, patient_id):
     """Return a mme-like patient from database by providing its ID"""
     query_patient = None
-    query_result = list(patients(database, ids=[patient_id]))
+    query_result = list(patients(database=database, ids=[patient_id]))
     if query_result:
         query_patient = query_result[0]
     return query_patient

@@ -1,3 +1,9 @@
+## [] -
+### Changed
+- Improve views code by reusing a controllers function when request auth fails
+### added
+- Bulk replace patients' contact info using the command line
+
 ## [2.10.2] - 2021-11-12
 ### Fixed
 - Increase MongoDB connection serverSelectionTimeoutMS to 30K (defeult value accorfing to MongoDB socumentation)
