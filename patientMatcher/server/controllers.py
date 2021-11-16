@@ -94,7 +94,7 @@ def check_request(database, request):
     contact_href = request_json["patient"]["contact"]["href"]
 
     # If new contact is a simple email, add "mailto" schema
-    if bool(EMAIL_REGEX.match(contact_href)) is True:
+    if bool(EMAIL_REGEX.match(contact_href)) is True and not "mailto:" in contact_href:
         contact_href = ":".join(["mailto", contact_href])
         request_json["patient"]["contact"]["href"] = contact_href
 
@@ -103,9 +103,6 @@ def check_request(database, request):
             "Provided contact href does not have a valid schema - either a URL (http://.., https://..) or an email address (mailto:..)"
         )
         return 422
-
-    # if href_validate(request_json["contact"]["href"]) is False:
-    #    LOG.warning("Patient's contact href not con")
 
     formatted_patient = mme_patient(json_patient=request_json["patient"], convert_to_ensembl=True)
     return formatted_patient
