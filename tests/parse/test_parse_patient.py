@@ -21,7 +21,7 @@ def test_href_validate_valid_url():
 
 def test_href_validate_wrong_email():
     """Test href_validate function with a mailto link and wrong email syntax"""
-    assert href_validate("mailto:foo@a") is False
+    assert href_validate("me@patientmatcher.se") is False
 
 
 def test_href_validate_valid_email():
