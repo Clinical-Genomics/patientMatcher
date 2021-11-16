@@ -14,7 +14,7 @@ def drop_all_collections(mongo_db):
         mongo_db(pymongo.database.Database)
     """
     LOG.warning(f"Dropping all existing collections in database")
-    for collection in mongo_db.collection_names():
+    for collection in mongo_db.list_collection_names():
         mongo_db[collection].drop()
 
 

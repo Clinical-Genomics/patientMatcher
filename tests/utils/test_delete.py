@@ -6,11 +6,11 @@ def test_drop_all_collections(demo_data_path, database):
     """Test the functions that drop all existent collections from database before populating demo database"""
     # GIVEN a populated database
     load_demo_patients(demo_data_path, database)
-    collections = database.collection_names()
+    collections = database.list_collection_names()
     assert collections
 
     # WHEN drop_all_collections is invoked
     drop_all_collections(database)
-    collections = database.collection_names()
+    collections = database.list_collection_names()
     # THEN no collections should be found in database
     assert collections == []
