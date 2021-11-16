@@ -31,7 +31,7 @@ def contact(old_href, href, name, institution):
     """Update contact person for a group of patients"""
 
     # If new contact is a simple email, add "mailto" schema
-    if bool(EMAIL_REGEX.match(href)) is True:
+    if bool(EMAIL_REGEX.match(href)) is True and not "mailto:" in href:
         href = ":".join(["mailto", href])
 
     if href_validate(href) is False:

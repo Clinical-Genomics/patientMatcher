@@ -23,15 +23,13 @@ def href_validate(href):
     Returns:
         True if it's a valid URL or False if it isn't
     """
+    LOG.warning(f"Passed href is {href}")
     try:
         result = urlparse(href)
         if result.scheme == "mailto":  # mailto:me@example.com
             # validate email
             return bool(EMAIL_REGEX.match(href.split("mailto:")[1]))
-        return all([result.scheme, result.netloc]) and result.scheme in [
-            "http",
-            "https",
-        ]
+        return all([result.scheme, result.netloc]) and result.scheme in ["http", "https", "mailto"]
     except Exception as ex:
         return False
 
