@@ -36,7 +36,7 @@ def contact(old_href, href, name, institution):
 
     if href_validate(href) is False:
         LOG.error(
-            "Provided href does not have a valid schema. Provide either a URL (http, https) or an email address (mailto)"
+            "Provided href does not have a valid schema. Provide either a URL (http://.., https://..) or an email address (mailto:..)"
         )
         return
 
