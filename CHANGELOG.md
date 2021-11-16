@@ -1,4 +1,4 @@
-## [] -
+## [2.11] - 2021-11-16
 ### Fixed
 - Fix some deprecated code causing warnings during automatic tests
 - Do not duplicate `mailto` schema when contact href is an email with correct schema
