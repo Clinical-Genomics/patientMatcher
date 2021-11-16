@@ -238,6 +238,8 @@ def test_update_patient(mock_app, test_client, gpx4_patients, test_node, databas
     """Test updating a patient by sending a POST request to the add endpoint with valid data"""
 
     patient_data = gpx4_patients[1]
+    # Modify patient's contact href with a simple email
+    patient_data["contact"]["href"] = "somebody@test.se"
 
     # Given a node with authorized token
     ok_token = test_client["auth_token"]
@@ -269,8 +271,9 @@ def test_update_patient(mock_app, test_client, gpx4_patients, test_node, databas
     assert response.status_code == 200
 
     # Then there should still be one patient in the database
-    results = database["patients"].find()
-    assert len(list(results)) == 1
+    updated_patient = database["patients"].find_one()
+    # With an updated and valid email address
+    assert updated_patient["contact"]["href"] == "mailto:somebody@test.se"
 
     # And the update has triggered an additional external patient matching
     results = database["matches"].find()

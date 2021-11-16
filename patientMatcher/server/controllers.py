@@ -8,7 +8,7 @@ from patientMatcher.__version__ import __version__
 from patientMatcher.auth.auth import authorize
 from patientMatcher.constants import STATUS_CODES
 from patientMatcher.match.handler import external_matcher
-from patientMatcher.parse.patient import mme_patient, validate_api
+from patientMatcher.parse.patient import EMAIL_REGEX, href_validate, mme_patient, validate_api
 from patientMatcher.utils.delete import delete_by_query
 from patientMatcher.utils.patient import patients
 from patientMatcher.utils.stats import general_metrics
@@ -74,20 +74,38 @@ def check_request(database, request):
 
     # check that request is using a valid auth token
     if not authorize(database, request):
-        LOG.info("Request is not authorized")
+        LOG.warning("Request is not authorized")
         return 401
 
     try:  # make sure request has valid json data
         request_json = request.get_json(force=True)
     except Exception as err:
-        LOG.info("Json data in request is not valid:{}".format(err))
+        LOG.warning("Json data in request is not valid:{}".format(err))
         return 400
 
-    try:  # validate json data against MME API
+    try:
+        # validate json data against MME API
         validate_api(json_obj=request_json, is_request=True)
     except Exception as err:
-        LOG.info("Patient data does not conform to API:{}".format(err))
+        LOG.warning("Patient data does not conform to API:{}".format(err))
         return 422
+
+    # validate and eventually fix patient's contact href
+    contact_href = request_json["patient"]["contact"]["href"]
+
+    # If new contact is a simple email, add "mailto" schema
+    if bool(EMAIL_REGEX.match(contact_href)) is True:
+        contact_href = ":".join(["mailto", contact_href])
+        request_json["patient"]["contact"]["href"] = contact_href
+
+    if href_validate(contact_href) is False:
+        LOG.warning(
+            "Provided contact href does not have a valid schema - either a URL (http://.., https://..) or an email address (mailto:..)"
+        )
+        return 422
+
+    # if href_validate(request_json["contact"]["href"]) is False:
+    #    LOG.warning("Patient's contact href not con")
 
     formatted_patient = mme_patient(json_patient=request_json["patient"], convert_to_ensembl=True)
     return formatted_patient

@@ -1,15 +1,39 @@
 # -*- coding: utf-8 -*-
-
 import json
-from copy import deepcopy
-from jsonschema import validate, RefResolver, FormatChecker
-from patientMatcher.utils.gene import symbol_to_ensembl, entrez_to_symbol, ensembl_to_symbol
-from patientMatcher.utils.variant import liftover
-from pkgutil import get_data
 import logging
+import re
+from copy import deepcopy
+from pkgutil import get_data
+from urllib.parse import urlparse
+
+from jsonschema import FormatChecker, RefResolver, validate
+from patientMatcher.utils.gene import ensembl_to_symbol, entrez_to_symbol, symbol_to_ensembl
+from patientMatcher.utils.variant import liftover
 
 LOG = logging.getLogger(__name__)
 SCHEMA_FILE = "api.json"
+EMAIL_REGEX = re.compile(r"[^@]+@[^@]+\.[^@]+")
+
+
+def href_validate(href):
+    """Validates the URL used as contact href for the patient
+
+    Args:
+        href(str): A string provided by the user as patient's contact href
+    Returns:
+        True if it's a valid URL or False if it isn't
+    """
+    try:
+        result = urlparse(href)
+        if result.scheme == "mailto":  # mailto:me@example.com
+            # validate email
+            return bool(EMAIL_REGEX.match(href.split("mailto:")[1]))
+        return all([result.scheme, result.netloc]) and result.scheme in [
+            "http",
+            "https",
+        ]
+    except Exception as ex:
+        return False
 
 
 def mme_patient(json_patient, convert_to_ensembl=False):

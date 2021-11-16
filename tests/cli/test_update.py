@@ -41,9 +41,10 @@ def test_update_contact(mock_app, gpx4_patients):
         ],
         input="y",
     )
+    assert result.exit_code == 0
 
     # THEN the config info should be updated
-    updated_patient = patients_collection.find({"contact.href": new_href})
+    updated_patient = patients_collection.find({"contact.href": ":".join(["mailto", new_href])})
     assert len(list(updated_patient)) > 0
 
 
@@ -82,9 +83,10 @@ def test_update_contact_no_href_match(mock_app, gpx4_patients):
             "Test Institution",
         ],
     )
+    assert result.exit_code == 0
 
     # THEN no patients contact should be updated
-    assert patients_collection.find_one({"contact.href": new_href}) is None
+    assert patients_collection.find_one({"contact.href": ":".join(["mailto", new_href])}) is None
 
 
 def test_update_contact_multiple_href_match(mock_app, gpx4_patients):
@@ -119,4 +121,4 @@ def test_update_contact_multiple_href_match(mock_app, gpx4_patients):
     )
 
     # THEN no patients contact should be updated
-    assert patients_collection.find_one({"contact.href": new_href}) is None
+    assert patients_collection.find_one({"contact.href": ":".join(["mailto", new_href])}) is None

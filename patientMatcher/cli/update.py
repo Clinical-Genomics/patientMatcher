@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import logging
 
 import click
 import requests
 from clint.textui import progress
 from flask.cli import current_app, with_appcontext
 from patientMatcher.constants import PHENOTYPE_TERMS
+from patientMatcher.parse.patient import EMAIL_REGEX, href_validate
 from patientMatcher.utils.patient import patients
+
+LOG = logging.getLogger(__name__)
 
 
 @click.group()
@@ -25,6 +29,16 @@ def update():
 )
 def contact(old_href, href, name, institution):
     """Update contact person for a group of patients"""
+
+    # If new contact is a simple email, add "mailto" schema
+    if bool(EMAIL_REGEX.match(href)) is True:
+        href = ":".join(["mailto", href])
+
+    if href_validate(href) is False:
+        LOG.error(
+            "Provided href does not have a valid schema. Provide either a URL (http://.., https://..) or an email address (mailto:..)"
+        )
+        return
 
     database = current_app.db
     query = {"contact.href": {"$regex": old_href}}

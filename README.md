@@ -167,10 +167,10 @@ Options:
   -institution TEXT  New contact institution
 ```
 
-Let's assume a group of patients has a contact `Peter Parker` with href `pparker@example.com`. To replace the old user contact in **all patients** with new contact, for instance `Bruce Wayne`, type:
+Let's assume a group of patients has a contact `Peter Parker` with href `mailto:pparker@example.com`. To replace the old user contact in **all patients** with the new contact info, for instance `Bruce Wayne`, type:
 
 ```bash
-pmatcher update contact -old-href pparker@example.com -href bwayne@example.com -name "Bruce Wayne" -institution "Wayne Enterprises, Inc."
+pmatcher update contact -old-href maito:pparker@example.com -href mailto:bwayne@example.com -name "Bruce Wayne" -institution "Wayne Enterprises, Inc."
 ```
 
 <a name="cli_add_client"></a>
