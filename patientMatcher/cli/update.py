@@ -6,6 +6,7 @@ import requests
 from clint.textui import progress
 from flask.cli import current_app, with_appcontext
 from patientMatcher.constants import PHENOTYPE_TERMS
+from patientMatcher.parse.patient import href_validator
 from patientMatcher.utils.patient import patients
 
 

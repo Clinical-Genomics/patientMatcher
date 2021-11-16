@@ -4,6 +4,7 @@
 ### Added
 - Bulk replace patients' contact info using the command line
 - Documentation on how to update patients' contact info using the command line
+- Contact href string validation when saving or updating patients
 
 ## [2.10.2] - 2021-11-12
 ### Fixed
