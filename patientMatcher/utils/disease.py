@@ -9,7 +9,7 @@ from collections import defaultdict
 from patientMatcher.resources import path_to_phenotype_annotations
 
 LOG = logging.getLogger(__name__)
-db_re = re.compile("([A-Z]+:\d+)")
+db_re = re.compile(r"([A-Z]+:\d+)")
 
 FREQUENCY_TERMS = {
     "HP:0040280": 1.0,  # Obligate

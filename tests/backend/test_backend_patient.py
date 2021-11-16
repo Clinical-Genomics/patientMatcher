@@ -28,7 +28,7 @@ def test_load_demo_patients(demo_data_path, database):
 
 
 def test_backend_remove_patient(gpx4_patients, database):
-    """ Test adding 2 test patients and then removing them using label or ID """
+    """Test adding 2 test patients and then removing them using label or ID"""
 
     # test conversion to format required for the database:
     test_mme_patients = [mme_patient(json_patient=patient) for patient in gpx4_patients]

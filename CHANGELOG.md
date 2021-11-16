@@ -1,4 +1,6 @@
 ## [] -
+### Fixed
+- Fix some deprecated code causing warnings during automatic tests
 ### Changed
 - Improve views code by reusing a controllers function when request auth fails
 ### Added
