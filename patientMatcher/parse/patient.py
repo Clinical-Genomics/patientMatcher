@@ -28,7 +28,7 @@ def href_validate(href):
         if result.scheme == "mailto":  # mailto:me@example.com
             # validate email
             return bool(EMAIL_REGEX.match(href.split("mailto:")[1]))
-        return all([result.scheme, result.netloc, result.path]) and result.scheme in [
+        return all([result.scheme, result.netloc]) and result.scheme in [
             "http",
             "https",
         ]
