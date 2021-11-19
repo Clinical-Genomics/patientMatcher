@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import pymongo
 from flask_mail import Message
 from patientMatcher.cli.commands import cli
 from patientMatcher.parse.patient import mme_patient

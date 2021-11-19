@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import pymongo
 from patientMatcher.utils.add import load_demo_patients
 from patientMatcher.utils.patient import patients
 

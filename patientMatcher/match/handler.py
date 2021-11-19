@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import logging
 import datetime
-import requests
-import pymongo
 import json
-from werkzeug.datastructures import Headers
+import logging
+
+import requests
 from patientMatcher.match.genotype_matcher import match as genomatch
 from patientMatcher.match.phenotype_matcher import match as phenomatch
 from patientMatcher.parse.patient import json_patient
+from werkzeug.datastructures import Headers
 
 LOG = logging.getLogger(__name__)
 

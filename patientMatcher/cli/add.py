@@ -83,8 +83,7 @@ def client(id, token, url, contact=None):
 
 @add.command()
 @with_appcontext
-@click.option("--ensembl_genes", is_flag=True, help="Convert gene symbols to Ensembl IDs")
-def demodata(ensembl_genes):
+def demodata():
     """Adds a set of 50 demo patients to database"""
     mongo_db = current_app.db
     drop_all_collections(mongo_db)

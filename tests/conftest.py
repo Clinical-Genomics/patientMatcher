@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
 import os
-from pathlib import Path
 
 import mongomock
 import pytest

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-import pymongo
-from patientMatcher.utils.notify import notify_match_external, notify_match_internal, html_format
+from patientMatcher.utils.notify import html_format, notify_match_external, notify_match_internal
 
 
 def test_notify_match_external(match_objs, mock_sender, mock_mail):
