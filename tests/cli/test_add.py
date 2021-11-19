@@ -1,7 +1,7 @@
 from patientMatcher.cli.commands import cli
 
 
-def test_cli_add_demo_data(mock_app, database, mock_symbol_2_ensembl, monkeypatch):
+def test_cli_add_demo_data(mock_app, database, monkeypatch):
     """Test the class that adds demo data"""
 
     # GIVEN a mocked Ensembl REST API for conversion of gene symbols to Ensembl IDs

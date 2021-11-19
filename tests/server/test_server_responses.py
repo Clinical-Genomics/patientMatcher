@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
 
-import pymongo
 import pytest
 import requests
 from patientMatcher.__version__ import __version__

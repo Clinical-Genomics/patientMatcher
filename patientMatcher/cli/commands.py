@@ -3,7 +3,6 @@
 import sys
 
 import click
-import pymongo
 from flask import Flask, current_app
 from flask.cli import FlaskGroup, routes_command, run_command, with_appcontext
 from flask_mail import Message
