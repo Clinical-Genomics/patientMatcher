@@ -1,3 +1,9 @@
+## [] -
+### Fixed
+- Removed unused imports
+### added
+- Vulture GitHub action to flag unused code with 90% confidence
+
 ## [2.11] - 2021-11-16
 ### Fixed
 - Fix some deprecated code causing warnings during automatic tests
