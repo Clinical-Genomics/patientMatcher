@@ -8,9 +8,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
+      - name: Find changed files
+        id: files
+        uses: jitterbit/get-changed-files@v1
+
       - name: Scavenge
         uses: anaynayak/python-vulture-action@v1.0
         id: vulture
         with:
-          vulture-args: . --min-confidence 90
+          vulture-args: . --min-confidence 80 ${{steps.files.outputs.all}}
         continue-on-error: true
