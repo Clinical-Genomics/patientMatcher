@@ -1,4 +1,4 @@
-## [] -
+## [2.12] - 2021-11-24
 ### Fixed
 - Removed unused imports
 ### added
