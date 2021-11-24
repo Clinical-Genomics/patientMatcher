@@ -3,7 +3,6 @@
 - Removed unused imports
 ### added
 - Vulture GitHub action to flag unused code with 90% confidence
-- Bumpversion GitHub Action
 
 ## [2.11] - 2021-11-16
 ### Fixed
