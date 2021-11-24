@@ -3,6 +3,8 @@
 - Removed unused imports
 ### added
 - Vulture GitHub action to flag unused code with 90% confidence
+### Changed
+- Scan only changed files with Vulture action
 
 ## [2.11] - 2021-11-16
 ### Fixed
