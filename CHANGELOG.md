@@ -1,6 +1,7 @@
 ## [2.12] - 2021-11-24
 ### Fixed
 - Removed unused imports
+- Freeze PyMongo lib to version<4.0 to keep supporting previous MongoDB versions
 ### added
 - Vulture GitHub action to flag unused code with 90% confidence
 ### Changed
