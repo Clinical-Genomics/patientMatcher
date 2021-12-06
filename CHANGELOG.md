@@ -1,6 +1,9 @@
 ## [] -
+### Changed
+- Docker base image to run the app via Docker and Gunicorn in a prod environment
 ### Fixed
 - Freeze PyMongo lib to version<4.0 to keep supporting previous MongoDB versions
+- Deprecated werkzeug.contrib preventing running the docker app in prod environment
 
 ## [2.12] - 2021-11-24
 ### Fixed
