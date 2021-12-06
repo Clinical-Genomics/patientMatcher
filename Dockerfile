@@ -6,15 +6,14 @@ LABEL about.home="https://github.com/Clinical-Genomics/patientMatcher"
 
 RUN apt-get update && \
     apt-get -y upgrade && \
-    apt-get -y install -y --no-install-recommends bash
+    apt-get -y install -y --no-install-recommends bash && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN groupadd --gid 1000 worker && useradd -g worker --uid 10001 --create-home worker
 
 WORKDIR /home/worker/app
 COPY . /home/worker/app
-
-# Install the app requirements
-RUN pip install --no-cache-dir -r requirements.txt
 
 # Install the app
 RUN pip install --no-cache-dir -e .
