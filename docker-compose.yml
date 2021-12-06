@@ -26,7 +26,7 @@ services:
       - mongodb
     networks:
       - pmatcher-net
-    command: bash -c "pmatcher add demodata"
+    command: -c 'pmatcher add demodata'
 
   pmatcher-web:
     container_name: pmatcher-web
@@ -43,7 +43,7 @@ services:
       - '9020:9020'
     expose:
       - '9020'
-    command: bash -c 'pmatcher run --host 0.0.0.0 -p 9020'
+    command: -c 'pmatcher run --host 0.0.0.0 -p 9020'
 
 networks:
   pmatcher-net:
