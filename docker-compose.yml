@@ -26,7 +26,7 @@ services:
       - mongodb
     networks:
       - pmatcher-net
-    command: -c 'pmatcher add demodata'
+    command: bash -c 'pmatcher add demodata'
 
   pmatcher-web:
     container_name: pmatcher-web
@@ -43,7 +43,7 @@ services:
       - '9020:9020'
     expose:
       - '9020'
-    command: -c 'gunicorn --workers=2 --bind="0.0.0.0:9020" --timeout=400 --access-logfile=- --error-logfile=- patientMatcher.server.auto:app'
+    command: bash -c 'gunicorn --workers=2 --bind="0.0.0.0:9020" --timeout=400 --access-logfile=- --error-logfile=- patientMatcher.server.auto:app'
 
 networks:
   pmatcher-net:

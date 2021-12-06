@@ -20,5 +20,3 @@ RUN pip install --no-cache-dir -e .
 
 # Run commands as non-root user
 USER worker
-
-ENTRYPOINT ["/bin/bash"]
