@@ -43,7 +43,8 @@ services:
       - '9020:9020'
     expose:
       - '9020'
-    command: -c 'pmatcher run --host 0.0.0.0 -p 9020'
+    command: -c 'gunicorn --workers=2 --bind="localhost:9020" --timeout=400 \
+        --access-logfile=- --error-logfile=- patientMatcher.server.auto:app'
 
 networks:
   pmatcher-net:
