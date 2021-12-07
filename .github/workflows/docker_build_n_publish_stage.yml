@@ -1,6 +1,6 @@
 name: Publish to Docker stage
 
-on: [push]
+on: [pull_request]
 
 jobs:
   docker-stage-push:
