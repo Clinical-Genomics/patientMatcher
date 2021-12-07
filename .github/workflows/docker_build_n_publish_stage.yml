@@ -32,4 +32,4 @@ jobs:
          context: ./
          file: ./Dockerfile
          push: true
-         tags: "clinicalgenomics/atlas-stage:${{steps.get_branch_name.outputs.branch}}, clinicalgenomics/atlas-stage:latest"
+         tags: "clinicalgenomics/patientmatcher-stage:${{steps.get_branch_name.outputs.branch}}, clinicalgenomics/patientmatcher-stage:latest"
