@@ -1,4 +1,6 @@
 ## [] -
+### added
+- GitHub action to push staging branches to Docker Hub
 ### Changed
 - Docker base image to run the app via Docker and Gunicorn in a prod environment
 ### Fixed
