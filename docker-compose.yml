@@ -15,8 +15,8 @@ services:
 
     restart: always
 
-  pmatcher-cli:
-    container_name: pmatcher-cli
+  cli:
+    container_name: cli-app
     build: .
     environment:
       MONGODB_HOST: mongodb
@@ -26,15 +26,22 @@ services:
       - mongodb
     networks:
       - pmatcher-net
-    command: bash -c 'pmatcher add demodata'
+    command: add demodata
 
-  pmatcher-web:
-    container_name: pmatcher-web
-    build: .
+  web:
+    container_name: web-app
+    build: Dockerfile-server
     environment:
       MONGODB_HOST: mongodb
       MONGODB_PORT: 27017
-      PMATCHER_CONFIG: '/home/worker/app/patientMatcher/patientMatcher/instance/config.py'
+      MAX_GT_SCORE: 0.75
+      MAX_PHENO_SCORE: 0.25
+      MAX_RESULTS: 10
+      DISCLAIMER: 'This is a test PatientMatcher server'
+      GUNICORN_WORKERS: 1
+      GUNICORN_TREADS: 1
+      GUNICORN_BIND: 0.0.0.0:9020
+      GUNICORN_TIMEOUT: 400
     depends_on:
       - mongodb
     networks:
@@ -43,7 +50,6 @@ services:
       - '9020:9020'
     expose:
       - '9020'
-    command: bash -c 'gunicorn --workers=2 --bind="0.0.0.0:9020" --timeout=400 --access-logfile=- --error-logfile=- patientMatcher.server.auto:app'
 
 networks:
   pmatcher-net:

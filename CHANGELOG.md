@@ -3,6 +3,8 @@
 - GitHub action to push staging branches from pull requests to Docker Hub
 ### Changed
 - Docker base image to run the app via Docker and Gunicorn in a prod environment
+- Created another Dockerfile to run the app via gunicorn
+- Extended config file functionality to collect all required params from environment variables
 ### Fixed
 - Freeze PyMongo lib to version<4.0 to keep supporting previous MongoDB versions
 - Deprecated werkzeug.contrib preventing running the docker app in prod environment
