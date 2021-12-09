@@ -5,17 +5,19 @@ ENV GUNICORN_THREADS=1
 ENV GUNICORN_BIND="0.0.0.0:8000"
 ENV GUNICORN_TIMEOUT=400
 
-# Install and run commands from virtual environment
-sudo RUN echo export PATH="/venv/bin:\$PATH" > /etc/profile.d/venv.sh
+# Set virtual environment as root
+USER root
+ENV PATH="/venv/bin:$PATH"
+RUN echo export PATH="/venv/bin:\$PATH" > /etc/profile.d/venv.sh
+
+# Install gunicorn
+RUN pip install --no-cache-dir gunicorn
 
 # Run commands as non-root user
 USER worker
 
 WORKDIR /home/worker/app
 COPY . /home/worker/app
-
-# Install Gunicorn
-RUN pip install --no-cache-dir gunicorn
 
 CMD gunicorn \
     --workers=$GUNICORN_WORKERS \
