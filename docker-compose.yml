@@ -30,7 +30,9 @@ services:
 
   web:
     container_name: web-app
-    build: Dockerfile-server
+    build:
+      context: .
+      dockerfile: Dockerfile-server
     environment:
       MONGODB_HOST: mongodb
       MONGODB_PORT: 27017

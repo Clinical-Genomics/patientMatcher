@@ -1,4 +1,4 @@
-FROM clinicalgenomics/patientMatcher-stage:latest
+FROM clinicalgenomics/patientmatcher-stage:latest
 
 ENV GUNICORN_WORKERS=1
 ENV GUNICORN_THREADS=1
@@ -6,18 +6,16 @@ ENV GUNICORN_BIND="0.0.0.0:8000"
 ENV GUNICORN_TIMEOUT=400
 
 # Install and run commands from virtual environment
-RUN echo export PATH="/venv/bin:\$PATH" > /etc/profile.d/venv.sh
+sudo RUN echo export PATH="/venv/bin:\$PATH" > /etc/profile.d/venv.sh
 
-RUN groupadd --gid 1000 worker && useradd -g worker --uid 1000 --create-home worker
+# Run commands as non-root user
+USER worker
 
 WORKDIR /home/worker/app
 COPY . /home/worker/app
 
 # Install Gunicorn
 RUN pip install --no-cache-dir gunicorn
-
-# Run commands as non-root user
-USER worker
 
 CMD gunicorn \
     --workers=$GUNICORN_WORKERS \
