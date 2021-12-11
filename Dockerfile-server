@@ -1,23 +1,45 @@
-FROM clinicalgenomics/patientmatcher-stage:latest
+###########
+# BUILDER #
+###########
+
+FROM clinicalgenomics/python3.8-venv:1.0 AS builder
+
+# Install and run commands from virtual environment
+RUN python3 -m venv /home/worker/venv
+ENV PATH="/home/worker/venv/bin:$PATH"
+
+# install requirements
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+#########
+# FINAL #
+#########
+
+FROM clinicalgenomics/python3.8-venv:1.0 AS deployer
+
+RUN groupadd --gid 1000 worker && useradd -g worker --uid 1000 --create-home worker
+COPY --chown=worker:worker --from=builder /home/worker/venv /home/worker/venv
+
+RUN mkdir /home/worker/app
+WORKDIR /home/worker/app
+COPY . .
+
+USER worker
+
+# make sure all messages always reach console
+ENV PYTHONUNBUFFERED=1
+
+# activate virtual environment
+ENV VIRTUAL_ENV=/home/worker/venv
+ENV PATH="/home/worker/venv/bin:$PATH"
+
+RUN pip install --no-cache-dir gunicorn
 
 ENV GUNICORN_WORKERS=1
 ENV GUNICORN_THREADS=1
 ENV GUNICORN_BIND="0.0.0.0:8000"
 ENV GUNICORN_TIMEOUT=400
-
-# Set virtual environment as root
-USER root
-ENV PATH="/venv/bin:$PATH"
-RUN echo export PATH="/venv/bin:\$PATH" > /etc/profile.d/venv.sh
-
-# Install gunicorn
-RUN pip install --no-cache-dir gunicorn
-
-# Run commands as non-root user
-USER worker
-
-WORKDIR /home/worker/app
-COPY . /home/worker/app
 
 CMD gunicorn \
     --workers=$GUNICORN_WORKERS \
