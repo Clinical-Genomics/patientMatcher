@@ -1,10 +1,15 @@
 ## [] -
 ### added
 - GitHub action to push staging branches from pull requests to Docker Hub
+- Created another Dockerfile to run the app via gunicorn
+- Modified  GitHub actions to push Dockerfile-server image (stage) to Docker Hub when a pull request is opened or modified
 ### Changed
 - Docker base image to run the app via Docker and Gunicorn in a prod environment
 - Created another Dockerfile to run the app via gunicorn
 - Extended config file functionality to collect all required params from environment variables
+- Modified README to describe the two distinct Dockerfiles
+- Modified the docker-compose to provide an example on how to use the two Dockerfiles
+- Modified  GitHub actions to push both Dockerfile and Dockerfile-server images (prod) to Docker Hub when a new release is created
 ### Fixed
 - Freeze PyMongo lib to version<4.0 to keep supporting previous MongoDB versions
 - Deprecated werkzeug.contrib preventing running the docker app in prod environment
