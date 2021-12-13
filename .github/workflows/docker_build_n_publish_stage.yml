@@ -32,6 +32,6 @@ jobs:
        uses: docker/build-push-action@v2
        with:
          context: ./
-         file: ./Dockerfile
+         file: ./Dockerfile-server
          push: true
-         tags: "clinicalgenomics/patientmatcher-stage:${{steps.branch-name.outputs.current_branch}}, clinicalgenomics/patientmatcher-stage:latest"
+         tags: "clinicalgenomics/patientmatcher-server-stage:${{steps.branch-name.outputs.current_branch}}, clinicalgenomics/patientmatcher-server-stage:latest"
