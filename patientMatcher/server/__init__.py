@@ -48,11 +48,12 @@ def configure_email_error_logging(app):
 def create_app():
     app = None
     try:
-        LOG.info("Configuring app from environment variable")
         app = Flask(__name__)
         app.config.from_envvar("PMATCHER_CONFIG")
     except:
-        LOG.warning("Environment variable settings not found, configuring from instance file.")
+        LOG.warning(
+            "PMATCHER_CONFIG env variable not found, configuring from instance file + env vars."
+        )
         app_root = os.path.abspath(__file__).split("patientMatcher")[0]
 
         # check if config file exists under ../instance:
@@ -74,8 +75,9 @@ def create_app():
         sys.exit()
 
     app.client = mongo_client
-    app.db = mongo_client[app.config["DB_NAME"]]
-    LOG.info("database connection info:{}".format(app.db))
+    db_name = app.config["DB_NAME"]
+    app.db = mongo_client[db_name]
+    LOG.info(f"Connecting to database '{db_name}' on {app.db}")
 
     # If it's not a test app and phenotype resources are missing
     # Display message and exit

@@ -10,6 +10,7 @@
 - Modified README to describe the two distinct Dockerfiles
 - Modified the docker-compose to provide an example on how to use the two Dockerfiles
 - Modified  GitHub actions to push both Dockerfile and Dockerfile-server images (prod) to Docker Hub when a new release is created
+- Improved initial debug messages reporting database connection info
 ### Fixed
 - Freeze PyMongo lib to version<4.0 to keep supporting previous MongoDB versions
 - Deprecated werkzeug.contrib preventing running the docker app in prod environment
