@@ -1,4 +1,4 @@
-## [] -
+## [2.13] - 2021-12-13
 ### added
 - GitHub action to push staging branches from pull requests to Docker Hub
 - Created another Dockerfile to run the app via gunicorn
