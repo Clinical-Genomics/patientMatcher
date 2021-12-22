@@ -1,3 +1,7 @@
+## [] -
+### Fixed
+- Restore saving of all matching attempts into database, also those with no results
+
 ## [2.13] - 2021-12-13
 ### added
 - GitHub action to push staging branches from pull requests to Docker Hub

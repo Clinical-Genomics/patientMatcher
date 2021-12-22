@@ -7,7 +7,6 @@ from bson import json_util
 from flask import Blueprint, current_app, jsonify, request
 from flask_negotiate import consumes, produces
 from patientMatcher.auth.auth import authorize
-from patientMatcher.constants import STATUS_CODES
 from patientMatcher.match.handler import async_match, internal_matcher, patient_matches
 from patientMatcher.utils.add import backend_add_patient
 from patientMatcher.utils.notify import notify_match_external, notify_match_internal
@@ -278,8 +277,7 @@ def match_internal():
         current_app.db, query_patient, max_pheno_score, max_geno_score, max_results, score_threshold
     )
     # save matching object to database
-    if match_obj and (match_obj.get("has_matches") or match_obj.get("errors")):
-        current_app.db["matches"].insert_one(match_obj)
+    current_app.db["matches"].insert_one(match_obj)
     matches = []
     try:
         matches = match_obj["results"][0][
