@@ -30,7 +30,7 @@ MAX_RESULTS = os.getenv("MAX_RESULTS") or 5
 
 # Set a minimum patient score threshold for returned results
 # Set this parameter to 0 to return all results with a score higher than 0
-SCORE_THRESHOLD = 0.065
+SCORE_THRESHOLD = os.getenv("SCORE_THRESHOLD") or 0
 
 # Disclaimer. This text is returned along with match results or server metrics
 DISCLAIMER = (
