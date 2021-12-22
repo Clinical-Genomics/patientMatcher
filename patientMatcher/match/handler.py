@@ -112,9 +112,7 @@ def internal_matcher(
     sorted_matches = sorted(matches, key=lambda k: k["score"]["patient"], reverse=True)
 
     # this is saved to server, regardless of the results returned by the nodes
-    has_matches = False
-    if sorted_matches:
-        has_matches = True
+    has_matches = bool(sorted_matches)
 
     internal_match = {
         "created": datetime.datetime.now(),
