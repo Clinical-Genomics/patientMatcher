@@ -7,7 +7,6 @@ from bson import json_util
 from flask import Blueprint, current_app, jsonify, request
 from flask_negotiate import consumes, produces
 from patientMatcher.auth.auth import authorize
-from patientMatcher.constants import STATUS_CODES
 from patientMatcher.match.handler import async_match, internal_matcher, patient_matches
 from patientMatcher.utils.add import backend_add_patient
 from patientMatcher.utils.notify import notify_match_external, notify_match_internal
