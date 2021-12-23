@@ -66,7 +66,6 @@ def create_app():
 
     if app.config.get("ADMINS"):
         app.config["ADMINS"] = admins_email_format(app.config["ADMINS"])
-        LOG.error(app.config["ADMINS"])
 
     current_log_level = LOG.getEffectiveLevel()
     coloredlogs.install(level="DEBUG" if app.debug else current_log_level)
