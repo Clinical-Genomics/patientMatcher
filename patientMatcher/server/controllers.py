@@ -2,7 +2,7 @@
 import logging
 from urllib.parse import urlparse
 
-from flask import jsonify
+from flask import current_app, jsonify
 from jsonschema import ValidationError
 from patientMatcher.__version__ import __version__
 from patientMatcher.auth.auth import authorize
@@ -14,6 +14,18 @@ from patientMatcher.utils.patient import patients
 from patientMatcher.utils.stats import general_metrics
 
 LOG = logging.getLogger(__name__)
+
+
+def populate_index_data():
+    """Populate the dictionary used to display the server index page"""
+    data = dict(
+        node_stats=metrics(),
+        node_disclaimer=current_app.config.get("DISCLAIMER"),
+        node_contacts=current_app.config.get("ADMINS"),
+        connected_nodes=len(get_nodes(current_app.db)),
+        software_version=__version__,
+    )
+    return data
 
 
 def heartbeat(disclaimer):
@@ -33,9 +45,9 @@ def heartbeat(disclaimer):
     return hbeat
 
 
-def metrics(database):
+def metrics():
     """return database metrics"""
-    db_metrics = general_metrics(database)
+    db_metrics = general_metrics(current_app.db)
     return db_metrics
 
 
