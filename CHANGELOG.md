@@ -3,6 +3,7 @@
 - Index (landing page) reachable at endpoint `/`
 ### Fixed
 - Restore saving of all matching attempts into database, also those with no results
+- Parsing of admins emails list when provided using env vars
 
 ## [2.13] - 2021-12-13
 ### added

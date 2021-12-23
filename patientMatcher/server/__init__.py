@@ -7,7 +7,7 @@ import coloredlogs
 from flask import Flask
 from flask_mail import Mail
 from patientMatcher.resources import path_to_hpo_terms, path_to_phenotype_annotations
-from patientMatcher.utils.notify import TlsSMTPHandler
+from patientMatcher.utils.notify import TlsSMTPHandler, admins_email_format
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure, OperationFailure, ServerSelectionTimeoutError
 
@@ -63,6 +63,9 @@ def create_app():
 
         app = Flask(__name__, instance_path=instance_path, instance_relative_config=True)
         app.config.from_pyfile("config.py")
+
+    if app.config.get("ADMINS"):
+        app.config["ADMINS"] = admins_email_format(app.config["ADMINS"])
 
     current_log_level = LOG.getEffectiveLevel()
     coloredlogs.install(level="DEBUG" if app.debug else current_log_level)

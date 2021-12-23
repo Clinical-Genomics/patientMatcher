@@ -40,6 +40,7 @@ services:
       MAX_PHENO_SCORE: 0.25
       MAX_RESULTS: 10
       DISCLAIMER: 'This is a test PatientMatcher server'
+      ADMINS: '["test@mail.se"]'
       GUNICORN_WORKERS: 1
       GUNICORN_TREADS: 1
       GUNICORN_BIND: 0.0.0.0:8000

@@ -1,5 +1,16 @@
 # -*- coding: utf-8 -*-
-from patientMatcher.utils.notify import html_format, notify_match_external, notify_match_internal
+from patientMatcher.utils.notify import (
+    admins_email_format,
+    html_format,
+    notify_match_external,
+    notify_match_internal,
+)
+
+
+def test_admins_email_format():
+    unformatted_admins = '["foo@mail.com", "bar@mail.com"]'
+    formatted_admins = admins_email_format(unformatted_admins)
+    assert isinstance(formatted_admins, list)
 
 
 def test_notify_match_external(match_objs, mock_sender, mock_mail):
