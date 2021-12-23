@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+import json
 import logging
 from logging.handlers import SMTPHandler
+
 from flask_mail import Message
 
 LOG = logging.getLogger(__name__)
@@ -229,6 +231,13 @@ def passive_match_email_body(
     )
 
     return html
+
+
+def admins_email_format(admins_string):
+    """Formats the ADMINS value provided by a server admin via env vars"""
+    if isinstance(admins_string, str):
+        admins_string = json.loads(admins_string)
+    return admins_string
 
 
 def html_format(obj, indent=0, notify_complete=False):
