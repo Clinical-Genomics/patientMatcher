@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<title>PatientMatcher</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
+#footer {
+   position:absolute;
+   bottom:0;
+   width:100%;
+   height:200px;
+}
+</style>
+<body class="w3-light-grey">
+
+<!-- Top container -->
+<div class="w3-bar w3-top w3-black w3-large" style="z-index:4">
+  <button class="w3-bar-item w3-button w3-hide-large w3-hover-none w3-hover-text-light-grey" onclick="w3_open();"><i class="fa fa-bars"></i> &nbsp;Menu</button>
+  <span class="w3-bar-item w3-left"><a href="https://github.com/Clinical-Genomics/patientMatcher" target="_blank" class="fa fa-github" style="text-decoration: none;"></a></span>
+  <span class="w3-bar-item w3-right">PatientMatcher v.{{software_version}}</span>
+</div>
+
+<!-- !PAGE CONTENT! -->
+<div class="w3-main" style="margin-top:43px;">
+
+  <div class="w3-row-padding w3-margin-bottom">
+    <div class="w3-quarter">
+      <div class="w3-container w3-red w3-padding-16">
+        <div class="w3-left"><i class="fa fa-hospital-o w3-xxxlarge"></i></div>
+        <div class="w3-right">
+          <h3>{{connected_nodes}}</h3>
+        </div>
+        <div class="w3-clear"></div>
+        <h4>Connected nodes</h4>
+        <h6>Requests received: {{node_stats.numberOfRequestsReceived}}</h6>
+        <h6>Potential matches sent: {{node_stats.numberOfPotentialMatchesSent }}</h6>
+      </div>
+    </div>
+    <div class="w3-quarter">
+      <div class="w3-container w3-blue w3-padding-16">
+        <div class="w3-left"><i class="fa fa-share-alt w3-xxxlarge"></i></div>
+        <div class="w3-right">
+          <h3>{{node_stats.numberOfCases}}</h3>
+        </div>
+        <div class="w3-clear"></div>
+        <h4>Patients</h4>
+        <h6>Patients with a diagnosis: {{node_stats.numberOfCasesWithDiagnosis}}</h6>
+        <h6>Number of submitters: {{node_stats.numberOfSubmitters}}</h6>
+      </div>
+    </div>
+    <div class="w3-quarter">
+      <div class="w3-container w3-teal w3-padding-16">
+        <div class="w3-left"><i class="fa fa-puzzle-piece w3-xxxlarge"></i></div>
+        <div class="w3-right">
+          <h3>{{node_stats.numberOfGenes}}</h3>
+        </div>
+        <div class="w3-clear"></div>
+        <h4>Genes</h4>
+        <h6>Number of unique genes: {{node_stats.numberOfUniqueGenes}}</h6>
+        <h6>Number of unique genes matched: {{node_stats.numberOfUniqueGenesMatched}}</h6>
+      </div>
+    </div>
+    <div class="w3-quarter">
+      <div class="w3-container w3-orange w3-text-white w3-padding-16">
+        <div class="w3-left"><i class="fa fa-bolt w3-xxxlarge"></i></div>
+        <div class="w3-right">
+          <h3>{{node_stats.numberOfVariants}}</h3>
+        </div>
+        <div class="w3-clear"></div>
+        <h4>Variants</h4>
+        <h6>Number of unique variants: {{node_stats.numberOfUniqueVariants}}</h6>
+      </div>
+    </div>
+  </div>
+
+  <div class="w3-container">
+    <h2>Welcome to PatientMatcher!</h2>
+
+    PatientMatcher is a <a href="https://www.matchmakerexchange.org/" target="_blank">MatchMaker Exchange</a> node curated and maintained by Clinical Genomics, SciLifeLab in collaboration with the <a href="https://www.karolinska.se/for-vardgivare/karolinska-universitetslaboratoriet/genomic-medicine-center-karolinska" target="_blank">Genomic Medicine Center Karolinska</a> at the <a href="https://www.karolinska.se/en/karolinska-university-hospital" target="_blank">Karolinska University Hospital, Stockholm</a>.
+    <br>
+    If you are insterested in matching patients against our node, please <b>contact us{% if node_contacts %} ({{ node_contacts|join(', ') }}) {%endif%}</b> to become a collaborator.<br><br>
+    If you are interested in our <b>open source software</b> for clinical laboratories and research facilities who wish to join the federated MME network as independent nodes, please visit the project's <a href="https://github.com/Clinical-Genomics/patientMatcher" target="_blank">GitHub pages</a>.
+  <hr>
+  </div>
+</div>
+
+<div id="footer">
+  <div class="w3-container w3-dark-grey w3-padding-16">
+    <div class="w3-row">
+      <h5 class="w3-bottombar w3-border-green">Disclaimer</h5>
+      {{ node_disclaimer }}
+    </div>
+  </div>
+  <div class="w3-container w3-light-grey w3-padding-16">
+    <span class="w3-bar-item w3-left">Powered by <a href="https://www.scilifelab.se/units/clinical-genomics-stockholm/" target="_blank">Clinical Genomics, Science For Life Laboratory, Sweden</a></span>
+  </div>
+</div>
+
+</body>
+</html>

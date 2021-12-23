@@ -48,7 +48,7 @@ MAIL_USERNAME = os.getenv("MAIL_USERNAME") or None  # some.email@test.se
 MAIL_PASSWORD = os.getenv("MAIL_PASSWORD") or None  # email_password
 
 # ADMINS will receive email notification is app crashes
-ADMINS = os.getenv("ADMINS") or []
+ADMINS = os.getenv("ADMINS") or ["test.email@mail.se"]
 
 # Set NOTIFY_COMPLETE to False if you don't want to notify variants and phenotypes by email
 # This way only contact info and matching patients ID will be notified in email body

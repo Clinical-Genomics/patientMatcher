@@ -1,15 +1,17 @@
 ## [] -
+### added
+- Index (landing page) reachable at endpoint `/`
 ### Fixed
 - Restore saving of all matching attempts into database, also those with no results
 
 ## [2.13] - 2021-12-13
 ### added
 - GitHub action to push staging branches from pull requests to Docker Hub
-- Created another Dockerfile to run the app via gunicorn
+- Created another Dockerfile to run the app via Gunicorn
 - Modified  GitHub actions to push Dockerfile-server image (stage) to Docker Hub when a pull request is opened or modified
 ### Changed
 - Docker base image to run the app via Docker and Gunicorn in a prod environment
-- Created another Dockerfile to run the app via gunicorn
+- Created another Dockerfile to run the app via Gunicorn
 - Extended config file functionality to collect all required params from environment variables
 - Modified README to describe the two distinct Dockerfiles
 - Modified the docker-compose to provide an example on how to use the two Dockerfiles

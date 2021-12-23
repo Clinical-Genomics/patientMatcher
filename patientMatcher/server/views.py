@@ -4,7 +4,7 @@ import json
 import logging
 
 from bson import json_util
-from flask import Blueprint, current_app, jsonify, request
+from flask import Blueprint, current_app, jsonify, render_template, request
 from flask_negotiate import consumes, produces
 from patientMatcher.auth.auth import authorize
 from patientMatcher.match.handler import async_match, internal_matcher, patient_matches
@@ -16,6 +16,13 @@ from . import controllers
 LOG = logging.getLogger(__name__)
 blueprint = Blueprint("server", __name__)
 API_MIME_TYPE = "application/vnd.ga4gh.matchmaker.v1.0+json"
+
+
+@blueprint.route("/", methods=["GET"])
+def index():
+    """Provide an index page with general node description and stats"""
+    data = controllers.populate_index_data()
+    return render_template("index.html", **data)
 
 
 @blueprint.route("/patient/add", methods=["POST"])
@@ -98,7 +105,7 @@ def heartbeat():
 def metrics():
     """Get database metrics"""
     LOG.info("Receiving a requests for server metrics.")
-    results = controllers.metrics(database=current_app.db)
+    results = controllers.metrics()
     resp = jsonify({"metrics": results, "disclaimer": current_app.config.get("DISCLAIMER")})
     resp.status_code = 200
     return resp
