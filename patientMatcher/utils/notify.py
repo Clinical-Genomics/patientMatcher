@@ -233,11 +233,11 @@ def passive_match_email_body(
     return html
 
 
-def admins_email_format(admins_string):
+def admins_email_format(admins_emails):
     """Formats the ADMINS value provided by a server admin via env vars"""
-    if isinstance(admins_string, str):
-        admins_string = json.loads(admins_string)
-    return admins_string
+    if isinstance(admins_emails, str):
+        admins_emails = json.loads(admins_emails)
+    return admins_emails
 
 
 def html_format(obj, indent=0, notify_complete=False):
