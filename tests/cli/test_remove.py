@@ -11,11 +11,11 @@ def test_cli_remove_client(mock_app, database, test_client):
         [
             "add",
             "client",
-            "-id",
+            "--id",
             test_client["_id"],
-            "-token",
+            "--token",
             test_client["auth_token"],
-            "-url",
+            "--url",
             test_client["base_url"],
         ],
     )
@@ -25,7 +25,7 @@ def test_cli_remove_client(mock_app, database, test_client):
     assert database["clients"].find_one()
 
     # Use the cli to remove client
-    result = runner.invoke(cli, ["remove", "client", "-id", test_client["_id"]])
+    result = runner.invoke(cli, ["remove", "client", "--id", test_client["_id"]])
 
     # check that command is executed withour errors
     assert result.exit_code == 0
@@ -43,15 +43,15 @@ def test_cli_remove_node(mock_app, database, test_node):
         [
             "add",
             "node",
-            "-id",
+            "--id",
             test_node["_id"],
-            "-label",
+            "--label",
             "This is a test node",
-            "-token",
+            "--token",
             test_node["auth_token"],
-            "-matching_url",
+            "--matching_url",
             test_node["matching_url"],
-            "-accepted_content",
+            "--accepted_content",
             test_node["accepted_content"],
         ],
     )
@@ -61,7 +61,7 @@ def test_cli_remove_node(mock_app, database, test_node):
     assert database["nodes"].find_one()
 
     # Use the cli to remove client
-    result = runner.invoke(cli, ["remove", "node", "-id", test_node["_id"]])
+    result = runner.invoke(cli, ["remove", "node", "--id", test_node["_id"]])
 
     # check that command is executed withour errors
     assert result.exit_code == 0
@@ -83,7 +83,7 @@ def test_cli_remove_patient(mock_app, database, gpx4_patients, match_objs):
     assert database["patients"].find_one()
 
     # test that without a valid id or label no patient is removed
-    result = runner.invoke(cli, ["remove", "patient", "-id", "", "-label", ""])
+    result = runner.invoke(cli, ["remove", "patient", "--id", "", "--label", ""])
     assert "Error" in result.output
 
     # Add mock patient matches objects to database
@@ -94,7 +94,7 @@ def test_cli_remove_patient(mock_app, database, gpx4_patients, match_objs):
 
     # involke cli command to remove the patient by id and label
     result = runner.invoke(
-        cli, ["remove", "patient", "-id", inserted_id, "-label", "350_1-test", "-leave_matches"]
+        cli, ["remove", "patient", "--id", inserted_id, "--label", "350_1-test", "--leave_matches"]
     )
     assert result.exit_code == 0
 
@@ -106,12 +106,12 @@ def test_cli_remove_patient(mock_app, database, gpx4_patients, match_objs):
     assert len(list(results)) == 2
 
     # Run remove patient command with option to remove matches but without patient ID
-    result = runner.invoke(cli, ["remove", "patient", "-label", "350_1-test", "-remove_matches"])
+    result = runner.invoke(cli, ["remove", "patient", "--label", "350_1-test", "--remove_matches"])
     # And make sure that it doesn't work
     assert "Please provide patient ID and not label to remove all its matches." in result.output
 
     # Test now the proper command to remove patient matches:
-    result = runner.invoke(cli, ["remove", "patient", "-id", inserted_id, "-remove_matches"])
+    result = runner.invoke(cli, ["remove", "patient", "--id", inserted_id, "--remove_matches"])
     assert result.exit_code == 0
 
     # And make sure that patient removal removed its matchings

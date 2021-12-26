@@ -159,10 +159,10 @@ pmatcher
 For testing purposes you can upload a list of [50 benchmarking patients](https://github.com/ga4gh/mme-apis/tree/master/testing).&nbsp;
 To add these patients to the database run the following command:
 ```bash
-pmatcher add demodata --ensembl_genes
+pmatcher add demodata
 ```
 Please note that the list of benchmarking patients all gene ids are represented as HGNC gene symbols.
-The command above, with the `--ensembl_genes` option, will convert gene symbols to Ensembl ids, in accordance to the GA4GH API: https://github.com/ga4gh/mme-apis/blob/master/search-api.md.
+The command above will convert gene symbols to Ensembl ids, in accordance to the GA4GH API: https://github.com/ga4gh/mme-apis/blob/master/search-api.md.
 
 The above command will also load a demo client with token `DEMO` into the database
 &nbsp;&nbsp;
@@ -175,8 +175,8 @@ You can remove a patient using the command line interface by invoking this comma
 pmatcher remove patient [OPTIONS]
 
 Options:
--id TEXT     ID of the patient to be removed from database
--label TEXT  label of the patient to be removed from database
+--id TEXT     ID of the patient to be removed from database
+--label TEXT  label of the patient to be removed from database
 ```
 &nbsp;&nbsp;
 
@@ -195,16 +195,16 @@ pmatcher update contact [OPTIONS]
   Update contact person for a group of patients
 
 Options:
-  -old-href TEXT     Old contact href  [required]
-  -href TEXT         New contact href  [required]
-  -name TEXT         New contact name  [required]
-  -institution TEXT  New contact institution
+  --old-href TEXT     Old contact href  [required]
+  --href TEXT         New contact href  [required]
+  --name TEXT         New contact name  [required]
+  --institution TEXT  New contact institution
 ```
 
 Let's assume a group of patients has a contact `Peter Parker` with href `mailto:pparker@example.com`. To replace the old user contact in **all patients** with the new contact info, for instance `Bruce Wayne`, type:
 
 ```bash
-pmatcher update contact -old-href maito:pparker@example.com -href mailto:bwayne@example.com -name "Bruce Wayne" -institution "Wayne Enterprises, Inc."
+pmatcher update contact --old-href maito:pparker@example.com --href mailto:bwayne@example.com -name "Bruce Wayne" -institution "Wayne Enterprises, Inc."
 ```
 
 <a name="cli_add_client"></a>
@@ -216,15 +216,15 @@ Use the following command to insert a client object in the database:
 pmatcher add client [OPTIONS]
 
 Options:
--id TEXT       Client ID  [required]
--token TEXT    Authorization token  [required]
--url TEXT      Client URL  [required]
--contact TEXT  Client email
+--id TEXT       Client ID  [required]
+--token TEXT    Authorization token  [required]
+--url TEXT      Client URL  [required]
+--contact TEXT  Client email
 ```
 POST request aimed at adding or modifying a patient in patientMatcher **should be using a token** from a client present in the database.&nbsp;
 Clients may be from the command line with this command:
 ```bash
-pmatcher remove client -id client_id
+pmatcher remove client --id client_id
 ```
 &nbsp;&nbsp;
 
@@ -237,15 +237,15 @@ You can add a node to the database by running the command:
 pmatcher add node [OPTIONS]
 
 Options:
-  -id TEXT                Server/Client ID  [required]
-  -token TEXT             Authorization token  [required]
-  -matching_url TEXT      URL to send match requests to  [required]
-  -accepted_content TEXT  Accepted Content-Type  [required]
-  -contact TEXT           An email address
+  --id TEXT                Server/Client ID  [required]
+  --token TEXT             Authorization token  [required]
+  --matching_url TEXT      URL to send match requests to  [required]
+  --accepted_content TEXT  Accepted Content-Type  [required]
+  --contact TEXT           An email address
 ```
 Connected nodes may be removed any time using the command:&nbsp;
 ```bash
-pmatcher remove node -id node_id
+pmatcher remove node --id node_id
 ```
 &nbsp;&nbsp;
 

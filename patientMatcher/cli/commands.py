@@ -72,7 +72,8 @@ def name():
 @test.command()
 @with_appcontext
 @click.option(
-    "-recipient",
+    "-r",
+    "--recipient",
     type=click.STRING,
     nargs=1,
     required=True,
