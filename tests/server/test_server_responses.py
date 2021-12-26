@@ -134,7 +134,7 @@ def test_heartbeat(mock_app, database, test_client):
     data = json.loads(response.data)
     assert data["disclaimer"] == mock_app.config.get("DISCLAIMER")
     assert data["heartbeat"]["version"] == __version__
-    assert isinstance(data["heartbeat"]["production"], bool)
+    assert data["heartbeat"]["production"] is False
     assert isinstance(data["heartbeat"]["accept"], list)
     assert len(data["heartbeat"]["accept"]) > 0
 

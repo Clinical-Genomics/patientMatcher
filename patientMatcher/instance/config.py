@@ -3,6 +3,9 @@ import os
 # Turns on debugging features in Flask
 DEBUG = os.getenv("DEBUG") or True
 
+# Set to False is app is a production app
+TESTING = os.getenv("TESTING") or True
+
 # secret key:
 SECRET_KEY = os.getenv("SECRET_KEY") or "MySuperSecretKey"
 
