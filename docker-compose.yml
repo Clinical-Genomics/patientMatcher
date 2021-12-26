@@ -41,7 +41,7 @@ services:
       MAX_RESULTS: 10
       DISCLAIMER: 'This is a test PatientMatcher server'
       ADMINS: '["test@mail.se"]'
-      TESTING: True
+      TESTING: 'True'
       GUNICORN_WORKERS: 1
       GUNICORN_TREADS: 1
       GUNICORN_BIND: 0.0.0.0:8000
