@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import os
-from smtplib import SMTP
 
 from patientMatcher.resources import path_to_hpo_terms
 from patientMatcher.server import configure_email_error_logging, create_app

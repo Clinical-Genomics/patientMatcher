@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import logging
-from urllib.parse import urlparse
 
 from flask import current_app, jsonify
 from jsonschema import ValidationError
