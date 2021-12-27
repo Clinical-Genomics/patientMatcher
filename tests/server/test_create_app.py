@@ -13,9 +13,12 @@ def test_create_app():
     assert create_app()
 
 
-def test_create_app_missing_requirement(mock_app):
+def test_create_app_missing_requirement(monkeypatch):
     """Tests the function that creates the app when phenotype_annotation.tab.txt and hp.obo.txt
     resources are missing"""
+
+    # GIVEN a prod server
+    monkeypatch.setenv("TESTING", False)
 
     # GIVEN one of the required files missing / it's been renamed
     temp_file = ".".join([path_to_hpo_terms, "temp"])
