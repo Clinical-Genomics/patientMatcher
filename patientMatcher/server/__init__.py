@@ -2,6 +2,7 @@
 import logging
 import os
 import sys
+from pathlib import Path
 
 import coloredlogs
 from flask import Flask
@@ -18,11 +19,10 @@ LOG = logging.getLogger(__name__)
 
 def available_phenotype_resources():
     """Check that necessary resources (HPO terms and phenotype annotations) were downloaded and available"""
-    if (
-        os.path.isfile(path_to_hpo_terms) is False
-        or os.path.isfile(path_to_phenotype_annotations) is False
-    ):
-        return False
+    for filepath in [path_to_hpo_terms, path_to_phenotype_annotations]:
+        if Path(path_to_hpo_terms).is_file() is False:
+            return False
+
     return True
 
 
@@ -84,7 +84,8 @@ def create_app():
 
     # If it's not a test app and phenotype resources are missing
     # Display message and exit
-    if not any([app.config.get("TESTING"), available_phenotype_resources()]):
+
+    if app.config.get("TESTING") in ["False", False] and available_phenotype_resources() is False:
         LOG.error(
             "Required files hp.obo.txt and phenotype_annotation.tab.txt not found on the server. Please download them with the command 'pmatcher update resources'."
         )

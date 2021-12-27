@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
 import json
 
-import pytest
-import requests
 from patientMatcher.__version__ import __version__
 from patientMatcher.auth.auth import authorize
 from patientMatcher.match.handler import patient_matches
 from patientMatcher.parse.patient import mme_patient
 from patientMatcher.server.controllers import validate_response
 from patientMatcher.utils.add import add_node, backend_add_patient, load_demo_patients
-from werkzeug.datastructures import Headers
 
 
 def test_match_async_request(mock_app, database, async_response_obj, json_patients, test_node):
@@ -134,7 +131,7 @@ def test_heartbeat(mock_app, database, test_client):
     data = json.loads(response.data)
     assert data["disclaimer"] == mock_app.config.get("DISCLAIMER")
     assert data["heartbeat"]["version"] == __version__
-    assert isinstance(data["heartbeat"]["production"], bool)
+    assert data["heartbeat"]["production"] is False
     assert isinstance(data["heartbeat"]["accept"], list)
     assert len(data["heartbeat"]["accept"]) > 0
 
