@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import logging
-from urllib.parse import urlparse
 
 from flask import current_app, jsonify
 from jsonschema import ValidationError
@@ -33,7 +32,7 @@ def heartbeat(disclaimer):
 
     hbeat = {
         "heartbeat": {
-            "production": True,
+            "production": current_app.config.get("TESTING", "True") in ["False", False],
             "version": __version__,
             "accept": [
                 "application/vnd.ga4gh.matchmaker.v1.0+json",
