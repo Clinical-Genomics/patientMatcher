@@ -4,6 +4,7 @@ import logging
 from logging.handlers import SMTPHandler
 
 from flask_mail import Message
+from patientMatcher.__version__ import __version__
 
 LOG = logging.getLogger(__name__)
 
@@ -187,15 +188,16 @@ def active_match_email_body(
         ***This is an automated message, please do not reply to this email.***<br><br>
         <strong>MatchMaker Exchange patient matching notification:</strong><br><br>
         Patient with ID <strong>{0}</strong>, label <strong>{1}</strong>.
+        PatientMatcher v.{2}.<br>
         This search returned these potential matches</strong>:<br>
-        <strong>{2}</strong><br>
+        <strong>{3}</strong><br>
         You might directly contact the matching part using the address specified in patient's data or review matching
         results in the portal you used to submit your patient.
         <br><br>
         Kind regards,<br>
         The PatientMatcher team
     """.format(
-        patient_id, patient_label, html_format(match_results, 0, notify_complete)
+        patient_id, patient_label, __version__, html_format(match_results, 0, notify_complete)
     )
 
     return html
@@ -218,16 +220,17 @@ def passive_match_email_body(
     html = """
         ***This is an automated message, please do not reply.***<br>
         <strong>MatchMaker Exchange patient matching notification:</strong><br><br>
-        Patient with <strong>ID {0}</strong>,<strong> label {1}</strong> was recently returned as a match result
+        PatientMatcher v.{0}.<br>
+        Patient with <strong>ID {1}</strong>,<strong> label {2}</strong> was recently returned as a match result
         in a search performed using a patient with these specifications:<br>
-        <strong>{2}</strong><br>
+        <strong>{3}</strong><br>
         You might directly contact the matching part using the address specified in patient's data or review matching
         results in the portal you used to submit your patient.
         <br><br>
         Kind regards,<br>
         The PatientMatcher team
     """.format(
-        patient_id, patient_label, html_format(matched_patient, 0, notify_complete)
+        __version__, patient_id, patient_label, html_format(matched_patient, 0, notify_complete)
     )
 
     return html
