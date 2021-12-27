@@ -6,6 +6,8 @@
 - Restore saving of all matching attempts into database, also those with no results
 - Parsing of admins emails list when provided using env vars
 - Heartbeat endpoint to return True or False if the app is prod or staging app
+### Changed
+- Refactor command line params and options to be compliant with the GNU coding standards
 
 ## [2.13] - 2021-12-13
 ### added

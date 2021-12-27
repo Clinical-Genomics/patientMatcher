@@ -16,21 +16,31 @@ def add():
 
 
 @add.command()
-@click.option("-id", type=click.STRING, nargs=1, required=True, help="Server ID")
-@click.option("-label", type=click.STRING, nargs=1, required=True, help="Server Description")
-@click.option("-token", type=click.STRING, nargs=1, required=True, help="Authorization token")
+@click.option("-i", "--id", type=click.STRING, nargs=1, required=True, help="Server ID")
+@click.option("-l", "--label", type=click.STRING, nargs=1, required=True, help="Server Description")
 @click.option(
-    "-matching_url", type=click.STRING, nargs=1, required=True, help="URL to send match requests to"
+    "-t", "--token", type=click.STRING, nargs=1, required=True, help="Authorization token"
 )
 @click.option(
-    "-accepted_content",
+    "-m",
+    "--matching_url",
+    type=click.STRING,
+    nargs=1,
+    required=True,
+    help="URL to send match requests to",
+)
+@click.option(
+    "-a",
+    "--accepted_content",
     type=click.STRING,
     nargs=1,
     required=True,
     help="Accepted Content-Type",
     default="application/vnd.ga4gh.matchmaker.v1.0+json",
 )
-@click.option("-contact", type=click.STRING, nargs=1, required=False, help="An email address")
+@click.option(
+    "-c", "--contact", type=click.STRING, nargs=1, required=False, help="An email address"
+)
 @with_appcontext
 def node(id, label, token, matching_url, accepted_content, contact=None):
     """Adds a new server to database"""
@@ -54,10 +64,12 @@ def node(id, label, token, matching_url, accepted_content, contact=None):
 
 
 @add.command()
-@click.option("-id", type=click.STRING, nargs=1, required=True, help="Client ID")
-@click.option("-token", type=click.STRING, nargs=1, required=True, help="Authorization token")
-@click.option("-url", type=click.STRING, nargs=1, required=True, help="Client URL")
-@click.option("-contact", type=click.STRING, nargs=1, required=False, help="Client email")
+@click.option("-i", "--id", type=click.STRING, nargs=1, required=True, help="Client ID")
+@click.option(
+    "-t", "--token", type=click.STRING, nargs=1, required=True, help="Authorization token"
+)
+@click.option("-u", "--url", type=click.STRING, nargs=1, required=True, help="Client URL")
+@click.option("-c", "--contact", type=click.STRING, nargs=1, required=False, help="Client email")
 @with_appcontext
 def client(id, token, url, contact=None):
     """Adds a new client to database"""

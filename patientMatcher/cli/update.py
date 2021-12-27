@@ -21,11 +21,13 @@ def update():
 
 @update.command()
 @with_appcontext
-@click.option("-old-href", type=click.STRING, nargs=1, required=True, help="Old contact href")
-@click.option("-href", type=click.STRING, nargs=1, required=True, help="New contact href")
-@click.option("-name", type=click.STRING, nargs=1, required=True, help="New contact name")
 @click.option(
-    "-institution", type=click.STRING, nargs=1, required=False, help="New contact institution"
+    "-o", "--old-href", type=click.STRING, nargs=1, required=True, help="Old contact href"
+)
+@click.option("-h", "--href", type=click.STRING, nargs=1, required=True, help="New contact href")
+@click.option("-n", "--name", type=click.STRING, nargs=1, required=True, help="New contact name")
+@click.option(
+    "--institution", type=click.STRING, nargs=1, required=False, help="New contact institution"
 )
 def contact(old_href, href, name, institution):
     """Update contact person for a group of patients"""

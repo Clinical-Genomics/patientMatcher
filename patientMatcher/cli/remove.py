@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import click
-from flask.cli import with_appcontext, current_app
-
+from flask.cli import current_app, with_appcontext
 from patientMatcher.utils.delete import delete_by_query
 
 
@@ -15,21 +14,23 @@ def remove():
 
 @remove.command()
 @click.option(
-    "-id",
+    "-i",
+    "--id",
     type=click.STRING,
     nargs=1,
     required=False,
     help="ID of the patient to be removed from database",
 )
 @click.option(
-    "-label",
+    "-l",
+    "--label",
     type=click.STRING,
     nargs=1,
     required=False,
     help="Label of the patient to be removed from database",
 )
 @click.option(
-    "-remove_matches/-leave_matches",
+    "--remove_matches/--leave_matches",
     default=False,
     help="Remove or leave on db matches triggered by patient",
 )
@@ -66,7 +67,8 @@ def patient(id, label, remove_matches):
 
 @remove.command()
 @click.option(
-    "-id",
+    "-i",
+    "--id",
     type=click.STRING,
     nargs=1,
     required=True,
@@ -83,7 +85,8 @@ def client(id):
 
 @remove.command()
 @click.option(
-    "-id",
+    "-i",
+    "--id",
     type=click.STRING,
     nargs=1,
     required=True,
