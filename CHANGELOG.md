@@ -1,4 +1,4 @@
-## [] -
+## [3.0] - 2021-12-27
 ### added
 - Index (landing page) reachable at endpoint `/`
 - Include software version in matching emails body
