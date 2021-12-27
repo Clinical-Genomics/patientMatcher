@@ -1,6 +1,7 @@
 ## [] -
 ### added
 - Index (landing page) reachable at endpoint `/`
+- Include software version in matching emails body
 ### Fixed
 - Restore saving of all matching attempts into database, also those with no results
 - Parsing of admins emails list when provided using env vars

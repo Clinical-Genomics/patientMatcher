@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from patientMatcher.__version__ import __version__
 from patientMatcher.utils.notify import (
     admins_email_format,
     html_format,
@@ -13,20 +14,23 @@ def test_admins_email_format():
     assert isinstance(formatted_admins, list)
 
 
-def test_notify_match_external(match_objs, mock_sender, mock_mail):
+def test_notify_match_external(mock_app, match_objs, mock_sender, mock_mail):
 
     match_obj = match_objs[0]  # an external match object with results
     assert match_obj["match_type"] == "external"
 
-    # When calling the function that sends external match notifications
-    notify_complete = True  # test notification of complete patient data by email
-    notify_match_external(match_obj, mock_sender, mock_mail, notify_complete)
+    with mock_app.app_context():
 
-    # make sure send method was called
-    assert mock_mail._send_was_called
+        # When calling the function that sends external match notifications
+        notify_complete = True  # test notification of complete patient data by email
+        notify_match_external(match_obj, mock_sender, mock_mail, notify_complete)
 
-    # and that mail object message was set correctly
-    assert mock_mail._message
+        # make sure send method was called
+        assert mock_mail._send_was_called
+
+        # and that mail object message was set correctly
+        assert match_obj["data"]["patient"]["id"] in mock_mail._message.html
+        assert __version__ in mock_mail._message.html
 
 
 def test_notify_match_internal(database, match_objs, mock_sender, mock_mail):
@@ -50,4 +54,5 @@ def test_notify_match_internal(database, match_objs, mock_sender, mock_mail):
     assert mock_mail._send_was_called
 
     # and that mail object message was set correctly
-    assert mock_mail._message
+    assert match_obj["data"]["patient"]["id"] in mock_mail._message.html
+    assert __version__ in mock_mail._message.html
