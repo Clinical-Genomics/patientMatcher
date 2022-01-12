@@ -1,43 +1,88 @@
-name: Tests and coverage
+name: Run tests and push coverage to Codecov
 on: [push, pull_request]
+
 jobs:
-  Pytest_Codecov:
-    runs-on: ubuntu-18.04
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install deps
+        run: |
+          pip install --upgrade --upgrade-strategy eager -r requirements-dev.txt -e .
+          pip check
+
+        # Cache package installation step to speed up the following step
+      - uses: actions/cache@v2
+        with:
+          path: ${{ env.pythonLocation }}
+          key: ${{ env.pythonLocation }}-${{ hashFiles('setup.py') }}-${{ hashFiles('requirements-dev.txt') }}
+
+  test:
+    needs: setup
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        mongodb-version: ['3.2', '4.4', '5.0']
+        group: [1, 2, 3]
+        mongodb-version: ['4.4']
     env:
       PMATCHER_CONFIG: ../instance/config.py
-
     steps:
-    - name: Launch MongoDB
-      uses: wbari/start-mongoDB@v0.2
-      with:
-        mongoDBVersion: ${{ matrix.mongodb-version }}
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.7.0
+        with:
+         mongodb-version: ${{ matrix.mongodb-version }}
 
-    - uses: actions/checkout@v2
-    - name: Set up Python
-      uses: actions/setup-python@master
-      with:
-        python-version: 3.8
+      - uses: actions/checkout@v2
 
-    - name: Install repo and its dependencies
-      run: |
-        pip install -r requirements.txt
-        pip install -r requirements-dev.txt
-        pip install -e .
-        pip install pytest
-        pip install pytest-cov
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
 
-    - name: Run pytest and codecov
-      run: |
-        pytest --cov=./ --cov-report=xml
+        # Cache package installation step to speed up the following step
+      - uses: actions/cache@v2
+        with:
+          path: ${{ env.pythonLocation }}
+          key: ${{ env.pythonLocation }}-${{ hashFiles('setup.py') }}-${{ hashFiles('requirements-dev.txt') }}
 
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v1
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        flags: unittests
-        env_vars: OS,PYTHON
-        name: codecov-umbrella
-        fail_ci_if_error: true
+      - name: Install deps
+        run: |
+          pip install --upgrade --upgrade-strategy eager -r requirements-dev.txt -e .
+
+      - name: Run pytest
+        run: pytest --cov --test-group-count 3 --test-group=${{ matrix.group }} --test-group-random-seed=12345 --rootdir=/home/runner/work/scout
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage${{ matrix.group }}
+          path: .coverage
+
+  coverage:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install coverage
+      - name: Download all artifacts
+        # Download and combine coverage1, coverage2, etc.
+        uses: actions/download-artifact@v2
+      - name: Run coverage
+        run: |
+          coverage combine coverage*/.coverage*
+          coverage report
+          coverage xml
+      - uses: codecov/codecov-action@v1

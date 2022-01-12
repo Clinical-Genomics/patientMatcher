@@ -1,3 +1,7 @@
+## [] -
+### Changed
+- Speed-up CI tests by caching installation of libs and splitting tests into randomized groups using pytest-test-groups
+
 ## [3.0] - 2021-12-27
 ### added
 - Index (landing page) reachable at endpoint `/`
