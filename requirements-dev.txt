@@ -1,6 +1,7 @@
 # testing:
 click
 pytest
+pytest-test-groups
 mongomock
 pytest-cov
 coveralls
