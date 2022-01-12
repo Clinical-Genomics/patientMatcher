@@ -1,6 +1,7 @@
 ## [] -
 ### Changed
 - Speed-up CI tests by caching installation of libs and splitting tests into randomized groups using pytest-test-groups
+- Mock Ensembl services (gene conversion and liftover) used in patient parsing tests
 
 ## [3.0] - 2021-12-27
 ### added
