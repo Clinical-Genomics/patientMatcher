@@ -86,11 +86,7 @@ def resources(test):
         url = item["url"]
 
         r = requests.get(url, stream=True)
-
-        LOG.error("AFTER REQUEST")
         total_length = int(r.headers.get("content-length"))
-
-        LOG.error("AFTER LENGTH")
 
         if test:  # read file and get its size
             files[
