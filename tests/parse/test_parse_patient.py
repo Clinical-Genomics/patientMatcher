@@ -35,7 +35,7 @@ def test_disorders_to_omim_no_omim():
     assert result == []
 
 
-def test_mme_patient_gene_symbol(gpx4_patients, database, monkeypatch):
+def test_mme_patient_gene_symbol(gpx4_patients, monkeypatch):
     """Test format a patient with HGNC gene symbol"""
 
     # GIVEN a patched gene conversion system mocking the Ensembl web services
@@ -56,7 +56,7 @@ def test_mme_patient_gene_symbol(gpx4_patients, database, monkeypatch):
     assert mme_formatted_patient["genomicFeatures"][0]["gene"]["_geneName"] == gene_name
 
 
-def test_mme_patient_entrez_gene(entrez_gene_patient, database, monkeypatch):
+def test_mme_patient_entrez_gene(entrez_gene_patient, monkeypatch):
     """Test format a patient with entrez gene"""
 
     # GIVEN a patched gene conversion system mocking the Ensembl web services

@@ -82,10 +82,16 @@ def resources(test):
     """
     files = {}
     for key, item in PHENOTYPE_TERMS.items():
-        url = item["url"]
         destination = item["resource_path"]
+        url = item["url"]
+
         r = requests.get(url, stream=True)
+
+        LOG.error("AFTER REQUEST")
         total_length = int(r.headers.get("content-length"))
+
+        LOG.error("AFTER LENGTH")
+
         if test:  # read file and get its size
             files[
                 key
@@ -93,6 +99,7 @@ def resources(test):
             if total_length:
                 click.echo("file {} found at the requested URL".format(key))
             continue
+
         with open(destination, "wb") as f:  # overwrite file
             for chunk in progress.bar(
                 r.iter_content(chunk_size=1024), expected_size=(total_length / 1024) + 1
