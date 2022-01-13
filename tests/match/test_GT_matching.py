@@ -5,17 +5,16 @@ from patientMatcher.parse.patient import mme_patient
 
 
 @responses.activate
-def test_genotype_matching(database, gpx4_patients, mock_symbol_2_ensembl):
+def test_genotype_matching(database, gpx4_patients):
     """Testing the genotyping matching algorithm"""
 
     # GIVEN a mocked Ensembl REST API:
-    for hgnc_symbol, ensembl_id in mock_symbol_2_ensembl.items():
-        responses.add(
-            responses.GET,
-            f"https://grch37.rest.ensembl.org/xrefs/symbol/homo_sapiens/{hgnc_symbol}?external_db=HGNC",
-            json=[{"id": ensembl_id}],
-            status=200,
-        )
+    responses.add(
+        responses.GET,
+        f"https://grch37.rest.ensembl.org/xrefs/symbol/homo_sapiens/GPX4?external_db=HGNC",
+        json=[{"id": "ENSG00000167468", "type": "gene"}],
+        status=200,
+    )
 
     # GIVEN a mocked Ensembl gene lookup service:
     responses.add(
