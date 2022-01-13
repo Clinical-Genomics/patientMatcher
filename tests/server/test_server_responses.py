@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import json
 
+import responses
 from patientMatcher.__version__ import __version__
-from patientMatcher.auth.auth import authorize
 from patientMatcher.match.handler import patient_matches
 from patientMatcher.parse.patient import mme_patient
 from patientMatcher.server.controllers import validate_response
@@ -190,8 +190,17 @@ def test_add_patient_malformed_data(mock_app, test_client, gpx4_patients, test_n
     assert response.status_code == 422
 
 
+@responses.activate
 def test_add_patient(mock_app, test_client, gpx4_patients, test_node, database):
     """Test adding a patient by sending a POST request to the add endpoint with valid data"""
+
+    # GIVEN a mocked Ensembl REST API converting gene symbol to Ensembl ID
+    responses.add(
+        responses.GET,
+        f"https://grch37.rest.ensembl.org/xrefs/symbol/homo_sapiens/GPX4?external_db=HGNC",
+        json=[{"id": "ENSG00000167468", "type": "gene"}],
+        status=200,
+    )
 
     patient_data = gpx4_patients[1]
 
@@ -458,8 +467,39 @@ def test_patient_matches(mock_app, database, match_objs, test_client):
     assert len(matches) == 2
 
 
+@responses.activate
 def test_match_hgnc_symbol_patient(mock_app, gpx4_patients, test_client, database):
-    """Testing matching patient with gene symbl against patientMatcher database (internal matching)"""
+    """Testing matching patient with gene symbol against patientMatcher database (internal matching)"""
+
+    # GIVEN a mocked Ensembl REST API converting gene symbol to Ensembl ID
+    responses.add(
+        responses.GET,
+        f"https://grch37.rest.ensembl.org/xrefs/symbol/homo_sapiens/GPX4?external_db=HGNC",
+        json=[{"id": "ENSG00000167468", "type": "gene"}],
+        status=200,
+    )
+
+    # GIVEN a mocked Ensembl gene lookup service:
+    responses.add(
+        responses.GET,
+        f"https://grch37.rest.ensembl.org/lookup/id/ENSG00000167468",
+        json=[{"display_name": "GPX4"}],
+        status=200,
+    )
+
+    # GIVEN a mocked liftover service:
+    responses.add(
+        responses.GET,
+        f"https://grch37.rest.ensembl.org/map/human/GRCh37/19:1105813..1105814/GRCh38?content-type=application/json",
+        json=[],
+        status=200,
+    )
+    responses.add(
+        responses.GET,
+        f"https://grch37.rest.ensembl.org/map/human/GRCh37/19:1106232..1106238/GRCh38?content-type=application/json",
+        json=[],
+        status=200,
+    )
 
     # add an authorized client to database
     ok_token = test_client["auth_token"]
@@ -506,8 +546,39 @@ def test_match_hgnc_symbol_patient(mock_app, gpx4_patients, test_client, databas
             assert pat["score"]["patient"] > 0
 
 
+@responses.activate
 def test_match_ensembl_patient(mock_app, test_client, gpx4_patients, database):
     """Test matching patient with ensembl gene against patientMatcher database (internal matching)"""
+
+    # GIVEN a mocked Ensembl REST API converting gene symbol to Ensembl ID
+    responses.add(
+        responses.GET,
+        f"https://grch37.rest.ensembl.org/xrefs/symbol/homo_sapiens/GPX4?external_db=HGNC",
+        json=[{"id": "ENSG00000167468", "type": "gene"}],
+        status=200,
+    )
+
+    # GIVEN a mocked Ensembl gene lookup service:
+    responses.add(
+        responses.GET,
+        f"https://grch37.rest.ensembl.org/lookup/id/ENSG00000167468",
+        json=[{"display_name": "GPX4"}],
+        status=200,
+    )
+
+    # GIVEN a mocked liftover service:
+    responses.add(
+        responses.GET,
+        f"https://grch37.rest.ensembl.org/map/human/GRCh37/19:1105813..1105814/GRCh38?content-type=application/json",
+        json=[],
+        status=200,
+    )
+    responses.add(
+        responses.GET,
+        f"https://grch37.rest.ensembl.org/map/human/GRCh37/19:1106232..1106238/GRCh38?content-type=application/json",
+        json=[],
+        status=200,
+    )
 
     # add an authorized client to database
     ok_token = test_client["auth_token"]
@@ -552,8 +623,39 @@ def test_match_ensembl_patient(mock_app, test_client, gpx4_patients, database):
     assert match["data"]["patient"]["genomicFeatures"][0]["gene"]["_geneName"] == "GPX4"
 
 
+@responses.activate
 def test_match_entrez_patient(mock_app, test_client, gpx4_patients, database):
     """Test matching patient with ensembl gene against patientMatcher database (internal matching)"""
+
+    # GIVEN a mocked Ensembl REST API converting gene symbol to Ensembl ID
+    responses.add(
+        responses.GET,
+        f"https://grch37.rest.ensembl.org/xrefs/symbol/homo_sapiens/GPX4?external_db=HGNC",
+        json=[{"id": "ENSG00000167468", "type": "gene"}],
+        status=200,
+    )
+
+    # GIVEN a mocked Ensembl gene lookup service:
+    responses.add(
+        responses.GET,
+        f"https://grch37.rest.ensembl.org/lookup/id/ENSG00000167468",
+        json=[{"display_name": "GPX4"}],
+        status=200,
+    )
+
+    # GIVEN a mocked liftover service:
+    responses.add(
+        responses.GET,
+        f"https://grch37.rest.ensembl.org/map/human/GRCh37/19:1105813..1105814/GRCh38?content-type=application/json",
+        json=[],
+        status=200,
+    )
+    responses.add(
+        responses.GET,
+        f"https://grch37.rest.ensembl.org/map/human/GRCh37/19:1106232..1106238/GRCh38?content-type=application/json",
+        json=[],
+        status=200,
+    )
 
     # add an authorized client to database
     ok_token = test_client["auth_token"]

@@ -1,12 +1,44 @@
 # -*- coding: utf-8 -*-
 import requests
+import responses
 from patientMatcher.match.handler import external_matcher, internal_matcher, save_async_response
 from patientMatcher.parse.patient import mme_patient
 from patientMatcher.utils.add import backend_add_patient
 
 
-def test_internal_matching(database, gpx4_patients):
+@responses.activate
+def test_internal_matching(mock_app, database, gpx4_patients):
     """Testing the combined matching algorithm"""
+
+    # GIVEN a mocked Ensembl REST API:
+    responses.add(
+        responses.GET,
+        f"https://grch37.rest.ensembl.org/xrefs/symbol/homo_sapiens/GPX4?external_db=HGNC",
+        json=[{"id": "ENSG00000167468", "type": "gene"}],
+        status=200,
+    )
+
+    # GIVEN a mocked Ensembl gene lookup service:
+    responses.add(
+        responses.GET,
+        f"https://grch37.rest.ensembl.org/lookup/id/ENSG00000167468",
+        json=[{"display_name": "GPX4"}],
+        status=200,
+    )
+
+    # GIVEN a mocked liftover service:
+    responses.add(
+        responses.GET,
+        f"https://grch37.rest.ensembl.org/map/human/GRCh37/19:1105813..1105814/GRCh38?content-type=application/json",
+        json=[],
+        status=200,
+    )
+    responses.add(
+        responses.GET,
+        f"https://grch37.rest.ensembl.org/map/human/GRCh37/19:1106232..1106238/GRCh38?content-type=application/json",
+        json=[],
+        status=200,
+    )
 
     # load 2 test patients in mock database
     for patient in gpx4_patients:
@@ -30,7 +62,39 @@ def test_internal_matching(database, gpx4_patients):
     assert higest_scored_patient["score"]["patient"] > lowest_scored_patient["score"]["patient"]
 
 
-def test_internal_matching_with_threshold(database, gpx4_patients):
+@responses.activate
+def test_internal_matching_with_threshold(mock_app, database, gpx4_patients):
+
+    # GIVEN a mocked Ensembl REST API:
+    responses.add(
+        responses.GET,
+        f"https://grch37.rest.ensembl.org/xrefs/symbol/homo_sapiens/GPX4?external_db=HGNC",
+        json=[{"id": "ENSG00000167468", "type": "gene"}],
+        status=200,
+    )
+
+    # GIVEN a mocked Ensembl gene lookup service:
+    responses.add(
+        responses.GET,
+        f"https://grch37.rest.ensembl.org/lookup/id/ENSG00000167468",
+        json=[{"display_name": "GPX4"}],
+        status=200,
+    )
+
+    # GIVEN a mocked liftover service:
+    responses.add(
+        responses.GET,
+        f"https://grch37.rest.ensembl.org/map/human/GRCh37/19:1105813..1105814/GRCh38?content-type=application/json",
+        json=[],
+        status=200,
+    )
+    responses.add(
+        responses.GET,
+        f"https://grch37.rest.ensembl.org/map/human/GRCh37/19:1106232..1106238/GRCh38?content-type=application/json",
+        json=[],
+        status=200,
+    )
+
     # load 2 test patients in mock database
     for patient in gpx4_patients:
         mme_pat = mme_patient(patient, True)  # convert gene symbol to ensembl

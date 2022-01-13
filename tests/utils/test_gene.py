@@ -1,32 +1,31 @@
 # -*- coding: utf-8 -*-
+import responses
 from patientMatcher.utils.ensembl_rest_client import requests
 from patientMatcher.utils.gene import ensembl_to_symbol, entrez_to_symbol, symbol_to_ensembl
 
 
+@responses.activate
 def test_entrez_to_symbol():
     """Test the function converting entrez ID to gene symbol"""
-
     # GIVEN an entrez ID
     entrez_id = "3735"
     # THAT should return a symbol
     symbol = "KARS"
 
-    # GIVEN a patched API response
-    class MockResponse(object):
-        def __init__(self):
-            self.status_code = 200
-
-        def json(self):
-            return {"display_id": symbol}
-
-    def mock_get(url, headers):
-        return MockResponse()
+    # GIVEN a mocked Ensembl REST API converting entrez ID to gene symbol
+    responses.add(
+        responses.GET,
+        f"https://grch37.rest.ensembl.org/xrefs/name/human/{entrez_id}?external_db=EntrezGene",
+        json=[{"display_id": symbol}],
+        status=200,
+    )
 
     # The EnsemblRestApiClient should return the right Ensembl ID
     assert entrez_to_symbol(entrez_id) == symbol
 
 
-def test_symbol_to_ensembl_one_ensembl_id(monkeypatch):
+@responses.activate
+def test_symbol_to_ensembl_one_ensembl_id():
     """
     Test function converting official gene symbol to ensembl ID using the Ensembl REST API
     Test case when the Ensembl API return only one Ensembl ID as result
@@ -34,20 +33,16 @@ def test_symbol_to_ensembl_one_ensembl_id(monkeypatch):
 
     # GIVEN a gene symbol
     hgnc_symbol = "AAGAB"
+    # That should return an Ensembl ID
     ensembl_id = "ENSG00000103591"
 
-    # GIVEN a patched API response
-    class MockResponse(object):
-        def __init__(self):
-            self.status_code = 200
-
-        def json(self):
-            return [{"id": ensembl_id, "type": "gene"}]
-
-    def mock_get(url, headers):
-        return MockResponse()
-
-    monkeypatch.setattr(requests, "get", mock_get)
+    # GIVEN a mocked Ensembl REST API converting gene symbol to Ensembl ID
+    responses.add(
+        responses.GET,
+        f"https://grch37.rest.ensembl.org/xrefs/symbol/homo_sapiens/{hgnc_symbol}?external_db=HGNC",
+        json=[{"id": "ENSG00000103591", "type": "gene"}],
+        status=200,
+    )
 
     # The EnsemblRestApiClient should return the right Ensembl ID
     assert ensembl_id == symbol_to_ensembl(hgnc_symbol)
@@ -59,6 +54,7 @@ def test_symbol_to_ensembl_multiple_ensembl_id(monkeypatch):
     """
     # GIVEN a gene symbol
     hgnc_symbol = "SKI"
+    # Corresponfing to 2 different ensembl IDs
     rigth_ensembl_id = "ENSG00000157933"
     wrong_ensembl_id = "ENSG00000054392"
 
@@ -107,6 +103,7 @@ def test_symbol_to_ensembl_multiple_ensembl_id(monkeypatch):
     assert ensembl_id == rigth_ensembl_id
 
 
+@responses.activate
 def test_ensembl_to_symbol(monkeypatch):
     """Test converting ensembl ID to official gene symbol using the Ensembl APIs"""
 
