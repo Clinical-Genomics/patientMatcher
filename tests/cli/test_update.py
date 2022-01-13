@@ -1,8 +1,28 @@
+import responses
 from patientMatcher.cli.commands import cli
+from patientMatcher.constants import PHENOTYPE_TERMS
 
 
+@responses.activate
 def test_update_resources(mock_app):
     """Test the command that updates the database resources (diseases and HPO terms)"""
+
+    # Given a mocked response from the servers containing the resources to be downloaded
+    for key, item in PHENOTYPE_TERMS.items():
+
+        local_resource_path = item["resource_path"]  # Resource on the local repo
+        url = item["url"]  # Resource internet URL
+        with open(local_resource_path, "r") as res:
+            responses.add(
+                responses.GET,
+                url,
+                body=res.read(),
+                status=200,
+                content_type="application/octet-stream",
+                auto_calculate_content_length=True,
+                stream=True,
+            )
+
     runner = mock_app.test_cli_runner()
 
     # run resources update command with --test flag:
