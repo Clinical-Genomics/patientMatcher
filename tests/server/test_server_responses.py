@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 
+import responses
 from patientMatcher.__version__ import __version__
 from patientMatcher.auth.auth import authorize
 from patientMatcher.match.handler import patient_matches
@@ -190,8 +191,17 @@ def test_add_patient_malformed_data(mock_app, test_client, gpx4_patients, test_n
     assert response.status_code == 422
 
 
+@responses.activate
 def test_add_patient(mock_app, test_client, gpx4_patients, test_node, database):
     """Test adding a patient by sending a POST request to the add endpoint with valid data"""
+
+    # GIVEN a mocked Ensembl REST API:
+    responses.add(
+        responses.GET,
+        f"https://grch37.rest.ensembl.org/xrefs/symbol/homo_sapiens/GPX4?external_db=HGNC",
+        json=[{"id": "ENSG00000167468", "type": "gene"}],
+        status=200,
+    )
 
     patient_data = gpx4_patients[1]
 
