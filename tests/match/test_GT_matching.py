@@ -1,11 +1,43 @@
 # -*- coding: utf-8 -*-
-
-from patientMatcher.parse.patient import mme_patient
+import responses
 from patientMatcher.match.genotype_matcher import match
+from patientMatcher.parse.patient import mme_patient
 
 
-def test_genotype_matching(database, gpx4_patients):
+@responses.activate
+def test_genotype_matching(database, gpx4_patients, mock_symbol_2_ensembl):
     """Testing the genotyping matching algorithm"""
+
+    # GIVEN a mocked Ensembl REST API:
+    for hgnc_symbol, ensembl_id in mock_symbol_2_ensembl.items():
+        responses.add(
+            responses.GET,
+            f"https://grch37.rest.ensembl.org/xrefs/symbol/homo_sapiens/{hgnc_symbol}?external_db=HGNC",
+            json=[{"id": ensembl_id}],
+            status=200,
+        )
+
+    # GIVEN a mocked Ensembl gene lookup service:
+    responses.add(
+        responses.GET,
+        f"https://grch37.rest.ensembl.org/lookup/id/ENSG00000167468",
+        json=[{"display_name": "GPX4"}],
+        status=200,
+    )
+
+    # GIVEN a mocked liftover service:
+    responses.add(
+        responses.GET,
+        f"https://grch37.rest.ensembl.org/map/human/GRCh37/19:1105813..1105814/GRCh38?content-type=application/json",
+        json=[],
+        status=200,
+    )
+    responses.add(
+        responses.GET,
+        f"https://grch37.rest.ensembl.org/map/human/GRCh37/19:1106232..1106238/GRCh38?content-type=application/json",
+        json=[],
+        status=200,
+    )
 
     # load 2 test patients in mock database
     for patient in gpx4_patients:
