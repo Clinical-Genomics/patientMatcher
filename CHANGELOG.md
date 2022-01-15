@@ -1,6 +1,6 @@
-## [] -
+## [3.1.1] - 2022-01-14
 ### Fixed
-- Parsing of numerical and boolean env vars when creating the app 
+- Parsing of numerical and boolean env vars when creating the app
 
 ## [3.1] - 2022-01-13
 ### Changed
