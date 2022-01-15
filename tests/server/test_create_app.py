@@ -3,6 +3,7 @@ import os
 
 from patientMatcher.resources import path_to_hpo_terms
 from patientMatcher.server import configure_email_error_logging, create_app
+from patientMatcher.server.__init__ import available_phenotype_resources
 from patientMatcher.utils.notify import TlsSMTPHandler
 
 
@@ -12,20 +13,20 @@ def test_create_app():
     assert create_app()
 
 
-def test_create_app_missing_requirement(monkeypatch):
-    """Tests the function that creates the app when phenotype_annotation.tab.txt and hp.obo.txt
-    resources are missing"""
+def test_available_phenotype_resources():
+    """Test function response when resource files (HPO terms and phenotype annotations) are both present"""
+    assert available_phenotype_resources()
 
-    # GIVEN a prod server
-    monkeypatch.setenv("TESTING", False)
 
-    # GIVEN one of the required files missing / it's been renamed
+def test_available_phenotype_resources_missing_resource():
+    """Test function response when one resource file is missing"""
+
+    # GIVEN one of the required files missing (here it's been renamed)
     temp_file = ".".join([path_to_hpo_terms, "temp"])
     os.rename(path_to_hpo_terms, temp_file)
 
-    # THEN the app should not be created
-    app = create_app()
-    assert app is None
+    # The function should return False
+    assert available_phenotype_resources() is False
 
     # Revert original resource name
     os.rename(temp_file, path_to_hpo_terms)
