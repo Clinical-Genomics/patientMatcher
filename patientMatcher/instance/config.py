@@ -1,10 +1,10 @@
 import os
 
 # Turns on debugging features in Flask
-DEBUG = os.getenv("DEBUG") or True
+DEBUG = os.getenv("DEBUG", "True") == "True" or True
 
 # Set to False is app if a production app
-TESTING = os.getenv("TESTING") or True
+TESTING = os.getenv("TESTING", "True") == "True" or True
 
 # secret key:
 SECRET_KEY = os.getenv("SECRET_KEY") or "MySuperSecretKey"
@@ -15,7 +15,7 @@ DB_NAME = os.getenv("MONGODB_DBNAME") or "pmatcher"
 DB_HOST = (
     os.getenv("MONGODB_HOST") or "127.0.0.1"
 )  # simply substitute with 'mongodb' if connecting to MongoDB running in a container
-DB_PORT = os.getenv("MONGODB_PORT") or 27017
+DB_PORT = int(os.getenv("MONGODB_PORT")) if os.getenv("MONGODB_PORT") else 27017
 
 # DB_URI = "mongodb://{}:{}@{}:{}/{}".format(DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME)
 DB_URI = os.getenv("MONGODB_DB_URI") or "mongodb://{}:{}/{}".format(
@@ -25,15 +25,15 @@ DB_URI = os.getenv("MONGODB_DB_URI") or "mongodb://{}:{}/{}".format(
 
 # Matching Algorithms scores
 # sum of MAX_GT_SCORE and MAX_PHENO_SCORE should be 1
-MAX_GT_SCORE = os.getenv("MAX_GT_SCORE") or 0.75
-MAX_PHENO_SCORE = os.getenv("MAX_PHENO_SCORE") or 0.25
+MAX_GT_SCORE = float(os.getenv("MAX_GT_SCORE")) if os.getenv("MAX_GT_SCORE") else 0.75
+MAX_PHENO_SCORE = float(os.getenv("MAX_PHENO_SCORE")) if os.getenv("MAX_PHENO_SCORE") else 0.25
 
 # Max results matches returned by server.
-MAX_RESULTS = os.getenv("MAX_RESULTS") or 5
+MAX_RESULTS = int(os.getenv("MAX_RESULTS")) if os.getenv("MAX_RESULTS") else 5
 
 # Set a minimum patient score threshold for returned results
 # Set this parameter to 0 to return all results with a score higher than 0
-SCORE_THRESHOLD = os.getenv("SCORE_THRESHOLD") or 0
+SCORE_THRESHOLD = float(os.getenv("SCORE_THRESHOLD")) if os.getenv("SCORE_THRESHOLD") else 0
 
 # Disclaimer. This text is returned along with match results or server metrics
 DISCLAIMER = (
@@ -44,9 +44,9 @@ DISCLAIMER = (
 # Email notification params.
 # Required only if you want to send match notifications to patients contacts
 MAIL_SERVER = os.getenv("MAIL_SERVER") or None  # "smtp.gmail.com"
-MAIL_PORT = os.getenv("MAIL_PORT") or None  # 587
-MAIL_USE_TLS = os.getenv("MAIL_USE_TLS") or True  # True
-MAIL_USE_SSL = os.getenv("MAIL_USE_SSL") or False  # False
+MAIL_PORT = int(os.getenv("MAIL_PORT")) if os.getenv("MAIL_PORT") else None  # 587
+MAIL_USE_TLS = os.getenv("MAIL_USE_TLS", "True") == "True" or True  # True
+MAIL_USE_SSL = os.getenv("MAIL_USE_SSL", "True") == "True" or False  # False
 MAIL_USERNAME = os.getenv("MAIL_USERNAME") or None  # some.email@test.se
 MAIL_PASSWORD = os.getenv("MAIL_PASSWORD") or None  # email_password
 
@@ -55,4 +55,4 @@ ADMINS = os.getenv("ADMINS") or ["test.email@mail.se"]
 
 # Set NOTIFY_COMPLETE to False if you don't want to notify variants and phenotypes by email
 # This way only contact info and matching patients ID will be notified in email body
-NOTIFY_COMPLETE = os.getenv("NOTIFY_COMPLETE") or False
+NOTIFY_COMPLETE = os.getenv("NOTIFY_COMPLETE", "False") == "True" or False

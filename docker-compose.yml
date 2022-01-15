@@ -35,10 +35,10 @@ services:
       dockerfile: Dockerfile-server
     environment:
       MONGODB_HOST: mongodb
-      MONGODB_PORT: 27017
-      MAX_GT_SCORE: 0.75
-      MAX_PHENO_SCORE: 0.25
-      MAX_RESULTS: 10
+      MONGODB_PORT: '27017'
+      MAX_GT_SCORE: '0.75'
+      MAX_PHENO_SCORE: '0.25'
+      MAX_RESULTS: '10'
       DISCLAIMER: 'This is a test PatientMatcher server'
       ADMINS: '["test@mail.se"]'
       TESTING: 'True'

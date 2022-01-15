@@ -1,3 +1,7 @@
+## [] -
+### Fixed
+- Parsing of numerical and boolean env vars when creating the app 
+
 ## [3.1] - 2022-01-13
 ### Changed
 - Speed-up CI tests by caching installation of libs and splitting tests into randomized groups using pytest-test-groups
