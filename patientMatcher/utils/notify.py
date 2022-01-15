@@ -123,6 +123,7 @@ def notify_match_internal(database, match_obj, admin_email, mail, notify_complet
         # send email using flask_mail
         try:
             mail.send(message)
+            LOG.info("Email notification sent")
         except Exception as err:
             LOG.error(
                 "An error occurred while sending an internal match notification: {}".format(err)
@@ -161,6 +162,7 @@ def notify_match_external(match_obj, admin_email, mail, notify_complete):
     # send email using flask_mail
     try:
         mail.send(message)
+        LOG.info("Email notification sent")
     except Exception as err:
         LOG.error("An error occurred while sending an external match notification: {}".format(err))
 
