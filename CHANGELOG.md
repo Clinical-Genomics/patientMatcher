@@ -1,4 +1,4 @@
-## [3.1.1] - 2022-01-14
+## [3.1.1] - 2022-01-15
 ### Fixed
 - Parsing of numerical and boolean env vars when creating the app
 
