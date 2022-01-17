@@ -96,6 +96,10 @@ def create_app():
     extensions.hpoic.init_app(app, extensions.hpo, extensions.diseases)
 
     if app.config.get("MAIL_SERVER"):
+
+        app.config["MAIL_SUPPRESS_SEND"] = False
+        app.config["MAIL_DEBUG"] = True
+
         mail = Mail(app)
         app.mail = mail
 

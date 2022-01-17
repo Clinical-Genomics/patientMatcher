@@ -1,3 +1,6 @@
+### Fixed
+- Set MAIL_SUPPRESS_SEND to False and MAIL_DEBUG to True whenever app config has a MAIL_SERVER param
+
 ## [3.1.1] - 2022-01-15
 ### Fixed
 - Parsing of numerical and boolean env vars when creating the app

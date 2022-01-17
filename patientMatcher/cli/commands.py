@@ -118,10 +118,9 @@ def email(recipient):
         sender=current_app.config.get("MAIL_USERNAME"),
         recipients=[recipient],
     )
-    message = Message(**kwargs)
     try:
+        message = Message(**kwargs)
         current_app.mail.send(message)
-        click.echo("Mail correctly sent. Check your inbox!")
     except Exception as err:
         click.echo('An error occurred while sending test email: "{}"'.format(err))
 
