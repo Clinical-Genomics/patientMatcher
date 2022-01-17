@@ -1,3 +1,4 @@
+## [3.1.2] - 2022-01-17
 ### Fixed
 - Set MAIL_SUPPRESS_SEND to False and MAIL_DEBUG to True whenever app config has a MAIL_SERVER param
 
