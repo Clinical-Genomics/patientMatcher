@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 from flask_mail import Message
 from patientMatcher.cli.commands import cli
-from patientMatcher.parse.patient import mme_patient
-from patientMatcher.utils.ensembl_rest_client import requests
 
 
 def test_appname(mock_app):
