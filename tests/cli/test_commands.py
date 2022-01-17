@@ -37,4 +37,3 @@ def test_sendemail(mock_app, mock_mail):
     # Make sure that mock mail send method was called and mock email is sent
     assert mock_mail._send_was_called
     assert mock_mail._message
-    assert "Mail correctly sent" in result.output
