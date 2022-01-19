@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
 <style>
 html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
 #footer {
@@ -18,7 +18,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
 <body class="w3-light-grey">
 
 <!-- Top container -->
-<div class="w3-bar w3-top w3-black w3-large" style="z-index:4">
+<div class="w3-bar w3-top w3-large w3-text-white w3-black" style="z-index:4;">
   <button class="w3-bar-item w3-button w3-hide-large w3-hover-none w3-hover-text-light-grey" onclick="w3_open();"><i class="fa fa-bars"></i> &nbsp;Menu</button>
   <span class="w3-bar-item w3-left"><a href="https://github.com/Clinical-Genomics/patientMatcher" target="_blank" class="fa fa-github" style="text-decoration: none;"></a></span>
   <span class="w3-bar-item w3-right">PatientMatcher v.{{software_version}}</span>
@@ -29,8 +29,8 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
 
   <div class="w3-row-padding w3-margin-bottom">
     <div class="w3-quarter">
-      <div class="w3-container w3-red w3-padding-16">
-        <div class="w3-left"><i class="fa fa-hospital-o w3-xxxlarge"></i></div>
+      <div class="w3-container w3-padding-16" style="background-color:#FCD271;">
+        <div class="w3-left"><i class="fas fa-hospital-alt w3-xxxlarge"></i></div>
         <div class="w3-right">
           <h3>{{connected_nodes}}</h3>
         </div>
@@ -41,8 +41,8 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
       </div>
     </div>
     <div class="w3-quarter">
-      <div class="w3-container w3-blue w3-padding-16">
-        <div class="w3-left"><i class="fa fa-share-alt w3-xxxlarge"></i></div>
+      <div class="w3-container w3-padding-16" style="background-color:#F78D3F;">
+        <div class="w3-left"><i class="fas fa-notes-medical w3-xxxlarge"></i></div>
         <div class="w3-right">
           <h3>{{node_stats.numberOfCases}}</h3>
         </div>
@@ -53,8 +53,8 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
       </div>
     </div>
     <div class="w3-quarter">
-      <div class="w3-container w3-teal w3-padding-16">
-        <div class="w3-left"><i class="fa fa-puzzle-piece w3-xxxlarge"></i></div>
+      <div class="w3-container w3-padding-16" style="background-color:#2BBBD8;">
+        <div class="w3-left"><i class="fas fa-dna w3-xxxlarge"></i></div>
         <div class="w3-right">
           <h3>{{node_stats.numberOfGenes}}</h3>
         </div>
@@ -65,14 +65,15 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
       </div>
     </div>
     <div class="w3-quarter">
-      <div class="w3-container w3-orange w3-text-white w3-padding-16">
-        <div class="w3-left"><i class="fa fa-bolt w3-xxxlarge"></i></div>
+      <div class="w3-container w3-dark-grey w3-text-white w3-padding-16">
+        <div class="w3-left"><i class="fas fa-crosshairs w3-xxxlarge"></i></div>
         <div class="w3-right">
           <h3>{{node_stats.numberOfVariants}}</h3>
         </div>
         <div class="w3-clear"></div>
         <h4>Variants</h4>
         <h6>Number of unique variants: {{node_stats.numberOfUniqueVariants}}</h6>
+        <h6>-</h6>
       </div>
     </div>
   </div>
@@ -89,9 +90,9 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
 </div>
 
 <div id="footer">
-  <div class="w3-container w3-dark-grey w3-padding-16">
+  <div class="w3-container w3-dark-grey w3-text-white w3-padding-16">
     <div class="w3-row">
-      <h5 class="w3-bottombar w3-border-green">Disclaimer</h5>
+      <h5 class="w3-bottombar w3-border-orange">Disclaimer</h5>
       {{ node_disclaimer }}
     </div>
   </div>
