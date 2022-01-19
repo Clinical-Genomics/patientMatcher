@@ -1,6 +1,6 @@
-##
+## [3.2] - 2022-01-19
 ### Changed
-- Colors of landing page
+- Colors and icons of landing page
 
 ## [3.1.2] - 2022-01-17
 ### Fixed
