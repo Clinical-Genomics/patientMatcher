@@ -28,6 +28,7 @@ def available_phenotype_resources():
 
 def configure_email_error_logging(app):
     """Setup logging of error/exceptions to email."""
+    LOG.debug(f"Configuring email error logging to notify server admins:{app.config['ADMINS']}")
 
     mail_handler = TlsSMTPHandler(
         mailhost=(app.config["MAIL_SERVER"], app.config["MAIL_PORT"]),
@@ -43,6 +44,7 @@ def configure_email_error_logging(app):
         )
     )
     app.logger.addHandler(mail_handler)
+    logging.getLogger("werkzeug").addHandler(mail_handler)
 
 
 def create_app():
@@ -104,7 +106,7 @@ def create_app():
         app.mail = mail
 
         # Configure email logging of errors
-        if app.debug and app.config.get("ADMINS"):
+        if app.debug is True and app.config.get("ADMINS"):
             configure_email_error_logging(app)
 
     app.register_blueprint(views.blueprint)
