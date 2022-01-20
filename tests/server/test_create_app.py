@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+import logging
 import os
 
+import pytest
 from patientMatcher.resources import path_to_hpo_terms
 from patientMatcher.server import configure_email_error_logging, create_app
 from patientMatcher.server.__init__ import available_phenotype_resources
@@ -59,29 +61,29 @@ def test_available_phenotype_resources_missing_resource():
     os.rename(temp_file, path_to_hpo_terms)
 
 
-def test_error_log_email(monkeypatch):
+def test_app_logging(monkeypatch):
     """Test the app error logging via email"""
 
+    #
+
     # GIVEN an app with an ADMIN and configured email error logging params
-    monkeypatch.setenv("ADMINS", '["app_admin_email"]')
+    monkeypatch.setenv("DEBUG", "True")
+    monkeypatch.setenv("ADMINS", '["admin@test.se"]')
     monkeypatch.setenv("MAIL_SERVER", "smtp.gmail.com")
     monkeypatch.setenv("MAIL_PORT", "587")
     monkeypatch.setenv("MAIL_USERNAME", "server_email")
     monkeypatch.setenv("MAIL_PASSWORD", "server_pw")
     monkeypatch.setenv("MAIL_USE_TLS", "True")
 
+    # WHEN the app is created
     app = create_app()
 
-    configure_email_error_logging(app)
+    # An app logger that logs from DEBUG level should be created
+    assert app.logger
+    assert app.logger.level == logging.DEBUG
 
-    # Then a TlsSMTPHandler should be among the app loggers
-    handler = app.logger.handlers[0]
-    assert isinstance(handler, TlsSMTPHandler)
-
-    # And should contain the given settings
-    assert handler.mailhost == "smtp.gmail.com"
-    assert handler.mailport == 587
-    assert handler.fromaddr == "server_email"
-    assert handler.password == "server_pw"
-    assert app.config["ADMINS"] == ["app_admin_email"]
-    assert isinstance(handler.toaddrs, list)
+    # A logger handler of type TlsSMTPHandler should be created
+    logging_handler = app.logger.handlers[0]
+    assert isinstance(logging_handler, TlsSMTPHandler)
+    # The handler logs from ERROR level
+    assert logging_handler.level == logging.ERROR
