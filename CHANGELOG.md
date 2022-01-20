@@ -1,6 +1,7 @@
 ##
 ### Changed
 - Colors of landing page
+- Admin error log email handling and relative test
 
 ## [3.1.2] - 2022-01-17
 ### Fixed
