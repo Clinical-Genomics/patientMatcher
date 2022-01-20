@@ -1,6 +1,7 @@
 ##
 ### Changed
 - Colors of landing page
+- Improved testing and initial debugging for logging error handler
 
 ## [3.1.2] - 2022-01-17
 ### Fixed
