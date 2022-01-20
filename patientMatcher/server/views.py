@@ -21,7 +21,6 @@ API_MIME_TYPE = "application/vnd.ga4gh.matchmaker.v1.0+json"
 @blueprint.route("/", methods=["GET"])
 def index():
     """Provide an index page with general node description and stats"""
-    raise ValueError("A very specific bad thing happened.")
     data = controllers.populate_index_data()
     return render_template("index.html", **data)
 
