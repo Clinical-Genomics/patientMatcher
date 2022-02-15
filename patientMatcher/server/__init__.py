@@ -34,7 +34,7 @@ def configure_email_error_logging(app):
         mailhost=(app.config["MAIL_SERVER"], app.config["MAIL_PORT"]),
         fromaddr=app.config["MAIL_USERNAME"],
         toaddrs=app.config["ADMINS"],
-        subject=f"{app.name} log error",
+        subject=f"{app.name} - {app.config['DB_NAME']} - log error",
         credentials=(app.config["MAIL_USERNAME"], app.config["MAIL_PASSWORD"]),
     )
     mail_handler.setLevel(logging.ERROR)
