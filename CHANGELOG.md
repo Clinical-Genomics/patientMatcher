@@ -1,3 +1,7 @@
+## [] -
+### Added
+- Name of database in crash report email, to understand if crashed app is stage or prod app
+
 ## [3.2] - 2022-01-21
 ### Changed
 - Colors and icons of landing page
@@ -19,7 +23,7 @@
 - Mock the download of files containing phenotype resources in tests
 
 ## [3.0] - 2021-12-27
-### added
+### Added
 - Index (landing page) reachable at endpoint `/`
 - Include software version in matching emails body
 ### Fixed
