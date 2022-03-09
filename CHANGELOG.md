@@ -9,6 +9,8 @@
 - Colors and icons of landing page
 ### Fixed
 - Admin error log email handling and relative test
+### Added
+- Double helix favicon to index page
 
 ## [3.1.2] - 2022-01-17
 ### Fixed
