@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-import os
 import json
 import logging
+import os
 
 from bson import json_util
 from flask import Blueprint, current_app, jsonify, render_template, request, send_from_directory
@@ -18,10 +18,12 @@ blueprint = Blueprint("server", __name__)
 API_MIME_TYPE = "application/vnd.ga4gh.matchmaker.v1.0+json"
 
 
-@blueprint.route('/favicon.ico')
+@blueprint.route("/favicon.ico")
 def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'static'),
-                          'favicon.ico',mimetype='image/vnd.microsoft.icon')
+    return send_from_directory(
+        os.path.join(app.root_path, "static"), "favicon.ico", mimetype="image/x-icon"
+    )
+
 
 @blueprint.route("/", methods=["GET"])
 def index():
