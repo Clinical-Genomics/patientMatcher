@@ -3,12 +3,15 @@
 - Citation file, pointing to newly published paper
 ### Added
 - Name of database in crash report email, to understand if crashed app is stage or prod app
+- Citation button on index page
 
 ## [3.2] - 2022-01-21
 ### Changed
 - Colors and icons of landing page
 ### Fixed
 - Admin error log email handling and relative test
+### Added
+- Double helix favicon to index page
 
 ## [3.1.2] - 2022-01-17
 ### Fixed

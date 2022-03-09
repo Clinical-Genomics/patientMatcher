@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-
 import json
 import logging
+import os
 
 from bson import json_util
-from flask import Blueprint, current_app, jsonify, render_template, request
+from flask import Blueprint, current_app, jsonify, render_template, request, send_from_directory
 from flask_negotiate import consumes, produces
 from patientMatcher.auth.auth import authorize
 from patientMatcher.match.handler import async_match, internal_matcher, patient_matches
@@ -16,6 +16,13 @@ from . import controllers
 LOG = logging.getLogger(__name__)
 blueprint = Blueprint("server", __name__)
 API_MIME_TYPE = "application/vnd.ga4gh.matchmaker.v1.0+json"
+
+
+@blueprint.route("/favicon.ico")
+def favicon():
+    return send_from_directory(
+        os.path.join(app.root_path, "static"), "favicon.ico", mimetype="image/x-icon"
+    )
 
 
 @blueprint.route("/", methods=["GET"])
