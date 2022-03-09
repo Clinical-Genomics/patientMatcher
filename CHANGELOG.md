@@ -3,6 +3,7 @@
 - Citation file, pointing to newly published paper
 ### Added
 - Name of database in crash report email, to understand if crashed app is stage or prod app
+- Citation button on index page
 
 ## [3.2] - 2022-01-21
 ### Changed
