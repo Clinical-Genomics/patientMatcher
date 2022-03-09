@@ -1,11 +1,35 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 authors:
-  - family-names: Rasi
-    given-names: Chiara
-    orcid: https://orcid.org/0000-0002-7001-3988
-title: PatientMatcher
-abstract: A Flask and MongoDB - based MatchMaker Exchange server
-version: 2.7
-doi: 10.5281/zenodo.5482517
-date-released: 2021-09-07
+- family-names: "Rasi"
+  given-names: "Chiara"
+  orcid: "https://orcid.org/0000-0002-7001-3988"
+- family-names: "Nilsson"
+  given-names: "Daniel"
+  orcid: "https://orcid.org/0000-0001-5831-385X"
+- family-names: "Magnusson"
+  given-names: "Måns"
+  orcid: "https://orcid.org/0000-0002-0001-1047"
+- family-names: "Lesko"
+  given-names: "Nicole"
+  orcid: "https://orcid.org/0000-0001-8770-1878"
+- family-names: "Lagerstedt-Robinson"
+  given-names: "Kristina"
+  orcid: "https://orcid.org/0000-0001-9848-0468"
+- family-names: "Wedell"
+  given-names: "Anna"
+  orcid: "https://orcid.org/0000-0002-2612-6301"
+- family-names: "Lindstrand"
+  given-names: "Anna"
+  orcid: "https://orcid.org/0000-0003-0806-5602"
+- family-names: "Wirta"
+  given-names: "Valtteri"
+  orcid: "https://orcid.org/0000-0003-3811-5439"
+- family-names: "Stranneheim"
+  given-names: "Henrik"
+  orcid: "https://orcid.org/0000-0002-1831-5735"
+title: "PatientMatcher: A customizable Python-based open-source tool for matching undiagnosed rare disease patients via the Matchmaker Exchange network"
+version: 3.2
+doi: 10.1002/humu.24358
+date-released: 2022-03-07
+url: "https://onlinelibrary.wiley.com/doi/10.1002/humu.24358"
