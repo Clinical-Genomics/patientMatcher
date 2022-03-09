@@ -1,4 +1,6 @@
 ## [] -
+### Changed
+- Citation file, pointing to newly published paper
 ### Added
 - Name of database in crash report email, to understand if crashed app is stage or prod app
 
