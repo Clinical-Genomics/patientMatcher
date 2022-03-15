@@ -1,3 +1,7 @@
+## [] -
+### Fixed
+- Updated deprecated codecov action from v1. to v.2
+
 ## [3.3] - 2022-03-09
 ### Changed
 - Citation file, pointing to newly published paper
