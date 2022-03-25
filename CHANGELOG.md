@@ -1,4 +1,6 @@
 ## [] -
+### Added
+- Created codecov config file in app's root folder
 ### Fixed
 - Updated deprecated codecov action from v1. to v.2
 
