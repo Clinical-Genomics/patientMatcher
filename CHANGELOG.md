@@ -3,6 +3,7 @@
 - Created codecov config file in app's root folder
 ### Fixed
 - Updated deprecated codecov action from v1. to v.2
+- Upgraded the version of Black lib to latest (22.3.0) in GitHub action
 
 ## [3.3] - 2022-03-09
 ### Changed
