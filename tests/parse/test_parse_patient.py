@@ -10,7 +10,7 @@ def test_href_validate_wrong_url():
 
 def test_href_validate_valid_url():
     """Test href_validate function with a valid URL"""
-    assert patient.href_validate("http://google.com") is True
+    assert patient.href_validate("https://google.com") is True
 
 
 def test_href_validate_wrong_email():
