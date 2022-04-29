@@ -4,6 +4,8 @@
 ### Fixed
 - Updated deprecated codecov action from v1. to v.2
 - Upgraded the version of Black lib to latest (22.3.0) in GitHub action
+- Link to the GitHub repo on the top-left corner of index page
+- Remove HTTP-related security issues
 
 ## [3.3] - 2022-03-09
 ### Changed
