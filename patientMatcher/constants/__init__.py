@@ -13,7 +13,7 @@ STATUS_CODES = {
 # are updated using the CLI
 PHENOTYPE_TERMS = {
     "hpo_ontology": {
-        "url": "http://purl.obolibrary.org/obo/hp.obo",
+        "url": "https://raw.githubusercontent.com/obophenotype/human-phenotype-ontology/master/hp.obo",
         "resource_path": path_to_hpo_terms,
     },
     "hpo_annotations": {
