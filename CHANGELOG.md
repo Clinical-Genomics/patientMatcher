@@ -6,6 +6,8 @@
 - Upgraded the version of Black lib to latest (22.3.0) in GitHub action
 - Link to the GitHub repo on the top-left corner of index page
 - Remove HTTP-related security issues
+## Changed
+- Updated resource files (HPO and OMIM definitions)
 
 ## [3.3] - 2022-03-09
 ### Changed
