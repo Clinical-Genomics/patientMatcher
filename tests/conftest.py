@@ -100,7 +100,7 @@ def test_client():
     client = {
         "_id": "client_1",
         "auth_token": "superSecretToken",
-        "base_url": "http://test_node_institution.com",
+        "base_url": "https://test_node_institution.com",
         "contact": "test_client@email.com",
     }
     return client
@@ -113,7 +113,7 @@ def test_node():
         "_id": "node_1",
         "label": "Test node description",
         "auth_token": "superSecretToken",
-        "matching_url": "http://test_node/match/",
+        "matching_url": "https://test_node/match/",
         "accepted_content": "application/vnd.ga4gh.matchmaker.v1.0+json",
         "contact": "test_node_user@email.com",
     }
