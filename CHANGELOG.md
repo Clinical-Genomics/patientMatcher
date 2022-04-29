@@ -1,4 +1,4 @@
-## [] -
+## [3.4] - 2022-04-29
 ### Added
 - Created codecov config file in app's root folder
 ### Fixed
