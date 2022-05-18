@@ -1,4 +1,6 @@
 ## [] -
+### Added
+- GitHub action for auto-deploying mkdocs when a new release is created
 ### Fixed
 - Ports used to serve the app in docker-compose howto
 ### Changed
