@@ -7,7 +7,7 @@ from bson import json_util
 from flask import Blueprint, current_app, jsonify, render_template, request, send_from_directory
 from flask_negotiate import consumes, produces
 from patientMatcher.auth.auth import authorize
-from patientMatcher.match.handler import async_match, internal_matcher, patient_matches
+from patientMatcher.match.handler import internal_matcher, patient_matches
 from patientMatcher.utils.add import backend_add_patient
 from patientMatcher.utils.notify import notify_match_external, notify_match_internal
 
@@ -214,51 +214,6 @@ def match_external(patient_id):
         )
 
     resp = jsonify({"results": results})
-    resp.status_code = 200
-    return resp
-
-
-@blueprint.route("/async_response", methods=["POST"])
-def asynch_match_response():
-    """Receives and handles asynchronous match responses.
-    This implies that patientMatcher has already submitted a match request
-    to a server x and has received not results, but a query id in response.
-    Query id was previously saved into patientMatcher database.
-    This delayed response from server x contains match results and
-    the same query id and server x source key.
-    """
-    LOG.info("Receiving an asynchronous request.")
-    data = controllers.check_async_request(current_app.db, request)
-    # returned data after check_async_request is a dictionary if request is valid
-    if isinstance(data, int):  # some error must have occurred during validation
-        return controllers.bad_request(data)
-
-    # create a match object from specifics you first sent to the node
-    async_match_obj = async_match(current_app.db, data)
-    if async_match_obj:
-        # save match object to database
-        LOG.info("saving match object to database")
-        current_app.db["matches"].insert_one(async_match_obj)
-
-        # Remove query_id from async responses, this is not used any more
-        current_app.db["async_responses"].delete_one({"query_id": data["query_id"]})
-    else:
-        message = "Error: could not create a valid match object from request data"
-        resp = jsonify({"message": message})
-        resp.status_code = 200
-        return resp
-
-    # notify matches if there are matching patients and app is configured to do so
-    if len(async_match_obj["results"]) > 0 and current_app.config.get("MAIL_SERVER"):
-        # send an email to patient's contact:
-        notify_match_external(
-            match_obj=async_match_obj,
-            admin_email=current_app.config.get("MAIL_USERNAME"),
-            mail=current_app.mail,
-            notify_complete=current_app.config.get("NOTIFY_COMPLETE"),
-        )
-
-    resp = jsonify({"message": "results received, many thanks!"})
     resp.status_code = 200
     return resp
 

@@ -1,3 +1,7 @@
+## [] -
+### Changed
+- Removed support for asynchronous requests to the server
+
 ## [3.4] - 2022-04-29
 ### Added
 - Created codecov config file in app's root folder

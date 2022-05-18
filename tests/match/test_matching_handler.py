@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import requests
 import responses
-from patientMatcher.match.handler import external_matcher, internal_matcher, save_async_response
+from patientMatcher.match.handler import external_matcher, internal_matcher
 from patientMatcher.parse.patient import mme_patient
 from patientMatcher.utils.add import backend_add_patient
 
@@ -149,23 +149,3 @@ def test_external_matching(database, test_node, gpx4_patients, monkeypatch):
     assert ext_m_result["data"]["patient"]["id"] == patient["id"]
     assert ext_m_result["has_matches"] == True
     assert ext_m_result["match_type"] == "external"
-
-
-def test_save_async_response(database, test_node):
-    """Testing the function that saves an async response object to database"""
-
-    # Test database should not contain async responses
-    results = database["async_responses"].find()
-    assert len(list(results)) == 0
-
-    # Save an async response using the matching handler
-    save_async_response(
-        database=database, node_obj=test_node, query_id="test", query_patient_id="test_patient"
-    )
-
-    # async_responses database collection should now contain one object
-    async_response = database["async_responses"].find_one()
-    assert async_response["query_id"] == "test"
-    assert async_response["query_patient_id"] == "test_patient"
-    assert async_response["node"]["id"] == test_node["_id"]
-    assert async_response["node"]["label"] == test_node["label"]
