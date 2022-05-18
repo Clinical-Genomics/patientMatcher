@@ -3,6 +3,7 @@
 - Ports used to serve the app in docker-compose howto
 ### Changed
 - Removed support for asynchronous requests to the server
+- Moved documentation to mkdocs pages (https://clinical-genomics.github.io/patientMatcher)
 
 ## [3.4] - 2022-04-29
 ### Added
