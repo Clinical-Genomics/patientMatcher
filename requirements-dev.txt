@@ -9,6 +9,3 @@ coveralls
 # server-related stuff
 requests
 Flask-Mail
-
-# documentation
-mkdocs
