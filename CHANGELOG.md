@@ -1,4 +1,6 @@
-## [] -
+## [4.0] - 2022-05-18
+### Added
+- GitHub action to auto-deploy documentation when a new release is created
 ### Fixed
 - Ports used to serve the app in docker-compose howto
 ### Changed
