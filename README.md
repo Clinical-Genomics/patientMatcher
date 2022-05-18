@@ -46,13 +46,13 @@ docker-compose up -d
 The command will create 3 containers:
 - mongodb: starting a mongodb server with support for user authentication (--auth option)
 - patientmatcher_cli: the a command-line app, which will connect to the server and populates it with demo data
-- patientmatcher_web: a web server running on localhost and port 9020.
+- patientmatcher_web: a web server running on localhost and port 8000.
 
 The server will be running and accepting requests sent from outside the containers (another terminal or a web browser). Read further down to find out about requests and commands.
 
 To test server responses try to invoke the `metrics` endpoint with the following command:
 ```
-curl localhost:5000/metrics
+curl localhost:8000/metrics
 ```
 
 To stop the containers (and the server), run:
