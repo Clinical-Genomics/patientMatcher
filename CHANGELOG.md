@@ -1,4 +1,6 @@
 ## [] -
+### Added
+- Documentation on how to update phenotype resource files
 ### Changed
 - Download automatically phenotype resources when a non-demo app starts
 

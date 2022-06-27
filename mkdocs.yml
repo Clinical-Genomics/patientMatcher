@@ -6,12 +6,11 @@ nav:
     - Installing the application on a conda environment: conda_inst.md
     - Data types: data_types.md
     - Command line interface: cli.md
+    - Phenotype resource files: phenotype_resources.md
     - Server endpoints: endpoints.md
     - Matching algrorithm: algorithm.md
     - Matching notifications: matching_emails.md
     - Server error notifications: error_emails.md
-
-
 
 
 theme: readthedocs
