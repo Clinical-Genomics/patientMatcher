@@ -3,12 +3,10 @@
 import logging
 
 import click
-import requests
-from clint.textui import progress
 from flask.cli import current_app, with_appcontext
-from patientMatcher.constants import PHENOTYPE_TERMS
 from patientMatcher.parse.patient import EMAIL_REGEX, href_validate
 from patientMatcher.utils.patient import patients
+from patientMatcher.utils.update import update_resources
 
 LOG = logging.getLogger(__name__)
 
@@ -80,26 +78,4 @@ def resources(test):
     http://purl.obolibrary.org/obo/hp.obo
     https://ci.monarchinitiative.org/view/hpo/job/hpo.annotations/lastSuccessfulBuild/artifact/rare-diseases/misc/phenotype_annotation.tab
     """
-    files = {}
-    for key, item in PHENOTYPE_TERMS.items():
-        destination = item["resource_path"]
-        url = item["url"]
-
-        r = requests.get(url, stream=True)
-        total_length = int(r.headers.get("content-length"))
-
-        if test:  # read file and get its size
-            files[
-                key
-            ] = total_length  # create an object for each downloadable file and save its length
-            if total_length:
-                click.echo("file {} found at the requested URL".format(key))
-            continue
-
-        with open(destination, "wb") as f:  # overwrite file
-            for chunk in progress.bar(
-                r.iter_content(chunk_size=1024), expected_size=(total_length / 1024) + 1
-            ):
-                if chunk:
-                    f.write(chunk)
-                    f.flush()
+    update_resources(test)

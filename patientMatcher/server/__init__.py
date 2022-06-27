@@ -9,6 +9,7 @@ from flask import Flask
 from flask_mail import Mail
 from patientMatcher.resources import path_to_hpo_terms, path_to_phenotype_annotations
 from patientMatcher.utils.notify import TlsSMTPHandler, admins_email_format
+from patientMatcher.utils.update import update_resources
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure, OperationFailure, ServerSelectionTimeoutError
 
@@ -84,10 +85,11 @@ def create_app():
     app.db = mongo_client[db_name]
     LOG.info(f"Connecting to database '{db_name}' on {app.db}")
 
-    # If it's not a test app and phenotype resources are missing
-    # Display message and exit
+    if app.config.get("TESTING") in ["False", False]:
+        update_resources(test=False)
 
-    if app.config.get("TESTING") in ["False", False] and available_phenotype_resources() is False:
+    # If it's not a test app and phenotype resources are missing display error and exit
+    if available_phenotype_resources() is False:
         LOG.error(
             "Required files hp.obo.txt and phenotype_annotation.tab.txt not found on the server. Please download them with the command 'pmatcher update resources'."
         )
