@@ -1,3 +1,7 @@
+## [] -
+### Changed
+- Download automatically phenotype resources when a non-demo app starts
+
 ## [4.0] - 2022-05-18
 ### Added
 - GitHub action to auto-deploy documentation when a new release is created
@@ -6,10 +10,6 @@
 ### Changed
 - Removed support for asynchronous requests to the server
 - Moved documentation to mkdocs pages (https://clinical-genomics.github.io/patientMatcher)
-
-## [] -
-### Changed
-- Download automatically phenotype resources when a non-demo app starts
 
 ## [3.4] - 2022-04-29
 ### Added
