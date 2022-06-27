@@ -8,7 +8,7 @@ When the non-demo app server is lauched, it tries to download the following file
 
 The downloaded resources will be parsed and the available phenotype terms (HPO, OMIM, Decipher and Orphanet) will be used to build a model used for scoring the similarity between patients.
 
-If the download of one or both files fails, then the server will try to use the same files available under patientMatcher/resources, provided together with the software, last time that it was installed. Note that files provided by the software are not guaranteed to be up-to-date with the latest definitions of HPO, OMIM, Decipher and Orphanet.
+If the download of one or both files fails, then the server will try to use the same files provided together with the software (when it was installed) and available under `patientMatcher/resources`. Note that files provided by the software are not guaranteed to be up-to-date with the latest definitions of HPO, OMIM, Decipher and Orphanet.
 
 It is important that these resources are updated often (every few months or even better whenever a new version of the files above is available), since the availability of these terms has an impact on the phenotype scoring algorithm.
 
