@@ -1,4 +1,8 @@
-## [4.0] - 2022-05-18 
+## [] -
+### Changed
+- Download automatically phenotype resources when a non-demo app starts
+
+## [4.0] - 2022-05-18
 ### Added
 - GitHub action to auto-deploy documentation when a new release is created
 ### Fixed
