@@ -88,7 +88,7 @@ def create_app():
     if app.config.get("TESTING") in ["False", False]:
         update_resources(test=False)
 
-    # If it's not a test app and phenotype resources are missing display error and exit
+    # If phenotype resources are missing display error and exit
     if available_phenotype_resources() is False:
         LOG.error(
             "Required files hp.obo.txt and phenotype_annotation.tab.txt not found on the server. Please download them with the command 'pmatcher update resources'."
