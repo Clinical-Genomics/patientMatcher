@@ -1,3 +1,7 @@
+## [unreleased] -
+### Fixed
+- Broken Link to HPO definitions (`phenotype_annotation.tab`)
+
 ## [4.1] - 2022-06-27
 ### Added
 - Documentation on how to update phenotype resource files

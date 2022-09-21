@@ -17,7 +17,7 @@ PHENOTYPE_TERMS = {
         "resource_path": path_to_hpo_terms,
     },
     "hpo_annotations": {
-        "url": "https://ci.monarchinitiative.org/view/hpo/job/hpo.annotations/lastSuccessfulBuild/artifact/rare-diseases/misc/phenotype_annotation.tab",
+        "url": "https://purl.obolibrary.org/obo/hp/hpoa/phenotype_annotation.tab",
         "resource_path": path_to_phenotype_annotations,
     },
 }
