@@ -1,5 +1,6 @@
 ## [unreleased] -
 ### Fixed
+- Broken Link to HPO definitions (`phenotype_annotation.tab`)
 - Security hotspots flagged by SonarCloud
 
 ## [4.1] - 2022-06-27
