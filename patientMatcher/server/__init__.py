@@ -7,6 +7,7 @@ from pathlib import Path
 import coloredlogs
 from flask import Flask
 from flask_mail import Mail
+from flask_wtf.csrf import CSRFProtect
 from patientMatcher.resources import path_to_hpo_terms, path_to_phenotype_annotations
 from patientMatcher.utils.notify import TlsSMTPHandler, admins_email_format
 from patientMatcher.utils.update import update_resources
@@ -66,6 +67,9 @@ def create_app():
 
         app = Flask(__name__, instance_path=instance_path, instance_relative_config=True)
         app.config.from_pyfile("config.py")
+
+    csrf = CSRFProtect()
+    csrf.init_app(app)
 
     if app.config.get("ADMINS"):
         app.config["ADMINS"] = admins_email_format(app.config["ADMINS"])
