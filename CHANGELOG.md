@@ -1,3 +1,7 @@
+## [unreleased] -
+### Fixed
+- Security hotspots flagged by SonarCloud
+
 ## [4.1] - 2022-06-27
 ### Added
 - Documentation on how to update phenotype resource files
