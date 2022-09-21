@@ -6,7 +6,6 @@ flask-negotiate
 requests
 responses
 jsonschema
-flask_wtf
 
 ## database connection
 pymongo<4.0

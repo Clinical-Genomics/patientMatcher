@@ -68,9 +68,6 @@ def create_app():
         app = Flask(__name__, instance_path=instance_path, instance_relative_config=True)
         app.config.from_pyfile("config.py")
 
-    csrf = CSRFProtect()
-    csrf.init_app(app)
-
     if app.config.get("ADMINS"):
         app.config["ADMINS"] = admins_email_format(app.config["ADMINS"])
 
