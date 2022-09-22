@@ -4,6 +4,7 @@
 - Security hotspots flagged by SonarCloud
 - Decreased vulnerability by removing some server log messages
 - Problems flagged as bugs by SonarCloud
+- Server startup debug message showing correct number of parsed diseases
 
 ## [4.1] - 2022-06-27
 ### Added
