@@ -4,7 +4,6 @@ from patientMatcher.match.phenotype_matcher import match, similarity_wrapper
 from patientMatcher.parse.patient import mme_patient
 from patientMatcher.resources import path_to_hpo_terms, path_to_phenotype_annotations
 from patientMatcher.server.extensions import diseases, hpo, hpoic
-from patientMatcher.utils.patient import Patient
 
 PHENOTYPE_ROOT = "HP:0000118"
 
