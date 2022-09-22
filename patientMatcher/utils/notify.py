@@ -145,7 +145,6 @@ def notify_match_external(match_obj, admin_email, mail, notify_complete):
         patient_id=patient_id,
         match_results=match_obj["results"],
         patient_label=patient_label,
-        external_match=True,
         notify_complete=notify_complete,
     )
     LOG.info(
