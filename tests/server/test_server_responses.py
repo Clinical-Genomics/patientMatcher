@@ -558,10 +558,9 @@ def test_match_entrez_patient(mock_app, test_client, gpx4_patients, database):
     ok_token = test_client["auth_token"]
     add_node(mongo_db=mock_app.db, obj=test_client, is_client=True)
 
-    query_patient = gpx4_patients[0]
     query_patient = {"patient": gpx4_patients[0]}
     for feat in query_patient["patient"]["genomicFeatures"]:
-        feat["gene"]["id"] == "2879"  # entrez id for GPX4
+        assert feat["gene"]["id"] == "GPX4"
 
     # load 2 test patient in mock database
     assert len(gpx4_patients) == 2

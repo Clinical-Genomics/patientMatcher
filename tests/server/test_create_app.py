@@ -3,7 +3,7 @@ import logging
 import os
 
 from patientMatcher.resources import path_to_hpo_terms
-from patientMatcher.server import configure_email_error_logging, create_app
+from patientMatcher.server import create_app
 from patientMatcher.server.__init__ import available_phenotype_resources
 from patientMatcher.utils.notify import TlsSMTPHandler
 
@@ -12,7 +12,7 @@ def test_env_vars_parsing(monkeypatch):
     """Test that the env vars are correctly parsed when creating the app"""
     # GIVEN some params provided as env vars
     monkeypatch.setenv("DEBUG", "True")
-    monkeypatch.setenv("TESTING", "False")
+    monkeypatch.setenv("TESTING", "True")
     monkeypatch.setenv("DB_PORT", "27017")
     monkeypatch.setenv("MAX_GT_SCORE", "0.7")
     monkeypatch.setenv("MAX_PHENO_SCORE", "0.3")
@@ -24,15 +24,15 @@ def test_env_vars_parsing(monkeypatch):
     app = create_app()
 
     # THEN the app should be created with the expected config values
-    app.config["DEBUG"] is True
-    app.config["TESTING"] is False
-    app.config["DB_PORT"] == 27017
-    app.config["MAX_GT_SCORE"] == 0.7
-    app.config["MAX_PHENO_SCORE"] == 0.3
-    app.config["MAX_RESULTS"] == 3
-    app.config["SCORE_THRESHOLD"] == 0.5
-    app.config["MAIL_PORT"] == 586
-    app.config["NOTIFY_COMPLETE"] is False
+    assert app.config["DEBUG"] is True
+    assert app.config["TESTING"] is True
+    assert app.config["DB_PORT"] == 27017
+    assert app.config["MAX_GT_SCORE"] == 0.7
+    assert app.config["MAX_PHENO_SCORE"] == 0.3
+    assert app.config["MAX_RESULTS"] == 3
+    assert app.config["SCORE_THRESHOLD"] == 0.5
+    assert app.config["MAIL_PORT"] == 586
+    assert app.config["NOTIFY_COMPLETE"] is False
 
 
 def test_create_app():
