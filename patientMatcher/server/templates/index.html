@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html>
-<title>PatientMatcher</title>
+<html lang="en">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
@@ -18,6 +17,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
 </style>
 
 <head>
+  <title>PatientMatcher</title>
   <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
 
@@ -35,7 +35,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
   <div class="w3-row-padding w3-margin-bottom">
     <div class="w3-quarter">
       <div class="w3-container w3-padding-16" style="background-color:#FCD271;">
-        <div class="w3-left"><i class="fas fa-hospital-alt w3-xxxlarge"></i></div>
+        <div class="w3-left"><em class="fas fa-hospital-alt w3-xxxlarge"></em></div>
         <div class="w3-right">
           <h3>{{connected_nodes}}</h3>
         </div>
@@ -47,7 +47,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
     </div>
     <div class="w3-quarter">
       <div class="w3-container w3-padding-16" style="background-color:#F78D3F;">
-        <div class="w3-left"><i class="fas fa-notes-medical w3-xxxlarge"></i></div>
+        <div class="w3-left"><em class="fas fa-notes-medical w3-xxxlarge"></em></div>
         <div class="w3-right">
           <h3>{{node_stats.numberOfCases}}</h3>
         </div>
@@ -59,7 +59,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
     </div>
     <div class="w3-quarter">
       <div class="w3-container w3-padding-16" style="background-color:#2BBBD8;">
-        <div class="w3-left"><i class="fas fa-dna w3-xxxlarge"></i></div>
+        <div class="w3-left"><em class="fas fa-dna w3-xxxlarge"></em></div>
         <div class="w3-right">
           <h3>{{node_stats.numberOfGenes}}</h3>
         </div>
@@ -71,7 +71,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
     </div>
     <div class="w3-quarter">
       <div class="w3-container w3-dark-grey w3-text-white w3-padding-16">
-        <div class="w3-left"><i class="fas fa-crosshairs w3-xxxlarge"></i></div>
+        <div class="w3-left"><em class="fas fa-crosshairs w3-xxxlarge"></em></div>
         <div class="w3-right">
           <h3>{{node_stats.numberOfVariants}}</h3>
         </div>
@@ -88,8 +88,8 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
 
     PatientMatcher is a <a href="https://www.matchmakerexchange.org/" target="_blank" rel="noopener">MatchMaker Exchange</a> node curated and maintained by Clinical Genomics, SciLifeLab in collaboration with the <a href="https://www.karolinska.se/for-vardgivare/karolinska-universitetslaboratoriet/genomic-medicine-center-karolinska" target="_blank" rel="noopener">Genomic Medicine Center Karolinska</a> at the <a href="https://www.karolinska.se/en/karolinska-university-hospital" target="_blank" rel="noopener">Karolinska University Hospital, Stockholm</a>.
     <br>
-    If you are insterested in matching patients against our node, please <b>contact us{% if node_contacts %} ({{ node_contacts|join(', ') }}) {%endif%}</b> to become a collaborator.<br><br>
-    If you want to use this <b>open source software</b> for clinical laboratories and research facilities who wish to join the federated MME network as independent nodes, please visit the project's <a href="https://github.com/Clinical-Genomics/patientMatcher" target="_blank" rel="noopener">GitHub pages</a>.
+    If you are insterested in matching patients against our node, please <strong>contact us{% if node_contacts %} ({{ node_contacts|join(', ') }}) {%endif%}</strong> to become a collaborator.<br><br>
+    If you want to use this <strong>open source software</strong> for clinical laboratories and research facilities who wish to join the federated MME network as independent nodes, please visit the project's <a href="https://github.com/Clinical-Genomics/patientMatcher" target="_blank" rel="noopener">GitHub pages</a>.
   <hr>
   </div>
 </div>
