@@ -83,7 +83,6 @@ def delete(patient_id):
     if not authorize(current_app.db, request):  # not authorized, return a 401 status code
         return controllers.bad_request(401)
 
-    LOG.info("Authorized client is removing patient with id {}".format(patient_id))
     message = controllers.delete_patient(current_app.db, patient_id)
     resp = jsonify(message)
     resp.status_code = 200
@@ -135,7 +134,6 @@ def nodes():
 @blueprint.route("/matches/<patient_id>", methods=["GET"])
 def matches(patient_id):
     """Get all matches (external and internal) for a patient ID"""
-    LOG.info("getting all matches for patient {}".format(patient_id))
     resp = None
     message = {}
     if not authorize(current_app.db, request):  # not authorized, return a 401 status code
@@ -161,16 +159,9 @@ def match_external(patient_id):
     message = {}
     if not authorize(current_app.db, request):  # not authorized, return a 401 status code
         return controllers.bad_request(401)
-
-    LOG.info(
-        "Authorized clients is matching patient with ID {} against external nodes".format(
-            patient_id
-        )
-    )
     query_patient = controllers.patient(current_app.db, patient_id)
 
     if not query_patient:
-        LOG.error("ERROR. Could not find any patient with ID {} in database".format(patient_id))
         message["message"] = "ERROR. Could not find any patient with ID {} in database".format(
             patient_id
         )
@@ -182,7 +173,6 @@ def match_external(patient_id):
 
     # if search should be performed on a specific node, make sure node is in database
     if node and current_app.db["nodes"].find_one({"_id": node}) is None:
-        LOG.info('ERROR, theres no node with id "{}" in database'.format(request.args["node"]))
         message[
             "message"
         ] = "ERROR. Could not find any connected node with id {} in database".format(
@@ -265,7 +255,6 @@ def match_internal():
             notify_complete=current_app.config.get("NOTIFY_COMPLETE"),
         )
 
-    # validate_response = controllers.validate_response({'results': matches})
     validate_response = {"results": matches}
     if isinstance(validate_response, int):  # some error must have occurred during validation
         return controllers.bad_request(validate_response)
