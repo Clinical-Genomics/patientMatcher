@@ -3,6 +3,7 @@ import json
 
 import mongomock
 import pytest
+import responses
 from patientMatcher.resources import path_to_benchmark_patients
 from patientMatcher.server import create_app
 
@@ -270,3 +271,39 @@ def json_patients(demo_data_path):
     with open(demo_data_path) as json_data:
         patients = json.load(json_data)
     return patients
+
+
+@pytest.fixture()
+def mocked_ensemble_responses():
+    """Provides mock responses from Ensembl services"""
+    with responses.RequestsMock() as mock:
+        # a mocked Ensembl REST API converting gene symbol to Ensembl ID
+        responses.add(
+            responses.GET,
+            f"https://grch37.rest.ensembl.org/xrefs/symbol/homo_sapiens/GPX4?external_db=HGNC",
+            json=[{"id": "ENSG00000167468", "type": "gene"}],
+            status=200,
+        )
+        # a mocked Ensembl gene lookup service:
+        responses.add(
+            responses.GET,
+            f"https://grch37.rest.ensembl.org/lookup/id/ENSG00000167468",
+            json=[{"display_name": "GPX4"}],
+            status=200,
+        )
+        # a mocked liftover service:
+        responses.add(
+            responses.GET,
+            f"https://grch37.rest.ensembl.org/map/human/GRCh37/19:1105813..1105814/GRCh38?content-type=application/json",
+            json=[],
+            status=200,
+        )
+        # Another mocked liftover service:
+        responses.add(
+            responses.GET,
+            f"https://grch37.rest.ensembl.org/map/human/GRCh37/19:1106232..1106238/GRCh38?content-type=application/json",
+            json=[],
+            status=200,
+        )
+
+        yield mock
