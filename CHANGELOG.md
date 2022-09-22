@@ -3,6 +3,7 @@
 - Broken Link to HPO definitions (`phenotype_annotation.tab`)
 - Security hotspots flagged by SonarCloud
 - Decreased vulnerability by removing some server log messages
+- Problems flagged as bugs by SonarCloud
 
 ## [4.1] - 2022-06-27
 ### Added
