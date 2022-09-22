@@ -3,7 +3,7 @@ import logging
 import os
 
 from patientMatcher.resources import path_to_hpo_terms
-from patientMatcher.server import configure_email_error_logging, create_app
+from patientMatcher.server import create_app
 from patientMatcher.server.__init__ import available_phenotype_resources
 from patientMatcher.utils.notify import TlsSMTPHandler
 
