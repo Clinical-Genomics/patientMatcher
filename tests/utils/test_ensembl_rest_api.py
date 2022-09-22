@@ -20,7 +20,7 @@ def test_except_on_invalid_response():
 
     # Then it should trigger an exception
     with pytest.raises(Exception):
-        result = client.except_on_invalid_response(mockresp)
+        client.except_on_invalid_response(mockresp)
 
 
 @responses.activate

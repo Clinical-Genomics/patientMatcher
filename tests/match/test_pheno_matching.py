@@ -89,7 +89,6 @@ def test_phenotype_matching(gpx4_patients, database):
         assert value["pheno_score"] > 0
 
     features = formatted_patient["features"]
-    disorders = formatted_patient["disorders"]
     # remove HPO terms from the query patient, test that the algorithm works anyway
     # because matching will use OMIM disorders
     formatted_patient["features"] = []
