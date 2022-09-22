@@ -63,7 +63,6 @@ def notify_match_internal(database, match_obj, admin_email, mail, notify_complet
     sender = admin_email
     patient_id = None
     patient_label = None
-    results = None
     recipient = None
     email_subject = "MatchMaker Exchange: new patient match available."
     email_body = None
@@ -180,10 +179,6 @@ def active_match_email_body(
     Returns:
         html(str): the body message
     """
-    search_type = "against the internal database of MatchMaker patients"
-    if external_match:
-        search_type = "against external nodes connected to MatchMaker"
-
     html = """
         ***This is an automated message, please do not reply to this email.***<br><br>
         <strong>MatchMaker Exchange patient matching notification:</strong><br><br>
