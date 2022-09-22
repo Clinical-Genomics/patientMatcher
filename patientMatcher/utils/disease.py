@@ -122,7 +122,6 @@ class Diseases:
                 max_freq = freq
         else:
             max_freq = freq
-        LOG.error(max_freq)
         return max_freq
 
     def _parse_diseases(self):
