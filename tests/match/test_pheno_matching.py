@@ -4,7 +4,6 @@ from patientMatcher.match.phenotype_matcher import match, similarity_wrapper
 from patientMatcher.parse.patient import mme_patient
 from patientMatcher.resources import path_to_hpo_terms, path_to_phenotype_annotations
 from patientMatcher.server.extensions import diseases, hpo, hpoic
-from patientMatcher.utils.patient import Patient
 
 PHENOTYPE_ROOT = "HP:0000118"
 
@@ -80,24 +79,23 @@ def test_phenotype_matching(gpx4_patients, database):
     assert len(formatted_patient["features"]) > 0
     assert len(formatted_patient["disorders"]) > 0
 
-    matches_HPO_OMIM = match(
+    matches_hpo_omim = match(
         database, 0.75, formatted_patient["features"], formatted_patient["disorders"]
     )
-    assert len(matches_HPO_OMIM.keys()) == 2
-    for key, value in matches_HPO_OMIM.items():
+    assert len(matches_hpo_omim.keys()) == 2
+    for key, value in matches_hpo_omim.items():
         assert "patient_obj" in value
         assert value["pheno_score"] > 0
 
     features = formatted_patient["features"]
-    disorders = formatted_patient["disorders"]
     # remove HPO terms from the query patient, test that the algorithm works anyway
     # because matching will use OMIM disorders
     formatted_patient["features"] = []
-    matches_OMIM = match(
+    matches_omim = match(
         database, 0.75, formatted_patient["features"], formatted_patient["disorders"]
     )
-    assert len(matches_OMIM.keys()) > 0 and len(matches_OMIM.keys()) < 50
-    for key, value in matches_OMIM.items():
+    assert len(matches_omim.keys()) > 0 and len(matches_omim.keys()) < 50
+    for key, value in matches_omim.items():
         assert "patient_obj" in value
         assert value["pheno_score"] > 0
 
@@ -111,15 +109,15 @@ def test_phenotype_matching(gpx4_patients, database):
 
     # Add again features. The algorithm works again because HPO terms will be used
     formatted_patient["features"] = features
-    matches_HPO = match(
+    matches_hpo = match(
         database, 0.75, formatted_patient["features"], formatted_patient["disorders"]
     )
-    assert len(matches_HPO.keys()) == 2
-    for key, value in matches_HPO.items():
+    assert len(matches_hpo.keys()) == 2
+    for key, value in matches_hpo.items():
         assert "patient_obj" in value
         assert value["pheno_score"] > 0
 
     # make sure that matches obtained when OMIM and HPO terms are present are more or equal than
     # when either of these phenotype terms is present by itself
-    assert len(matches_HPO_OMIM.keys()) >= len(matches_OMIM.keys())
-    assert len(matches_HPO_OMIM.keys()) >= len(matches_HPO.keys())
+    assert len(matches_hpo_omim.keys()) >= len(matches_omim.keys())
+    assert len(matches_hpo_omim.keys()) >= len(matches_hpo.keys())

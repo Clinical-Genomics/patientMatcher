@@ -138,7 +138,7 @@ class HPOIC(object):
         LOG.info("Total term frequency mass: {}".format(sum(term_freq.values())))
         term_ic = self._get_ics(hpo.root, term_freq)
         LOG.info("IC calculated for {}/{} terms".format(len(term_ic), len(hpo)))
-        lss = self._get_link_strengths(hpo.root, term_ic)
+        lss = self._get_link_strengths(term_ic)
         LOG.info("Link strength calculated for {}/{} terms".format(len(lss), len(hpo)))
         self.term_ic = term_ic
         self.lss = lss
@@ -202,12 +202,8 @@ class HPOIC(object):
 
         return term_ic
 
-    def _get_link_strengths(self, root, term_ic):
+    def _get_link_strengths(self, term_ic):
         lss = {}
-
-        # P(term&parents) = P(term|parents) P(parents)
-        # P(term|parents) = P(term&parents) / P(parents)
-        # P(parents) = probmass(descendants)
         for term, ic in term_ic.items():
             assert term not in lss
             if term.parents:

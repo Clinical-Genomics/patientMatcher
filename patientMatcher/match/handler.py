@@ -147,7 +147,7 @@ def external_matcher(database, patient, node=None):
         query["_id"] = node
     # get all connected nodes or ther one specified by user
     connected_nodes = list(database["nodes"].find(query))
-    if len(connected_nodes) == 0:
+    if not connected_nodes:
         LOG.error("Could't find any connected MME nodes. Aborting external matching.")
         return None
 
@@ -185,6 +185,16 @@ def external_matcher(database, patient, node=None):
                 method="POST", url=node_url, headers=headers, json=data
             )
             json_response = server_return.json()
+
+            LOG.info("server returns the following response: {}".format(json_response))
+            result_obj = {"node": {"id": node["_id"], "label": node["label"]}, "patients": []}
+
+            for match in json_response.get("results", []):
+                result_obj["patients"].append(match)
+
+            external_match["results"].append(result_obj)
+            external_match["has_matches"] = len(external_match["results"]) > 0
+
         except Exception as exp:
             error = exp
             error_obj = {"node": None, "error": str(error)}
@@ -195,22 +205,5 @@ def external_matcher(database, patient, node=None):
                 LOG.error("Error while sending external match request:{}".format(error))
                 error_obj["node"] = "PatientMatcher"
             external_match["errors"].append(error_obj)
-
-        if json_response:
-            LOG.info("server returns the following response: {}".format(json_response))
-
-            result_obj = {"node": {"id": node["_id"], "label": node["label"]}, "patients": []}
-
-            # node returned results
-            if "results" in json_response:
-                results = json_response["results"]
-                if len(results):
-                    external_match["has_matches"] = True
-                    for result in results:
-                        result_obj["patients"].append(result)
-
-                    external_match["results"].append(result_obj)
-            else:
-                LOG.error("JSON response from server was:{}".format(json_response))
 
     return external_match

@@ -20,8 +20,8 @@ LOG = logging.getLogger(__name__)
 
 def available_phenotype_resources():
     """Check that necessary resources (HPO terms and phenotype annotations) were downloaded and available"""
-    for filepath in [path_to_hpo_terms, path_to_phenotype_annotations]:
-        if Path(path_to_hpo_terms).is_file() is False:
+    for item in [path_to_hpo_terms, path_to_phenotype_annotations]:
+        if Path(item).is_file() is False:
             return False
 
     return True
@@ -41,7 +41,7 @@ def configure_email_error_logging(app):
     mail_handler.setLevel(logging.ERROR)
     mail_handler.setFormatter(
         logging.Formatter(
-            "%(asctime)s - %(name)s - %(levelname)s: %(message)s " "[in %(pathname)s:%(lineno)d]"
+            "%(asctime)s - %(name)s - %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]"
         )
     )
     app.logger.addHandler(mail_handler)
@@ -53,7 +53,7 @@ def create_app():
     try:
         app = Flask(__name__)
         app.config.from_envvar("PMATCHER_CONFIG")
-    except:
+    except Exception:
         LOG.warning(
             "PMATCHER_CONFIG env variable not found, configuring from instance file + env vars."
         )

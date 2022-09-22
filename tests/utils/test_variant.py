@@ -124,7 +124,7 @@ def test_liftover_38_37():
 
 
 @responses.activate
-def test_liftover_MT_variant():
+def test_liftover_mt_variant():
     """Test liftover for a mitochondrial variant from GRCh37 to GRCh38"""
 
     # GIVEN a mitochondrial variant

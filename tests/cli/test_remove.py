@@ -1,6 +1,8 @@
 from patientMatcher.cli.commands import cli
 from patientMatcher.parse.patient import mme_patient
 
+DATA_PATIENT_ID = "data.patient.id"
+
 
 def test_cli_remove_client(mock_app, database, test_client):
 
@@ -89,7 +91,7 @@ def test_cli_remove_patient(mock_app, database, gpx4_patients, match_objs):
     # Add mock patient matches objects to database
     database["matches"].insert_many(match_objs)
     # There should be 2 matches in database for this patient:
-    results = database["matches"].find({"data.patient.id": inserted_id})
+    results = database["matches"].find({DATA_PATIENT_ID: inserted_id})
     assert len(list(results)) == 2
 
     # involke cli command to remove the patient by id and label
@@ -102,7 +104,7 @@ def test_cli_remove_patient(mock_app, database, gpx4_patients, match_objs):
     assert database["patients"].find_one() is None
 
     # But matches are still there
-    results = database["matches"].find({"data.patient.id": inserted_id})
+    results = database["matches"].find({DATA_PATIENT_ID: inserted_id})
     assert len(list(results)) == 2
 
     # Run remove patient command with option to remove matches but without patient ID
@@ -115,4 +117,4 @@ def test_cli_remove_patient(mock_app, database, gpx4_patients, match_objs):
     assert result.exit_code == 0
 
     # And make sure that patient removal removed its matchings
-    assert database["matches"].find_one({"data.patient.id": inserted_id}) is None
+    assert database["matches"].find_one({DATA_PATIENT_ID: inserted_id}) is None

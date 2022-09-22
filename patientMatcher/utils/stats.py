@@ -3,6 +3,7 @@ import logging
 from datetime import date
 
 LOG = logging.getLogger(__name__)
+SEARCH_GEN_VARIANT = "genomicFeatures.variant"
 
 
 def general_metrics(db):
@@ -44,9 +45,7 @@ def general_metrics(db):
         n_genes += gene_count["count"]
 
     # get numberOfUniqueVariants/occurrence for all variants in db
-    variant_occurr = item_occurrence(
-        db, "genomicFeatures", "genomicFeatures.variant", "genomicFeatures.variant"
-    )
+    variant_occurr = item_occurrence(db, "genomicFeatures", SEARCH_GEN_VARIANT, SEARCH_GEN_VARIANT)
     n_vars = 0
     for var in variant_occurr:
         n_vars += var.get("count")
@@ -63,13 +62,13 @@ def general_metrics(db):
         "results.patients.patient.genomicFeatures.gene", match_type
     )
 
-    n_cases = sum(1 for i in db.patients.find())
+    n_cases = sum(1 for _ in db.patients.find())
     n_cases_diagnosis = sum(
-        1 for i in db.patients.find({"disorders": {"$exists": True, "$ne": []}})
+        1 for _ in db.patients.find({"disorders": {"$exists": True, "$ne": []}})
     )
-    n_requests = sum(1 for i in db.matches.find({"match_type": "internal"}))
+    n_requests = sum(1 for _ in db.matches.find({"match_type": "internal"}))
     n_positive_matches = sum(
-        1 for i in db.matches.find({"match_type": "internal", "has_matches": True})
+        1 for _ in db.matches.find({"match_type": "internal", "has_matches": True})
     )
     metrics = {
         "numberOfCases": n_cases,
@@ -77,7 +76,7 @@ def general_metrics(db):
         "numberOfGenes": n_genes,
         "numberOfUniqueGenes": len(db.patients.distinct("genomicFeatures.gene")),
         "numberOfVariants": n_vars,
-        "numberOfUniqueVariants": len(db.patients.distinct("genomicFeatures.variant")),
+        "numberOfUniqueVariants": len(db.patients.distinct(SEARCH_GEN_VARIANT)),
         "numberOfFeatures": n_feat,
         "numberOfUniqueFeatures": len(db.patients.distinct("features.id")),
         "numberOfUniqueGenesMatched": len(unique_gene_matches),

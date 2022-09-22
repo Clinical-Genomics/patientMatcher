@@ -105,7 +105,7 @@ def check_request(database, request):
     contact_href = request_json["patient"]["contact"]["href"]
 
     # If new contact is a simple email, add "mailto" schema
-    if bool(EMAIL_REGEX.match(contact_href)) is True and not "mailto:" in contact_href:
+    if bool(EMAIL_REGEX.match(contact_href)) is True and "mailto:" not in contact_href:
         contact_href = ":".join(["mailto", contact_href])
         request_json["patient"]["contact"]["href"] = contact_href
 

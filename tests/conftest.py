@@ -3,10 +3,12 @@ import json
 
 import mongomock
 import pytest
+import responses
 from patientMatcher.resources import path_to_benchmark_patients
 from patientMatcher.server import create_app
 
 DATABASE = "testdb"
+TEST_MAILTO = "mailto:test_contact@email.com"
 
 HGNC_SYMBOLS_2_ENSEMBL_IDS = {
     "AAGAB": "ENSG00000103591",
@@ -161,9 +163,7 @@ def match_objs():
         {  # External match where test_patient is the query and with results
             "_id": "match_1",
             "has_matches": True,
-            "data": {
-                "patient": {"id": "P0001058", "contact": {"href": "mailto:test_contact@email.com"}}
-            },
+            "data": {"patient": {"id": "P0001058", "contact": {"href": TEST_MAILTO}}},
             "results": [
                 {
                     "node": {"id": "test_node1", "label": "Test Node 1"},
@@ -181,7 +181,7 @@ def match_objs():
             "has_matches": False,
             "data": {
                 "patient": {"id": "P0001058"},
-                "contact": {"href": "mailto:test_contact@email.com"},
+                "contact": {"href": TEST_MAILTO},
             },
             "results": [
                 {
@@ -197,7 +197,7 @@ def match_objs():
             "data": {
                 "patient": {
                     "id": "external_patient_1",
-                    "contact": {"href": "mailto:test_contact@email.com"},
+                    "contact": {"href": TEST_MAILTO},
                 }
             },
             "results": [
@@ -271,3 +271,39 @@ def json_patients(demo_data_path):
     with open(demo_data_path) as json_data:
         patients = json.load(json_data)
     return patients
+
+
+@pytest.fixture()
+def mocked_ensemble_responses():
+    """Provides mock responses from Ensembl services"""
+    with responses.RequestsMock() as mock:
+        # a mocked Ensembl REST API converting gene symbol to Ensembl ID
+        responses.add(
+            responses.GET,
+            f"https://grch37.rest.ensembl.org/xrefs/symbol/homo_sapiens/GPX4?external_db=HGNC",
+            json=[{"id": "ENSG00000167468", "type": "gene"}],
+            status=200,
+        )
+        # a mocked Ensembl gene lookup service:
+        responses.add(
+            responses.GET,
+            f"https://grch37.rest.ensembl.org/lookup/id/ENSG00000167468",
+            json=[{"display_name": "GPX4"}],
+            status=200,
+        )
+        # a mocked liftover service:
+        responses.add(
+            responses.GET,
+            f"https://grch37.rest.ensembl.org/map/human/GRCh37/19:1105813..1105814/GRCh38?content-type=application/json",
+            json=[],
+            status=200,
+        )
+        # Another mocked liftover service:
+        responses.add(
+            responses.GET,
+            f"https://grch37.rest.ensembl.org/map/human/GRCh37/19:1106232..1106238/GRCh38?content-type=application/json",
+            json=[],
+            status=200,
+        )
+
+        yield mock

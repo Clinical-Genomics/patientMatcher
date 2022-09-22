@@ -87,6 +87,43 @@ class Diseases:
                 freq = float(num) / float(denom)
         return freq
 
+    def _parse_alt_diseases(self, terms):
+        """
+        Args:
+            terms(list), example: ['OMIM:604805']
+
+        Returns:
+            alt_terms(list), list of tuples [(alt_db1, alt_id1), (alt_db2, alt_id2)]
+        """
+        alt_terms = []
+        for term in terms:
+            alt_db = term.split(":")[0].strip()
+            alt_id = int(term.split(":")[1].strip())
+            if alt_db in ["MIM", "IM"]:
+                alt_db = "OMIM"
+            if alt_db not in self.databases:
+                continue
+            alt_terms.append((alt_db, alt_id))
+        return alt_terms
+
+    def _max_freq(self, phenotypes, freq, hpo_term):
+        """
+        Args:
+            phenotypes()
+            freq()
+            hpo_term()
+        Returns:
+            max_freq()
+        """
+        max_freq = None
+        if freq is not None and hpo_term in phenotypes:
+            old_freq = phenotypes[hpo_term]
+            if old_freq is None or old_freq < freq:
+                max_freq = freq
+        else:
+            max_freq = freq
+        return max_freq
+
     def _parse_diseases(self):
         """Parse diseases file, that is available under patientMatcher/resources"""
         disease_phenotypes = defaultdict(dict)
@@ -102,31 +139,18 @@ class Diseases:
                 diseases.append((items[0].strip(), items[1].strip()))  # diseases: [(OMIM, 102400)]
 
                 # Add alternative terms to list of diseases
-                alt_diseases = db_re.findall(items[5].strip())  # example: ['OMIM:147791']
-                for alt_disease in alt_diseases:
-                    alt_db = alt_disease.split(":")[0].strip()
-                    alt_db_id = int(alt_disease.split(":")[1].strip())
-                    if alt_db in ["MIM", "IM"]:
-                        alt_db = "OMIM"
-                    if alt_db not in self.databases:
-                        continue
-                    diseases.append((alt_db, alt_db_id))
+                alt_disease_terms = db_re.findall(items[5].strip())
+                for term in self._parse_alt_diseases(alt_disease_terms):
+                    diseases.append(term)
 
                 # Add HPO terms and frequencies to disease terms
                 hpo_term = items[4].strip()
                 freq = self._parse_disease_frequency(items[8])
+
                 for disease in diseases:
                     phenotypes = disease_phenotypes[disease]
                     # Collect max annotated frequency
-                    if freq is not None and hpo_term in phenotypes:
-                        old_freq = phenotypes[hpo_term]
-                        if old_freq is None or old_freq < freq:
-                            phenotypes[hpo_term] = freq
-                        if old_freq != freq:
-                            pass
-                    else:
-                        phenotypes[hpo_term] = freq
-                    # phenotypes[hpo_term] = None  # Do not populate disease frequencies
+                    phenotypes[hpo_term] = self._max_freq(phenotypes, freq, hpo_term)
 
         for (db, db_id), phenotypes in disease_phenotypes.items():
             disease = Disease(db, db_id, phenotypes)

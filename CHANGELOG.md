@@ -1,4 +1,6 @@
 ## [unreleased] -
+### Changed
+- Refactore to avoid code smells reported by SonarCloud
 ### Fixed
 - Broken Link to HPO definitions (`phenotype_annotation.tab`)
 - Security hotspots flagged by SonarCloud

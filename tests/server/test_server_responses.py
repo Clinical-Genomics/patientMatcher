@@ -8,6 +8,12 @@ from patientMatcher.parse.patient import mme_patient
 from patientMatcher.server.controllers import validate_response
 from patientMatcher.utils.add import add_node, backend_add_patient, load_demo_patients
 
+ADD_PATIENT_ENDPOINT = "patient/add"
+DELETE_PATIENT_ENDPOINT = "patient/delete/"
+MATCH_ENDPOINT = "/match"
+MATCH_EXTERNAL_ENDPOINT = "/match/external/"
+CONTENT_TYPE = "application/vnd.ga4gh.matchmaker.v1.0+json"
+
 
 def test_heartbeat(mock_app, database, test_client):
     """Test sending a GET request to see if app has a heartbeat"""
@@ -41,15 +47,13 @@ def test_add_patient_no_auth(mock_app, gpx4_patients):
 
     # try to add a patient without being authorized
     response = mock_app.test_client().post(
-        "patient/add", data=json.dumps(patient_data), headers=unauth_headers()
+        ADD_PATIENT_ENDPOINT, data=json.dumps(patient_data), headers=unauth_headers()
     )
     assert response.status_code == 401
 
 
 def test_add_patient_malformed_patient(mock_app, test_client, gpx4_patients, test_node):
     """Test sending a POST request to server to add a patient with malformed patient json"""
-
-    patient_data = gpx4_patients[1]
 
     # Given a node with authorized token
     ok_token = test_client["auth_token"]
@@ -60,7 +64,7 @@ def test_add_patient_malformed_patient(mock_app, test_client, gpx4_patients, tes
     # send a malformed json object using a valid auth token
     malformed_json = "{'_id': 'patient_id' }"
     response = mock_app.test_client().post(
-        "patient/add", data=malformed_json, headers=auth_headers(ok_token)
+        ADD_PATIENT_ENDPOINT, data=malformed_json, headers=auth_headers(ok_token)
     )
     # and check that you get the correct error code from server(400)
     assert response.status_code == 400
@@ -81,23 +85,17 @@ def test_add_patient_malformed_data(mock_app, test_client, gpx4_patients, test_n
 
     # add a patient not conforming to MME API using a valid auth token
     response = mock_app.test_client().post(
-        "patient/add", data=json.dumps(patient_data), headers=auth_headers(ok_token)
+        ADD_PATIENT_ENDPOINT, data=json.dumps(patient_data), headers=auth_headers(ok_token)
     )
     # and check that the server returns an error 422 (unprocessable entity)
     assert response.status_code == 422
 
 
 @responses.activate
-def test_add_patient(mock_app, test_client, gpx4_patients, test_node, database):
+def test_add_patient(
+    mock_app, test_client, gpx4_patients, test_node, database, mocked_ensemble_responses
+):
     """Test adding a patient by sending a POST request to the add endpoint with valid data"""
-
-    # GIVEN a mocked Ensembl REST API converting gene symbol to Ensembl ID
-    responses.add(
-        responses.GET,
-        f"https://grch37.rest.ensembl.org/xrefs/symbol/homo_sapiens/GPX4?external_db=HGNC",
-        json=[{"id": "ENSG00000167468", "type": "gene"}],
-        status=200,
-    )
 
     patient_data = gpx4_patients[1]
 
@@ -118,7 +116,7 @@ def test_add_patient(mock_app, test_client, gpx4_patients, test_node, database):
     patient_obj = {"patient": patient_data}  # this is a valid patient object
     # WHEN the patient is added using the add enpoint
     response = mock_app.test_client().post(
-        "patient/add", data=json.dumps(patient_obj), headers=auth_headers(ok_token)
+        ADD_PATIENT_ENDPOINT, data=json.dumps(patient_obj), headers=auth_headers(ok_token)
     )
     assert response.status_code == 200
 
@@ -160,7 +158,7 @@ def test_update_patient(mock_app, test_client, gpx4_patients, test_node, databas
     # GIVEN a patient added using the add enpoint
     patient_obj = {"patient": patient_data}  # this is a valid patient object
     response = mock_app.test_client().post(
-        "patient/add", data=json.dumps(patient_obj), headers=auth_headers(ok_token)
+        ADD_PATIENT_ENDPOINT, data=json.dumps(patient_obj), headers=auth_headers(ok_token)
     )
     assert response.status_code == 200
 
@@ -168,7 +166,7 @@ def test_update_patient(mock_app, test_client, gpx4_patients, test_node, databas
     patient_data["label"] = "modified patient label"
     patient_obj = {"patient": patient_data}  # this
     response = mock_app.test_client().post(
-        "patient/add", data=json.dumps(patient_obj), headers=auth_headers(ok_token)
+        ADD_PATIENT_ENDPOINT, data=json.dumps(patient_obj), headers=auth_headers(ok_token)
     )
     assert response.status_code == 200
 
@@ -261,7 +259,7 @@ def test_delete_patient(mock_app, database, gpx4_patients, test_client, match_ob
     delete_id = "P0001058"
 
     # try to delete patient without auth token:
-    response = mock_app.test_client().delete("".join(["patient/delete/", delete_id]))
+    response = mock_app.test_client().delete("".join([DELETE_PATIENT_ENDPOINT, delete_id]))
     assert response.status_code == 401
 
     # Add a valid client node
@@ -270,7 +268,7 @@ def test_delete_patient(mock_app, database, gpx4_patients, test_client, match_ob
 
     # Send delete request providing a valid token but a non valid id
     response = mock_app.test_client().delete(
-        "".join(["patient/delete/", "not_a_valid_ID"]), headers=auth_headers(ok_token)
+        "".join([DELETE_PATIENT_ENDPOINT, "not_a_valid_ID"]), headers=auth_headers(ok_token)
     )
     assert response.status_code == 200
     data = json.loads(response.data)
@@ -289,7 +287,7 @@ def test_delete_patient(mock_app, database, gpx4_patients, test_client, match_ob
 
     # Send valid patient ID and valid token
     response = mock_app.test_client().delete(
-        "".join(["patient/delete/", delete_id]), headers=auth_headers(ok_token)
+        "".join([DELETE_PATIENT_ENDPOINT, delete_id]), headers=auth_headers(ok_token)
     )
     assert response.status_code == 200
 
@@ -365,38 +363,10 @@ def test_patient_matches(mock_app, database, match_objs, test_client):
 
 
 @responses.activate
-def test_match_hgnc_symbol_patient(mock_app, gpx4_patients, test_client, database):
+def test_match_hgnc_symbol_patient(
+    mock_app, gpx4_patients, test_client, database, mocked_ensemble_responses
+):
     """Testing matching patient with gene symbol against patientMatcher database (internal matching)"""
-
-    # GIVEN a mocked Ensembl REST API converting gene symbol to Ensembl ID
-    responses.add(
-        responses.GET,
-        f"https://grch37.rest.ensembl.org/xrefs/symbol/homo_sapiens/GPX4?external_db=HGNC",
-        json=[{"id": "ENSG00000167468", "type": "gene"}],
-        status=200,
-    )
-
-    # GIVEN a mocked Ensembl gene lookup service:
-    responses.add(
-        responses.GET,
-        f"https://grch37.rest.ensembl.org/lookup/id/ENSG00000167468",
-        json=[{"display_name": "GPX4"}],
-        status=200,
-    )
-
-    # GIVEN a mocked liftover service:
-    responses.add(
-        responses.GET,
-        f"https://grch37.rest.ensembl.org/map/human/GRCh37/19:1105813..1105814/GRCh38?content-type=application/json",
-        json=[],
-        status=200,
-    )
-    responses.add(
-        responses.GET,
-        f"https://grch37.rest.ensembl.org/map/human/GRCh37/19:1106232..1106238/GRCh38?content-type=application/json",
-        json=[],
-        status=200,
-    )
 
     # add an authorized client to database
     ok_token = test_client["auth_token"]
@@ -424,7 +394,7 @@ def test_match_hgnc_symbol_patient(mock_app, gpx4_patients, test_client, databas
 
     # send a POST request to match patient with patients in database
     response = mock_app.test_client().post(
-        "/match", data=json.dumps(query_patient), headers=auth_headers(ok_token)
+        MATCH_ENDPOINT, data=json.dumps(query_patient), headers=auth_headers(ok_token)
     )
     assert response.status_code == 200  # POST request should be successful
     data = json.loads(response.data)
@@ -444,38 +414,10 @@ def test_match_hgnc_symbol_patient(mock_app, gpx4_patients, test_client, databas
 
 
 @responses.activate
-def test_match_ensembl_patient(mock_app, test_client, gpx4_patients, database):
+def test_match_ensembl_patient(
+    mock_app, test_client, gpx4_patients, database, mocked_ensemble_responses
+):
     """Test matching patient with ensembl gene against patientMatcher database (internal matching)"""
-
-    # GIVEN a mocked Ensembl REST API converting gene symbol to Ensembl ID
-    responses.add(
-        responses.GET,
-        f"https://grch37.rest.ensembl.org/xrefs/symbol/homo_sapiens/GPX4?external_db=HGNC",
-        json=[{"id": "ENSG00000167468", "type": "gene"}],
-        status=200,
-    )
-
-    # GIVEN a mocked Ensembl gene lookup service:
-    responses.add(
-        responses.GET,
-        f"https://grch37.rest.ensembl.org/lookup/id/ENSG00000167468",
-        json=[{"display_name": "GPX4"}],
-        status=200,
-    )
-
-    # GIVEN a mocked liftover service:
-    responses.add(
-        responses.GET,
-        f"https://grch37.rest.ensembl.org/map/human/GRCh37/19:1105813..1105814/GRCh38?content-type=application/json",
-        json=[],
-        status=200,
-    )
-    responses.add(
-        responses.GET,
-        f"https://grch37.rest.ensembl.org/map/human/GRCh37/19:1106232..1106238/GRCh38?content-type=application/json",
-        json=[],
-        status=200,
-    )
 
     # add an authorized client to database
     ok_token = test_client["auth_token"]
@@ -499,7 +441,7 @@ def test_match_ensembl_patient(mock_app, test_client, gpx4_patients, database):
 
     # send a POST request to match patient with patients in database
     response = mock_app.test_client().post(
-        "/match", data=json.dumps(query_patient), headers=auth_headers(ok_token)
+        MATCH_ENDPOINT, data=json.dumps(query_patient), headers=auth_headers(ok_token)
     )
     assert response.status_code == 200  # POST request should be successful
     data = json.loads(response.data)
@@ -577,7 +519,7 @@ def test_match_entrez_patient(mock_app, test_client, gpx4_patients, database):
 
     # send a POST request to match patient with patients in database
     response = mock_app.test_client().post(
-        "/match", data=json.dumps(query_patient), headers=auth_headers(ok_token)
+        MATCH_ENDPOINT, data=json.dumps(query_patient), headers=auth_headers(ok_token)
     )
     assert response.status_code == 200  # POST request should be successful
     data = json.loads(response.data)
@@ -616,13 +558,13 @@ def test_match_external(mock_app, test_client, test_node, database, json_patient
     assert database["patients"].find_one()
 
     # send an un-authorized match request to server
-    response = mock_app.test_client().post("".join(["/match/external/", inserted_id]))
+    response = mock_app.test_client().post("".join([MATCH_EXTERNAL_ENDPOINT, inserted_id]))
     # server should return 401 (not authorized)
     assert response.status_code == 401
 
     # send an authorized request with a patient ID that doesn't exist on server:
     response = mock_app.test_client().post(
-        "".join(["/match/external/", "not_a_valid_ID"]), headers=auth_headers(ok_token)
+        "".join([MATCH_EXTERNAL_ENDPOINT, "not_a_valid_ID"]), headers=auth_headers(ok_token)
     )
     # Response is valid
     assert response.status_code == 200
@@ -636,7 +578,7 @@ def test_match_external(mock_app, test_client, test_node, database, json_patient
 
     # Check that external matching doesn't work if there are no connected nodes:
     response = mock_app.test_client().post(
-        "".join(["/match/external/", inserted_id]), headers=auth_headers(ok_token)
+        "".join([MATCH_EXTERNAL_ENDPOINT, inserted_id]), headers=auth_headers(ok_token)
     )
     assert response.status_code == 200
     data = json.loads(response.data)
@@ -644,7 +586,7 @@ def test_match_external(mock_app, test_client, test_node, database, json_patient
 
     # Try to send a request for a match on a node that does not exist
     response = mock_app.test_client().post(
-        "".join(["/match/external/", inserted_id, "?node=meh"]), headers=auth_headers(ok_token)
+        "".join([MATCH_EXTERNAL_ENDPOINT, inserted_id, "?node=meh"]), headers=auth_headers(ok_token)
     )
     assert response.status_code == 200
     data = json.loads(response.data)
@@ -655,7 +597,7 @@ def test_match_external(mock_app, test_client, test_node, database, json_patient
     add_node(mongo_db=mock_app.db, obj=test_node, is_client=False)  # required for external matches
     # send a request to match patients against all nodes
     response = mock_app.test_client().post(
-        "".join(["/match/external/", inserted_id]), headers=auth_headers(ok_token)
+        "".join([MATCH_EXTERNAL_ENDPOINT, inserted_id]), headers=auth_headers(ok_token)
     )
 
     # Response should be valid
@@ -665,7 +607,7 @@ def test_match_external(mock_app, test_client, test_node, database, json_patient
 
     # send a request to match patients against the specific existing node:
     response = mock_app.test_client().post(
-        "".join(["/match/external/", inserted_id, "?node=", test_node["_id"]]),
+        "".join([MATCH_EXTERNAL_ENDPOINT, inserted_id, "?node=", test_node["_id"]]),
         headers=auth_headers(ok_token),
     )
     # Response should be valid
@@ -678,8 +620,8 @@ def test_match_external(mock_app, test_client, test_node, database, json_patient
 
 def unauth_headers():
     head = {
-        "Content-Type": "application/vnd.ga4gh.matchmaker.v1.0+json",
-        "Accept": ["application/vnd.ga4gh.matchmaker.v1.0+json", "application/json"],
+        "Content-Type": CONTENT_TYPE,
+        "Accept": [CONTENT_TYPE, "application/json"],
         "X-Auth-Token": "wrong_token",
     }
     return head
@@ -687,8 +629,8 @@ def unauth_headers():
 
 def auth_headers(test_token):
     head = {
-        "Content-Type": "application/vnd.ga4gh.matchmaker.v1.0+json",
-        "Accept": ["application/vnd.ga4gh.matchmaker.v1.0+json", "application/json"],
+        "Content-Type": CONTENT_TYPE,
+        "Accept": [CONTENT_TYPE, "application/json"],
         "X-Auth-Token": test_token,
     }
     return head

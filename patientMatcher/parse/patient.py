@@ -30,7 +30,7 @@ def href_validate(href):
             # validate email
             return bool(EMAIL_REGEX.match(href.split("mailto:")[1]))
         return all([result.scheme, result.netloc]) and result.scheme in ["http", "https", "mailto"]
-    except Exception as ex:
+    except Exception:
         return False
 
 
@@ -275,9 +275,8 @@ def validate_api(json_obj, is_request):
         is_request(bool): True if it is a request, False if it is a response
 
     Returns
-        validated(bool): True or False
+        bool: True or False if API is validted or not
     """
-    validated = True
     schema = "#/definitions/response"
     if is_request:
         schema = "#/definitions/request"

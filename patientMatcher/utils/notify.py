@@ -63,7 +63,6 @@ def notify_match_internal(database, match_obj, admin_email, mail, notify_complet
     sender = admin_email
     patient_id = None
     patient_label = None
-    results = None
     recipient = None
     email_subject = "MatchMaker Exchange: new patient match available."
     email_body = None
@@ -79,7 +78,6 @@ def notify_match_internal(database, match_obj, admin_email, mail, notify_complet
             patient_id=patient_id,
             match_results=match_obj["results"],
             patient_label=patient_label,
-            external_match=False,
             notify_complete=notify_complete,
         )
         LOG.info(
@@ -147,7 +145,6 @@ def notify_match_external(match_obj, admin_email, mail, notify_complete):
         patient_id=patient_id,
         match_results=match_obj["results"],
         patient_label=patient_label,
-        external_match=True,
         notify_complete=notify_complete,
     )
     LOG.info(
@@ -165,25 +162,18 @@ def notify_match_external(match_obj, admin_email, mail, notify_complete):
         LOG.error("An error occurred while sending an external match notification: {}".format(err))
 
 
-def active_match_email_body(
-    patient_id, match_results, patient_label=None, external_match=False, notify_complete=False
-):
+def active_match_email_body(patient_id, match_results, patient_label=None, notify_complete=False):
     """Returns the body message of the notification email when the patient was used as query patient
 
     Args:
         patient_id(str): the ID of the patient submitted by the  MME user which will be notified
         match_results(list): a list of patients which match with the patient whose contact is going to be notified
-        external_match(bool): True == match in connected nodes, False == match with other patients in database
         patient_label(str): the label of the patient submitted by the  MME user which will be notified (not mandatory field)
         notify_complete(bool): set to False to NOT notify variants and phenotype terms by email
 
     Returns:
         html(str): the body message
     """
-    search_type = "against the internal database of MatchMaker patients"
-    if external_match:
-        search_type = "against external nodes connected to MatchMaker"
-
     html = """
         ***This is an automated message, please do not reply to this email.***<br><br>
         <strong>MatchMaker Exchange patient matching notification:</strong><br><br>
