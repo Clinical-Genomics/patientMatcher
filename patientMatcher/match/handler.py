@@ -177,7 +177,6 @@ def external_matcher(database, patient, node=None):
             "Accept": "application/vnd.ga4gh.matchmaker.v1.0+json",
             "X-Auth-Token": token,
         }
-        LOG.info('sending HTTP request to server: "{}"'.format(server_name))
         # send request and get response from server
         json_response = None
         server_return = None

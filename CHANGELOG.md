@@ -1,4 +1,6 @@
 ## [unreleased] -
+### Changed
+- Decreased vulnerability by removing some server log messages
 ### Fixed
 - Broken Link to HPO definitions (`phenotype_annotation.tab`)
 - Security hotspots flagged by SonarCloud

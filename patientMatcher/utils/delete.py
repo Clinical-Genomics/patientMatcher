@@ -30,11 +30,7 @@ def delete_by_query(query, mongo_db, mongo_collection):
         deleted_entries(int): the number of deleted deleted entries or the error
     """
 
-    LOG.info(
-        'Removing entries from collection "{0}" using the following parameters:{1}'.format(
-            mongo_collection, query
-        )
-    )
+    LOG.info(f"Removing entries from collection {mongo_collection}")
     deleted_entries = 0
 
     try:
