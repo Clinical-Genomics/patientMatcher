@@ -55,5 +55,5 @@ def test_backend_remove_patient(gpx4_patients, database):
 
     # test removing a patient by label:
     remove_query = {"label": "350_2-test"}
-    elete_by_query(remove_query, database, "patients")
+    delete_by_query(remove_query, database, "patients")
     assert database["patients"].find_one() is None
