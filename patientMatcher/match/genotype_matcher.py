@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import logging
+
 from patientMatcher.parse.patient import (
     gtfeatures_to_genes_symbols,
     gtfeatures_to_variants,
@@ -63,7 +64,7 @@ def match(database, gt_features, max_score):
 
             # assign a genetic similarity score to each of these patients
             for patient in matching_patients:
-                gt_similarity = evaluate_GT_similarity(
+                gt_similarity = evaluate_gt_similarity(
                     gt_features, patient["genomicFeatures"], max_feature_similarity
                 )
                 LOG.info("GT similarity score is {}".format(gt_similarity))
@@ -81,7 +82,7 @@ def match(database, gt_features, max_score):
     return matches
 
 
-def evaluate_GT_similarity(query_features, db_patient_features, max_feature_similarity):
+def evaluate_gt_similarity(query_features, db_patient_features, max_feature_similarity):
     """Evaluates the genomic similarity of two patients based on genomic similarities
 
     Args:
@@ -124,11 +125,7 @@ def evaluate_GT_similarity(query_features, db_patient_features, max_feature_simi
             if q_variant == m_variant or m_variant in lifted_q_variant:
                 matched_features[n_feature] = max_feature_similarity
 
-            elif q_gene_id == m_gene_id:  # matching genes
-                matched_features[n_feature] = (
-                    max_feature_similarity / 4
-                )  # (0.25 of the max_feature_similarity)
-            elif q_gene_symbol and q_gene_symbol == m_gene_symbol:
+            elif q_gene_id == m_gene_id or (q_gene_symbol and q_gene_symbol == m_gene_symbol):
                 matched_features[n_feature] = (
                     max_feature_similarity / 4
                 )  # (0.25 of the max_feature_similarity)
