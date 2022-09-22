@@ -2,8 +2,6 @@
 
 import logging
 
-from pymongo import MongoClient
-
 LOG = logging.getLogger(__name__)
 
 
