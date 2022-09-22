@@ -1,20 +1,8 @@
 from patientMatcher.cli.commands import cli
 
 
-def test_cli_add_demo_data(mock_app, database, monkeypatch):
+def test_cli_add_demo_data(mock_app, database):
     """Test the class that adds demo data"""
-
-    # GIVEN a mocked Ensembl REST API for conversion of gene symbols to Ensembl IDs
-    class MockResponse(object):
-        def __init__(self, url):
-            self.status_code = 200
-            self.gene_symbol = url.split("homo_sapiens/")[1].split("?")[0]
-
-        def json(self):
-            return [{"id": self.gene_symbol, "type": "gene"}]
-
-    def mock_get(url, headers):
-        return MockResponse(url)
 
     runner = mock_app.test_cli_runner()
 

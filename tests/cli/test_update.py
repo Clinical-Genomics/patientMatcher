@@ -2,6 +2,10 @@ import responses
 from patientMatcher.cli.commands import cli
 from patientMatcher.constants import PHENOTYPE_TERMS
 
+CONTACT_HREF = "contact.href"
+NEW_NAME = "New Name"
+TEST_INST = "Test Institution"
+
 
 @responses.activate
 def test_update_resources(mock_app):
@@ -40,7 +44,7 @@ def test_update_contact(mock_app, gpx4_patients):
     patients_collection.insert_many(gpx4_patients)
     test_patients = patients_collection.find()
     # Sharing a contact information
-    contacts = test_patients.distinct("contact.href")
+    contacts = test_patients.distinct(CONTACT_HREF)
     assert len(contacts) == 1
 
     # WHEN their contact info is updated using the cli
@@ -55,16 +59,16 @@ def test_update_contact(mock_app, gpx4_patients):
             "--href",
             new_href,
             "--name",
-            "New Name",
+            NEW_NAME,
             "--institution",
-            "Test Institution",
+            TEST_INST,
         ],
         input="y",
     )
     assert result.exit_code == 0
 
     # THEN the config info should be updated
-    updated_patient = patients_collection.find({"contact.href": ":".join(["mailto", new_href])})
+    updated_patient = patients_collection.find({CONTACT_HREF: ":".join(["mailto", new_href])})
     assert len(list(updated_patient)) > 0
 
 
@@ -78,7 +82,7 @@ def test_update_contact_no_href_match(mock_app, gpx4_patients):
     patients_collection.insert_many(gpx4_patients)
     test_patients = patients_collection.find()
     # Sharing a contact information
-    contacts = test_patients.distinct("contact.href")
+    contacts = test_patients.distinct(CONTACT_HREF)
     assert len(contacts) == 1
     old_contact_href = contacts[0]
 
@@ -98,15 +102,15 @@ def test_update_contact_no_href_match(mock_app, gpx4_patients):
             "--href",
             new_href,
             "--name",
-            "New Name",
+            NEW_NAME,
             "--institution",
-            "Test Institution",
+            TEST_INST,
         ],
     )
     assert result.exit_code == 0
 
     # THEN no patients contact should be updated
-    assert patients_collection.find_one({"contact.href": ":".join(["mailto", new_href])}) is None
+    assert patients_collection.find_one({CONTACT_HREF: ":".join(["mailto", new_href])}) is None
 
 
 def test_update_contact_multiple_href_match(mock_app, gpx4_patients):
@@ -134,11 +138,11 @@ def test_update_contact_multiple_href_match(mock_app, gpx4_patients):
             "--href",
             new_href,
             "--name",
-            "New Name",
+            NEW_NAME,
             "--institution",
-            "Test Institution",
+            TEST_INST,
         ],
     )
 
     # THEN no patients contact should be updated
-    assert patients_collection.find_one({"contact.href": ":".join(["mailto", new_href])}) is None
+    assert patients_collection.find_one({CONTACT_HREF: ":".join(["mailto", new_href])}) is None

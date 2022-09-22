@@ -49,11 +49,11 @@ def test_backend_remove_patient(gpx4_patients, database):
 
     # test removing a patient by ID:
     remove_query = {"_id": "P0001058"}
-    deleted = delete_by_query(remove_query, database, "patients")
+    delete_by_query(remove_query, database, "patients")
     db_patients = database["patients"].find()
     assert len(list(db_patients)) == 1
 
     # test removing a patient by label:
     remove_query = {"label": "350_2-test"}
-    deleted = delete_by_query(remove_query, database, "patients")
+    elete_by_query(remove_query, database, "patients")
     assert database["patients"].find_one() is None

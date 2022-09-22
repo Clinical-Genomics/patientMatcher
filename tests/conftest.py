@@ -7,6 +7,7 @@ from patientMatcher.resources import path_to_benchmark_patients
 from patientMatcher.server import create_app
 
 DATABASE = "testdb"
+TEST_MAILTO = "mailto:test_contact@email.com"
 
 HGNC_SYMBOLS_2_ENSEMBL_IDS = {
     "AAGAB": "ENSG00000103591",
@@ -161,9 +162,7 @@ def match_objs():
         {  # External match where test_patient is the query and with results
             "_id": "match_1",
             "has_matches": True,
-            "data": {
-                "patient": {"id": "P0001058", "contact": {"href": "mailto:test_contact@email.com"}}
-            },
+            "data": {"patient": {"id": "P0001058", "contact": {"href": TEST_MAILTO}}},
             "results": [
                 {
                     "node": {"id": "test_node1", "label": "Test Node 1"},
@@ -181,7 +180,7 @@ def match_objs():
             "has_matches": False,
             "data": {
                 "patient": {"id": "P0001058"},
-                "contact": {"href": "mailto:test_contact@email.com"},
+                "contact": {"href": TEST_MAILTO},
             },
             "results": [
                 {
@@ -197,7 +196,7 @@ def match_objs():
             "data": {
                 "patient": {
                     "id": "external_patient_1",
-                    "contact": {"href": "mailto:test_contact@email.com"},
+                    "contact": {"href": TEST_MAILTO},
                 }
             },
             "results": [

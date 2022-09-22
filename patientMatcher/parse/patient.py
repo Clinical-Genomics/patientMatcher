@@ -167,7 +167,7 @@ def _convert_gene(gene):
         if symbol:
             gene = symbol_to_ensembl(symbol) or gene
 
-    except Exception:
+    except Exception as ex:
         LOG.error(
             f"An error occurred while converting gene format using the Ensembl Rest API: {ex}"
         )
