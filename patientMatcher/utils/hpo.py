@@ -73,7 +73,7 @@ class HPNode(object):
 class HPO(object):
     """Parse and HPO ontology to make it available for phenotype matching"""
 
-    def init_app(self, app):
+    def init_app(self):
         """Initialize the HPO ontology when the app is launched."""
         self.hps = {}
         self._parse_ontolology()

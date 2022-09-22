@@ -95,8 +95,8 @@ def create_app():
         )
         return
 
-    extensions.hpo.init_app(app)
-    extensions.diseases.init_app(app)
+    extensions.hpo.init_app()
+    extensions.diseases.init_app()
     extensions.hpoic.init_app(app, extensions.hpo, extensions.diseases)
 
     if app.config.get("MAIL_SERVER"):
