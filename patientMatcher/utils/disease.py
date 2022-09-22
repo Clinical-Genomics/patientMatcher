@@ -55,7 +55,7 @@ class Diseases:
         self.databases = ["DECIPHER", "OMIM", "ORPHA"]
         self.diseases = {}
         self._parse_diseases()
-        LOG.info(f"Parsed {len(self.diseases.keys())} disease/phenotypes from resource file")
+        LOG.info(f"Parsed {len(self.diseases)} disease/phenotypes from resource file")
 
     def _parse_disease_frequency(self, field):
         """Parse disease frequency (col 8 in phenotype anno file)"""
