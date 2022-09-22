@@ -50,7 +50,7 @@ class Diseases:
     Resources included in this file: DECIPHER, OMIM, ORPHANET
     """
 
-    def init_app(self, app):
+    def init_app(self):
         """Initialize the diseases object when the app is launched"""
         self.databases = ["DECIPHER", "OMIM", "ORPHA"]
         self.diseases = {}
