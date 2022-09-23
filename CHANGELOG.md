@@ -2,7 +2,7 @@
 ### Changed
 - Refactor to avoid code smells reported by SonarCloud
 ### Fixed
-- Broken Link to HPO definitions (`phenotype_annotation.tab`)
+- Broken link to HPO definitions (`phenotype_annotation.tab`)
 - Security hotspots flagged by SonarCloud
 - Decreased vulnerability by removing some server log messages
 - Problems flagged as bugs by SonarCloud
