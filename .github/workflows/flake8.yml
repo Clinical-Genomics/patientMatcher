@@ -4,7 +4,7 @@ on: [pull_request]
 
 jobs:
   flake8-lint:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     name: Flake8
     steps:
       - uses: actions/checkout@v2

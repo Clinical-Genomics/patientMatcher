@@ -1,6 +1,7 @@
 ## [unreleased]
 ### Fixed
 - Parsing and downloading of the HPO definitions in the new format (`phenotype.hpoa`)
+- Replaced deprecated version of Ubuntu in GitHub actions
 
 ## [4.2] - 2022-09-23
 ### Changed
