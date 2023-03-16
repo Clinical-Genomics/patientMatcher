@@ -1,4 +1,4 @@
-## [unreleased]
+## [4.3] - 2023-03-16
 ### Changed
 - Abort server startup if phenotypes terms are not correctly parse from resource files
 ### Fixed
