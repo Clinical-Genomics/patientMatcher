@@ -1,4 +1,6 @@
 ## [unreleased]
+### Changed
+- Abort server startup if phenotypes terms are not correctly parse from resource files
 ### Fixed
 - Parsing and downloading of the HPO definitions in the new format (`phenotype.hpoa`)
 - Replaced deprecated version of Ubuntu in GitHub actions
