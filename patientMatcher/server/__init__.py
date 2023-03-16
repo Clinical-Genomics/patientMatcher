@@ -91,7 +91,7 @@ def create_app():
     # If phenotype resources are missing display error and exit
     if available_phenotype_resources() is False:
         LOG.error(
-            "Required files hp.obo.txt and phenotype_annotation.tab.txt not found on the server. Please download them with the command 'pmatcher update resources'."
+            "Required files hp.obo.txt and phenotype.hpoa not found on the server. Please download them with the command 'pmatcher update resources'."
         )
         return
 
@@ -99,8 +99,12 @@ def create_app():
     extensions.diseases.init_app()
     extensions.hpoic.init_app(app, extensions.hpo, extensions.diseases)
 
-    if app.config.get("MAIL_SERVER"):
+    for terms in [extensions.hpo.hps, extensions.diseases.diseases]:
+        if not terms:
+            LOG.error("An error occurred while parsing resource files.")
+            return
 
+    if app.config.get("MAIL_SERVER"):
         app.config["MAIL_SUPPRESS_SEND"] = False
         app.config["MAIL_DEBUG"] = True
 
