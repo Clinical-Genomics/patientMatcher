@@ -2,7 +2,7 @@ import pkg_resources
 
 ###### Files ######
 hpo_filename = "resources/hp.obo.txt"
-phenotype_annotation_filename = "resources/phenotype_annotation.tab.txt"
+phenotype_annotation_filename = "resources/phenotype.hpoa"
 benchmark_patients = "resources/benchmark_patients.json"
 json_api = "resources/api.json"
 

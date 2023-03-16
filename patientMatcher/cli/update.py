@@ -76,6 +76,6 @@ def resources(test):
     """Updates HPO terms and disease ontology from the web.
     Specifically collect files from:
     http://purl.obolibrary.org/obo/hp.obo
-    https://ci.monarchinitiative.org/view/hpo/job/hpo.annotations/lastSuccessfulBuild/artifact/rare-diseases/misc/phenotype_annotation.tab
+    https://github.com/obophenotype/human-phenotype-ontology/releases/latest/download/phenotype.hpoa
     """
     update_resources(test)

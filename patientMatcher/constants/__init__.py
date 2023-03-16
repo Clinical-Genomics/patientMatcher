@@ -17,7 +17,7 @@ PHENOTYPE_TERMS = {
         "resource_path": path_to_hpo_terms,
     },
     "hpo_annotations": {
-        "url": "https://purl.obolibrary.org/obo/hp/hpoa/phenotype_annotation.tab",
+        "url": "https://github.com/obophenotype/human-phenotype-ontology/releases/latest/download/phenotype.hpoa",
         "resource_path": path_to_phenotype_annotations,
     },
 }

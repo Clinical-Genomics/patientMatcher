@@ -59,17 +59,12 @@ class Diseases:
 
     def _parse_disease_frequency(self, field):
         """Parse disease frequency (col 8 in phenotype anno file)"""
+
         if not field:
             return None
-
-        if field.upper() in FREQUENCY_TERMS:
+        if field.upper() in FREQUENCY_TERMS:  # example -> HP:0040281
             return FREQUENCY_TERMS[field]
-
-        field = field.lower()
-
-        if field in FREQUENCIES:
-            return FREQUENCIES[field]
-        if field.endswith("%"):
+        if field.endswith("%"):  # example ->  12%
             field = field.replace("%", "")
             if "-" in field:
                 # Average any frequency ranges
@@ -77,14 +72,11 @@ class Diseases:
                 freq = (float(low) + float(high)) / 2 / 100
             else:
                 freq = float(field) / 100
-        else:
-            try:
-                num, denom = fraction_frequency_re.split(field)
-            except Exception as ex:
-                LOG.warning(f"Error parsing frequency: {field} -> {ex}")
-                freq = default
-            else:
-                freq = float(num) / float(denom)
+        else:  # example ->  33/35
+            affected = int(field.split("/")[0])
+            total = int(field.split("/")[1])
+            freq = float(affected * 100) / total
+
         return freq
 
     def _parse_alt_diseases(self, terms):
@@ -129,23 +121,26 @@ class Diseases:
         disease_phenotypes = defaultdict(dict)
         with open(path_to_phenotype_annotations, encoding="utf-8") as disease_file:
             for line in disease_file:
+                if line.startswith("#"):
+                    continue
                 diseases = []
                 line = line.strip()
                 items = line.split("\t")
 
-                db = items[0]
-                if db not in self.databases:
+                pheno_db = items[0].split(":")[0]
+                pheno_id = items[0].split(":")[1]
+                if pheno_db not in self.databases:
                     continue
-                diseases.append((items[0].strip(), items[1].strip()))  # diseases: [(OMIM, 102400)]
+                diseases.append((pheno_db.strip(), pheno_id.strip()))  # diseases: [(OMIM, 102400)]
 
                 # Add alternative terms to list of diseases
-                alt_disease_terms = db_re.findall(items[5].strip())
+                alt_disease_terms = db_re.findall(items[4].strip())
                 for term in self._parse_alt_diseases(alt_disease_terms):
                     diseases.append(term)
 
                 # Add HPO terms and frequencies to disease terms
-                hpo_term = items[4].strip()
-                freq = self._parse_disease_frequency(items[8])
+                hpo_term = items[3].strip()
+                freq = self._parse_disease_frequency(items[7])
 
                 for disease in diseases:
                     phenotypes = disease_phenotypes[disease]

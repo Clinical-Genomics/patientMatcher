@@ -1,3 +1,7 @@
+## [unreleased]
+### Fixed
+- Parsing and downloading of the HPO definitions in the new format (`phenotype.hpoa`)
+
 ## [4.2] - 2022-09-23
 ### Changed
 - Refactor to avoid code smells reported by SonarCloud
