@@ -1,4 +1,4 @@
-name: Publish to Docker stage
+name: Build and push to Docker Hub stage
 
 on:
   pull_request:
