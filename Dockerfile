@@ -9,7 +9,7 @@ RUN python3 -m venv /home/worker/venv
 ENV PATH="/home/worker/venv/bin:$PATH"
 
 # Create a non-root user to run commands
-RUN groupadd --gid 1000 worker && useradd -g worker --uid 1000 --shell /usr/sbin/nologin --create-home worker
+RUN groupadd --gid 1000 worker && useradd -g worker --uid 1000 --create-home worker
 
 WORKDIR /home/worker/app
 COPY . /home/worker/app
