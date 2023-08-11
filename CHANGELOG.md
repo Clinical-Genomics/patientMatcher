@@ -1,6 +1,9 @@
 ## [unreleased]
 ### Fixed
 - `Build and publish to Docker Hub stage` README page badge 
+- Parsing of `phenotype.hpoa` file
+### Changed
+- Updated resource files
 
 ## [4.3] - 2023-03-16
 ### Changed
