@@ -6,7 +6,7 @@ LABEL about.home="https://github.com/Clinical-Genomics/patientMatcher"
 
 # Install and run commands from virtual environment
 RUN python3 -m venv /home/worker/venv
-ENV PATH="/home/worker/venv/bin:$PATH"
+ENV PATH="/venv/bin:$PATH"
 
 # Create a non-root user to run commands
 RUN groupadd --gid 1000 worker && useradd -g worker --uid 1000 --create-home worker
