@@ -21,7 +21,7 @@ def populate_index_data():
         node_stats=metrics(),
         node_disclaimer=current_app.config.get("DISCLAIMER"),
         node_contacts=current_app.config.get("ADMINS"),
-        connected_nodes=len(get_nodes(current_app.db)),
+        connected_nodes=get_nodes(current_app.db),
         software_version=__version__,
     )
     return data

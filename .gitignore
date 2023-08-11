@@ -15,6 +15,7 @@ develop-eggs
 lib
 lib64
 dist/
+.idea/
 
 # Mac OSX
 .DS_Store
