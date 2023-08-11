@@ -134,9 +134,7 @@ class Diseases:
                 pheno_id = items[0].split(":")[1]
                 if pheno_db not in self.databases:
                     continue
-                diseases.append(
-                    (pheno_db.strip(), pheno_id.strip())
-                )  # diseases: [(OMIM, 102400)]
+                diseases.append((pheno_db.strip(), pheno_id.strip()))  # diseases: [(OMIM, 102400)]
 
                 # Add alternative terms to list of diseases
                 alt_disease_terms = db_re.findall(items[4].strip())
