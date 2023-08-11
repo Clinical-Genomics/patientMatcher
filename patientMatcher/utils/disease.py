@@ -127,6 +127,9 @@ class Diseases:
                 line = line.strip()
                 items = line.split("\t")
 
+                if ":" not in items[0]:  # Sometimes header line doesn't start with '#'
+                    continue
+
                 pheno_db = items[0].split(":")[0]
                 pheno_id = items[0].split(":")[1]
                 if pheno_db not in self.databases:
