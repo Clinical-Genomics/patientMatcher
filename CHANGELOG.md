@@ -2,6 +2,7 @@
 ### Fixed
 - `Build and publish to Docker Hub stage` README page badge 
 - Parsing of `phenotype.hpoa` file
+- Gunicorn workers boot by replacing Dockerfile base image
 ### Changed
 - Updated resource files
 
