@@ -18,7 +18,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 FROM clinicalgenomics/python3.8-slim-bullseye-venv:1.0 AS deployer
 
-RUN groupadd --gid 1000 worker && useradd -g worker --uid 1000 --create-home worker
+RUN groupadd --gid 1000 worker && useradd -g worker --uid 1000 --shell /usr/sbin/nologin --create-home worker
 COPY --chown=worker:worker --from=builder /home/worker/venv /home/worker/venv
 
 RUN mkdir /home/worker/app
