@@ -37,10 +37,10 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
       <div class="w3-container w3-padding-16" style="background-color:#FCD271;">
         <div class="w3-left"><em class="fas fa-hospital-alt w3-xxxlarge"></em></div>
         <div class="w3-right">
-          <h3>{{connected_nodes}}</h3>
+          <h3>{{connected_nodes|length}}</h3>
         </div>
         <div class="w3-clear"></div>
-        <h4>Connected nodes</h4>
+        <h4>Connected nodes <a href="#" class="fas fa-info-circle" style="text-decoration: none;" onclick="document.getElementById('connectionsModal').style.display='block'"></a></h4>
         <h6>Requests received: {{node_stats.numberOfRequestsReceived}}</h6>
         <h6>Potential matches sent: {{node_stats.numberOfPotentialMatchesSent }}</h6>
       </div>
@@ -103,18 +103,34 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
   </div>
   <div class="w3-container w3-light-grey w3-padding-16">
     <span class="w3-bar-item w3-left">Powered by <a href="https://www.scilifelab.se/units/clinical-genomics-stockholm/" target="_blank" rel="noopener">Clinical Genomics, Science For Life Laboratory, Sweden</a></span>
-    <button onclick="document.getElementById('id01').style.display='block'" class="w3-bar-item w3-right">Cite PatientMatcher</button>
+    <button onclick="document.getElementById('citeModal').style.display='block'" class="w3-bar-item w3-right">Cite PatientMatcher</button>
   </div>
 </div>
 
-<!-- The Modal -->
-<div id="id01" class="w3-modal">
+<!-- Modal windows -->
+<div id="citeModal" class="w3-modal">
   <div class="w3-modal-content">
     <div class="w3-container">
-      <span onclick="document.getElementById('id01').style.display='none'" class="w3-button w3-red w3-display-topright">&times;</span>
+      <span onclick="document.getElementById('citeModal').style.display='none'" class="w3-button w3-red w3-display-topright">&times;</span>
       <p>
         If you publish scientific papers using PatientMatcher, please cite our paper <a href="https://onlinelibrary.wiley.com/doi/10.1002/humu.24358" target="_blanl">PatientMatcher: A customizable Python-based open-source tool for matching undiagnosed rare disease patients via the Matchmaker Exchange network</a>
       </p>
+    </div>
+  </div>
+</div>
+
+<div id="connectionsModal" class="w3-modal">
+  <div class="w3-modal-content">
+    <div class="w3-container">
+      <span onclick="document.getElementById('connectionsModal').style.display='none'" class="w3-button w3-red w3-display-topright">&times;</span>
+      <div class="w3-row-padding w3-margin-top">
+        <h5 class="w3-bottombar w3-border-orange">List of connected nodes</h5>
+        <ul class="w3-ul">
+          {% for node in connected_nodes %}
+          <li>{{node.description}}</li>
+          {% endfor %}
+        </ul>
+      </div>
     </div>
   </div>
 </div>

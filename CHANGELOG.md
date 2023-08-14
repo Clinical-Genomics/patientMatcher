@@ -1,4 +1,6 @@
 ## [unreleased]
+### Added
+- Option to display the description of the connected nodes on the index page
 ### Fixed
 - `Build and publish to Docker Hub stage` README page badge 
 - Parsing of `phenotype.hpoa` file
