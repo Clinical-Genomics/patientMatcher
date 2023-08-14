@@ -1,4 +1,4 @@
-## [unreleased]
+## [4.4] - 2023-08-14
 ### Added
 - Option to display the description of the connected nodes on the index page
 ### Fixed
