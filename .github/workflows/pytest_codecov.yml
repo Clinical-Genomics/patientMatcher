@@ -35,7 +35,7 @@ jobs:
     strategy:
       matrix:
         group: [1, 2, 3]
-        mongodb-version: ['4.4']
+        mongodb-version: ['7.0.2']
     env:
       PMATCHER_CONFIG: ../instance/config.py
     steps:

@@ -1,3 +1,9 @@
+## [unreleased]
+## Changed
+- Unfreeze PyMongo dependency
+- Use MongoDB version 7.0.2 in docker-compose.yml
+- Execute tests using MongoDB 7.0.2
+
 ## [4.4] - 2023-08-14
 ### Added
 - Option to display the description of the connected nodes on the index page
