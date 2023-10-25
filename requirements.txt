@@ -8,7 +8,7 @@ responses
 jsonschema
 
 ## database connection
-pymongo<4.0
+pymongo
 
 ##backend
 enlighten
