@@ -1,8 +1,8 @@
 ## [unreleased]
 ## Changed
 - Unfreeze PyMongo dependency
-- Use MongoDB version 7.0.2 in docker-compose.yml
-- Execute tests using MongoDB 7.0.2
+- Use MongoDB version 7 in docker-compose.yml
+- Execute tests using MongoDB 7
 
 ## [4.4] - 2023-08-14
 ### Added
