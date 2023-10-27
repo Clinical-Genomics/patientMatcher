@@ -4,7 +4,7 @@ version: '3'
 services:
   mongodb:
     # Using the official MongoDB image 4.4.9
-    image: mongo:7.0.2
+    image: mongo:7
     container_name: mongodb
     networks:
       - pmatcher-net
