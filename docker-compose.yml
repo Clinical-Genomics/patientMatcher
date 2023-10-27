@@ -3,7 +3,7 @@ version: '3'
 # sudo docker-compose up
 services:
   mongodb:
-    # Using the official MongoDB image 4.4.9
+    # Using the official MongoDB image 7
     image: mongo:7
     container_name: mongodb
     networks:
