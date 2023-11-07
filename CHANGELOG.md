@@ -1,4 +1,4 @@
-## [unreleased]
+## [4.5] - 2023-11-07
 ## Changed
 - Unfreeze PyMongo dependency
 - Use MongoDB version 7 in docker-compose.yml
