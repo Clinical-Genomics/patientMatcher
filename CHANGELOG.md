@@ -1,3 +1,9 @@
+## [4.5.1] - 2024-09-04
+### Fixed
+- Bump actions/download-artifact from 2 to 4 in /.github/workflows (recommended by security advisory)
+- Update version of other actions
+- Broken upload to Codecov step in Tests & Coverage GitHub action
+
 ## [4.5] - 2023-11-07
 ## Changed
 - Unfreeze PyMongo dependency
