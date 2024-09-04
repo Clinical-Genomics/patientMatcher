@@ -40,7 +40,7 @@ jobs:
       PMATCHER_CONFIG: ../instance/config.py
     steps:
       - name: Start MongoDB
-        uses: supercharge/mongodb-github-action@1
+        uses: supercharge/mongodb-github-action@1.11.0
         with:
          mongodb-version: ${{ matrix.mongodb-version }}
 
