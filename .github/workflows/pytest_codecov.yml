@@ -69,6 +69,7 @@ jobs:
         with:
           name: coverage${{ matrix.group }}
           path: .coverage
+          include-hidden-files: true
 
   coverage:
     needs: test
