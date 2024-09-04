@@ -11,10 +11,10 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Set up Python 3.8
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: 3.8
 
@@ -24,7 +24,7 @@ jobs:
           pip check
 
         # Cache package installation step to speed up the following step
-      - uses: actions/cache@v2
+      - uses: actions/cache@v4
         with:
           path: ${{ env.pythonLocation }}
           key: ${{ env.pythonLocation }}-${{ hashFiles('setup.py') }}-${{ hashFiles('requirements-dev.txt') }}
@@ -40,19 +40,19 @@ jobs:
       PMATCHER_CONFIG: ../instance/config.py
     steps:
       - name: Start MongoDB
-        uses: supercharge/mongodb-github-action@1.7.0
+        uses: supercharge/mongodb-github-action@1
         with:
          mongodb-version: ${{ matrix.mongodb-version }}
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Set up Python 3.8
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: 3.8
 
         # Cache package installation step to speed up the following step
-      - uses: actions/cache@v2
+      - uses: actions/cache@v4
         with:
           path: ${{ env.pythonLocation }}
           key: ${{ env.pythonLocation }}-${{ hashFiles('setup.py') }}-${{ hashFiles('requirements-dev.txt') }}
@@ -65,7 +65,7 @@ jobs:
         run: pytest --cov --test-group-count 3 --test-group=${{ matrix.group }} --test-group-random-seed=12345
 
       - name: Upload coverage
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: coverage${{ matrix.group }}
           path: .coverage
@@ -74,9 +74,9 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Set up Python 3.8
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: 3.8
       - name: Install deps
@@ -85,10 +85,10 @@ jobs:
           pip install coverage
       - name: Download all artifacts
         # Download and combine coverage1, coverage2, etc.
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@@v4
       - name: Run coverage
         run: |
           coverage combine coverage*/.coverage*
           coverage report
           coverage xml
-      - uses: codecov/codecov-action@v2
+      - uses: codecov/codecov-action@v4

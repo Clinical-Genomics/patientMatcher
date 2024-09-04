@@ -7,16 +7,16 @@ jobs:
     name: vulture
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Find changed Python files
         id: files
-        uses: Ana06/get-changed-files@v2.0.0
+        uses: Ana06/get-changed-files@v2
         with:
           filter: "*.py"
 
       - name: Scavenge
-        uses: anaynayak/python-vulture-action@v1.0
+        uses: anaynayak/python-vulture-action@v1
         id: vulture
         with:
           vulture-args: --min-confidence 80 --ignore-names args,kwargs ${{steps.files.outputs.all}}
