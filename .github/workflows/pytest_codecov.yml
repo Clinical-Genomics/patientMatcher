@@ -5,6 +5,16 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:6.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongo --eval 'db.adminCommand(\"ping\")'" 
+          --health-interval 10s 
+          --health-timeout 5s 
+          --health-retries 5
 
     steps:
       - uses: actions/checkout@v3
@@ -18,7 +28,8 @@ jobs:
         run: curl -sSL https://install.python-poetry.org | python3 -
 
       - name: Configure Poetry to not create virtualenvs
-        run: poetry config virtualenvs.create false --local
+        run: |
+          poetry config virtualenvs.create false --local
 
       - name: Install dependencies
         run: poetry install --no-interaction --no-ansi
@@ -26,11 +37,12 @@ jobs:
       - name: Run tests with pytest
         env:
           PMATCHER_CONFIG: ../instance/config.py
-        run: poetry run pytest
+        run: poetry run pytest patientMatcher/tests
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
-          files: ./coverage.xml
+          files: coverage.xml
           fail_ci_if_error: true
+
 
