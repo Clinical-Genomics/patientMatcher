@@ -1,35 +1,28 @@
-[project]
+[tool.poetry]
 name = "patientmatcher"
 version = "4.5.1"
 description = "patientMatcher - a Python and MongoDB - based MatchMaker Exchange server"
-authors = [
-    {name = "Chiara Rasi (northwestwitch)"}
-]
-
-packages = [
-    { include = "patientMatcher" }
-]
-
-license = {text = "MIT"}
+authors = ["Chiara Rasi (northwestwitch)"]
+license = "MIT"
 readme = "README.md"
-requires-python = ">=3.9"
-dependencies = [
-    "coloredlogs (>=15.0.1,<16.0.0)",
-    "flask (>=3.1.1,<4.0.0)",
-    "flask-mail (>=0.10.0,<0.11.0)",
-    "flask-negotiate (>=0.1.0,<0.2.0)",
-    "requests (>=2.32.4,<3.0.0)",
-    "responses (>=0.25.7,<0.26.0)",
-    "jsonschema (>=4.24.1,<5.0.0)",
-    "pymongo (>=4.13.2,<5.0.0)",
-    "enlighten (>=1.14.1,<2.0.0)",
-    "clint (>=0.5.1,<0.6.0)"
-]
+homepage = ""  # optional
+repository = ""  # optional
+keywords = []  # optional
+classifiers = []  # optional
+packages = [{ include = "patientMatcher" }]
 
-
-[build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
+[tool.poetry.dependencies]
+python = ">=3.9,<4.0"
+coloredlogs = ">=15.0.1,<16.0.0"
+flask = ">=3.1.1,<4.0.0"
+flask-mail = ">=0.10.0,<0.11.0"
+flask-negotiate = ">=0.1.0,<0.2.0"
+requests = ">=2.32.4,<3.0.0"
+responses = ">=0.25.7,<0.26.0"
+jsonschema = ">=4.24.1,<5.0.0"
+pymongo = ">=4.13.2,<5.0.0"
+enlighten = ">=1.14.1,<2.0.0"
+clint = ">=0.5.1,<0.6.0"
 
 [tool.poetry.group.dev.dependencies]
 click = "<8.2"
@@ -42,4 +35,8 @@ flask-mail = "^0.10.0"
 
 [tool.poetry.scripts]
 pmatcher = "patientMatcher.cli.commands:cli"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
 
