@@ -23,9 +23,6 @@ jobs:
       - name: Install dependencies
         run: poetry install --no-interaction --no-ansi
 
-      - name: Set config env variable
-        run: echo "PATIENTMATCHER_CONFIG=$(pwd)/patientMatcher/instance/config.py" >> $GITHUB_ENV
-
       - name: Run tests with pytest
         run: poetry run pytest
 
