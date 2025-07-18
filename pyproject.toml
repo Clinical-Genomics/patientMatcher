@@ -5,6 +5,11 @@ description = "patientMatcher - a Python and MongoDB - based MatchMaker Exchange
 authors = [
     {name = "Chiara Rasi (northwestwitch)"}
 ]
+
+packages = [
+    { include = "patientMatcher" }
+]
+
 license = {text = "MIT"}
 readme = "README.md"
 requires-python = ">=3.9"
