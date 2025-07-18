@@ -27,7 +27,7 @@ jobs:
         run: echo "PATIENTMATCHER_CONFIG=$(pwd)/patientMatcher/instance/config.py" >> $GITHUB_ENV
 
       - name: Run tests with pytest
-        run: poetry run pytest patientMatcher/tests
+        run: poetry run pytest
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
