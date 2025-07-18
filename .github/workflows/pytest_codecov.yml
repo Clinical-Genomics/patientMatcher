@@ -30,8 +30,8 @@ jobs:
           ls -l patientMatcher/instance
 
       - name: Run tests with pytest
-        working-directory: .
-        run: poetry run pytest tests
+        working-directory: patientMatcher
+        run: poetry run pytest
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
