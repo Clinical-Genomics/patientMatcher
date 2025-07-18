@@ -22,19 +22,19 @@ jobs:
 
       - name: Install dependencies
         run: poetry install --no-interaction --no-ansi
+        working-directory: patientMatcher
 
-      - name: Show directory structure for debugging
-        run: |
-          pwd
-          ls -l
-          ls -l patientMatcher/instance
+      - name: Set config env variable
+        run: echo "PATIENTMATCHER_CONFIG=$(pwd)/patientMatcher/instance/config.py" >> $GITHUB_ENV
+        working-directory: patientMatcher/patientMatcher
 
       - name: Run tests with pytest
-        working-directory: patientMatcher
-        run: poetry run pytest ../tests
+        run: poetry run pytest ../../tests
+        working-directory: patientMatcher/patientMatcher
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
           files: ./coverage.xml
           fail_ci_if_error: true
+
