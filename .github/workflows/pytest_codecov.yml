@@ -22,15 +22,12 @@ jobs:
 
       - name: Install dependencies
         run: poetry install --no-interaction --no-ansi
-        working-directory: patientMatcher
 
       - name: Set config env variable
-        run: echo "PATIENTMATCHER_CONFIG=$(pwd)/instance/config.py" >> $GITHUB_ENV
-        working-directory: patientMatcher/patientMatcher
+        run: echo "PATIENTMATCHER_CONFIG=$(pwd)/patientMatcher/instance/config.py" >> $GITHUB_ENV
 
       - name: Run tests with pytest
-        run: poetry run pytest ../../tests
-        working-directory: patientMatcher/patientMatcher
+        run: poetry run pytest patientMatcher/tests
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
