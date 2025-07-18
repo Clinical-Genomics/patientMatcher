@@ -24,6 +24,8 @@ jobs:
         run: poetry install --no-interaction --no-ansi
 
       - name: Run tests with pytest
+        env:
+          PMATCHER_CONFIG: patientMatcher/patientMatcher/instance/config.py
         run: poetry run pytest
 
       - name: Upload coverage to Codecov
