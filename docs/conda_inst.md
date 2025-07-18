@@ -26,8 +26,7 @@ git clone https://github.com/Clinical-Genomics/patientMatcher.git
 
 Change directory to the cloned folder and from there install the software using the following command:
 ```bash
-pip install -r requirements.txt
-pip install -e .
+poetry install
 ```
 
 To customize the server configuration you'll need to edit the **config.py** file under the /instance folder. &nbsp;
@@ -35,6 +34,6 @@ For testing purposes you can keep the default configuration values as they are, 
 
 To start the server run this command:
 ```bash
-pmatcher run -h custom_host -p custom_port
+poetry run pmatcher run -h custom_host -p custom_port
 ```
 Please note that the code is NOT guaranteed to be bug-free and it must be customized to be used in production.

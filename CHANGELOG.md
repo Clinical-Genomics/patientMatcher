@@ -1,3 +1,8 @@
+## [unreleased]
+### Changed
+- Migrate project installation from pip + requirements.txt to Poetry + pyproject.toml
+- Documentation on how to install the software
+
 ## [4.5.1] - 2024-09-04
 ### Fixed
 - Bump actions/download-artifact from 2 to 4 in /.github/workflows (recommended by security advisory)
