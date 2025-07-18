@@ -5,8 +5,8 @@ description = "patientMatcher - a Python and MongoDB - based MatchMaker Exchange
 authors = ["Chiara Rasi (northwestwitch)"]
 license = "MIT"
 readme = "README.md"
-homepage = ""  # optional
-repository = ""  # optional
+homepage = "https://github.com/Clinical-Genomics/patientMatcher"
+repository = "https://github.com/Clinical-Genomics/patientMatcher"
 keywords = []  # optional
 classifiers = []  # optional
 packages = [{ include = "patientMatcher" }]
