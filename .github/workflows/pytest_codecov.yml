@@ -1,95 +1,33 @@
-name: Run tests and push coverage to Codecov
-on:
-  push:
-    branches:
-    - main
-  pull_request:
-    branches:
-    - main
+name: pytest & codecov
+
+on: [push, pull_request]
 
 jobs:
-  setup:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.8
-
-      - name: Install deps
-        run: |
-          pip install --upgrade --upgrade-strategy eager -r requirements-dev.txt -e .
-          pip check
-
-        # Cache package installation step to speed up the following step
-      - uses: actions/cache@v4
-        with:
-          path: ${{ env.pythonLocation }}
-          key: ${{ env.pythonLocation }}-${{ hashFiles('setup.py') }}-${{ hashFiles('requirements-dev.txt') }}
-
   test:
-    needs: setup
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        group: [1, 2, 3]
-        mongodb-version: ['7']
-    env:
-      PMATCHER_CONFIG: ../instance/config.py
+
     steps:
-      - name: Start MongoDB
-        uses: supercharge/mongodb-github-action@1.11.0
+      - uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
         with:
-         mongodb-version: ${{ matrix.mongodb-version }}
+          python-version: '3.9'
 
-      - uses: actions/checkout@v4
+      - name: Install Poetry
+        run: curl -sSL https://install.python-poetry.org | python3 -
 
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v5
+      - name: Configure Poetry to not create virtualenvs
+        run: poetry config virtualenvs.create false --local
+
+      - name: Install dependencies
+        run: poetry install --no-interaction --no-ansi
+
+      - name: Run tests with pytest
+        run: poetry run pytest
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
         with:
-          python-version: 3.8
-
-        # Cache package installation step to speed up the following step
-      - uses: actions/cache@v4
-        with:
-          path: ${{ env.pythonLocation }}
-          key: ${{ env.pythonLocation }}-${{ hashFiles('setup.py') }}-${{ hashFiles('requirements-dev.txt') }}
-
-      - name: Install deps
-        run: |
-          pip install --upgrade --upgrade-strategy eager -r requirements-dev.txt -e .
-
-      - name: Run pytest
-        run: pytest --cov --test-group-count 3 --test-group=${{ matrix.group }} --test-group-random-seed=12345
-
-      - name: Upload coverage
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage${{ matrix.group }}
-          path: .coverage
-          include-hidden-files: true
-
-  coverage:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.8
-      - name: Install deps
-        run: |
-          python -m pip install --upgrade pip
-          pip install coverage
-      - name: Download all artifacts
-        # Download and combine coverage1, coverage2, etc.
-        uses: actions/download-artifact@v4
-      - name: Run coverage
-        run: |
-          coverage combine coverage*/.coverage*
-          coverage report
-          coverage xml
-      - uses: codecov/codecov-action@v4
+          files: ./coverage.xml
+          fail_ci_if_error: true
