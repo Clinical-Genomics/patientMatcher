@@ -25,7 +25,7 @@ jobs:
         working-directory: patientMatcher
 
       - name: Set config env variable
-        run: echo "PATIENTMATCHER_CONFIG=$(pwd)/patientMatcher/instance/config.py" >> $GITHUB_ENV
+        run: echo "PATIENTMATCHER_CONFIG=$(pwd)/instance/config.py" >> $GITHUB_ENV
         working-directory: patientMatcher/patientMatcher
 
       - name: Run tests with pytest
