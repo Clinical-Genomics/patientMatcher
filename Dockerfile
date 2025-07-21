@@ -1,4 +1,4 @@
-FROM clinicalgenomics/python3.8-venv:1.0
+FROM clinicalgenomics/python:3.12-slim-bookworm
 
 LABEL about.license="MIT License (MIT)"
 LABEL about.tags="WGS,WES,Rare diseases,VCF,variants,phenotype,OMIM,HPO,variants"
