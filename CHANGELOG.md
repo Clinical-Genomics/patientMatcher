@@ -1,6 +1,8 @@
 ## [unreleased]
+### Changed
+- Install software via uv instead, which supports a pyproject.toml file
 ### Fixed
-- Removed depreacted pkg_resources
+- Removed deprecated pkg_resources
 
 ## [4.5.1] - 2024-09-04
 ### Fixed
