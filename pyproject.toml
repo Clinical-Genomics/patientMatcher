@@ -18,7 +18,10 @@ dependencies = [
   "jsonschema>=4.24.1,<5.0.0",
   "pymongo>=4.13.2,<5.0.0",
   "enlighten>=1.14.1,<2.0.0",
-  "clint>=0.5.1,<0.6.0"
+  "clint>=0.5.1,<0.6.0",
+
+  # Only needed for Python <3.9 to support importlib.resources.files
+  "importlib_resources; python_version < '3.9'"
 ]
 
 [project.optional-dependencies]
@@ -41,3 +44,6 @@ build-backend = "hatchling.build"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["patientMatcher"]
