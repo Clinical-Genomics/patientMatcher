@@ -2,7 +2,7 @@
 # BUILDER #
 ###########
 
-FROM clinicalgenomics/python3.8-venv:1.0 AS builder
+FROM clinicalgenomics/python3.12-venv:1.0 AS builder
 
 # Install and run commands from virtual environment
 RUN python3 -m venv /home/worker/venv
@@ -16,7 +16,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # FINAL #
 #########
 
-FROM clinicalgenomics/python3.8-venv:1.0 AS deployer
+FROM clinicalgenomics/python3.12-venv:1.0 AS deployer
 
 RUN groupadd --gid 1000 worker && useradd -g worker --uid 1000 --create-home worker
 COPY --chown=worker:worker --from=builder /home/worker/venv /home/worker/venv
