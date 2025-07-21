@@ -1,4 +1,4 @@
-import pkg_resources
+from importlib.resources import files
 
 ###### Files ######
 hpo_filename = "resources/hp.obo.txt"
@@ -7,12 +7,9 @@ benchmark_patients = "resources/benchmark_patients.json"
 json_api = "resources/api.json"
 
 ###### Paths ######
-path_to_hpo_terms = pkg_resources.resource_filename("patientMatcher", hpo_filename)
+base = files("patientMatcher")
 
-path_to_phenotype_annotations = pkg_resources.resource_filename(
-    "patientMatcher", phenotype_annotation_filename
-)
-
-path_to_benchmark_patients = pkg_resources.resource_filename("patientMatcher", benchmark_patients)
-
-path_to_json_api = pkg_resources.resource_filename("patientMatcher", json_api)
+path_to_hpo_terms = str(base.joinpath(hpo_filename))
+path_to_phenotype_annotations = str(base.joinpath(phenotype_annotation_filename))
+path_to_benchmark_patients = str(base.joinpath(benchmark_patients))
+path_to_json_api = str(base.joinpath(json_api))
