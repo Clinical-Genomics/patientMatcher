@@ -1,4 +1,6 @@
 ## [unreleased]
+### Added
+- Custom issue templates (bug/feature request/other issue) and pull request template
 ### Changed
 - Install software via uv instead, which supports a pyproject.toml file
 ### Fixed
