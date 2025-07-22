@@ -557,6 +557,7 @@ requires-dist = [
     { name = "flask-mail", specifier = ">=0.10.0,<0.11.0" },
     { name = "flask-mail", marker = "extra == 'dev'", specifier = ">=0.10.0" },
     { name = "flask-negotiate", specifier = ">=0.1.0,<0.2.0" },
+    { name = "importlib-resources", marker = "python_full_version < '3.9'" },
     { name = "jsonschema", specifier = ">=4.24.1,<5.0.0" },
     { name = "mongomock", marker = "extra == 'dev'", specifier = ">=4.3.0" },
     { name = "pymongo", specifier = ">=4.13.2,<5.0.0" },

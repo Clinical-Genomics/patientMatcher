@@ -5,6 +5,7 @@
 ### Changed
 - Install software via uv instead, which supports a pyproject.toml file
 - Switched from python 3.8 to python 3.12 on Dockerfile and Dockerfile-server files
+- Updated `hp.obo.txt` and `phenotype.hpoa` resource files
 ### Fixed
 - Removed deprecated pkg_resources
 
