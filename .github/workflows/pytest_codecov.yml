@@ -58,13 +58,14 @@ jobs:
         # Cache package installation step to speed up the following step
       - uses: actions/cache@v4
         with:
-          path: ${{ env.pythonLocation }}
-          key: ${{ env.pythonLocation }}-${{ hashFiles('setup.py') }}-${{ hashFiles('requirements-dev.txt') }}
+          path: |
+            ~/.cache/uv
+            .venv
+          key: uv-${{ runner.os }}-${{ hashFiles('pyproject.toml', 'uv.lock') }}
 
-      - name: Install dependencies using uv
+      - name: Install uv
         run: |
-          curl -LsSf https://astral.sh/uv/install.sh | sh -s -- --yes
-          uv install --frozen --no-editable
+          curl -LsSf https://astral.sh/uv/install.sh | sh
 
       - name: Run pytest
         run: uv run pytest --cov --test-group-count 3 --test-group=${{ matrix.group }} --test-group-random-seed=12345
