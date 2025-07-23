@@ -1,34 +1,33 @@
-FROM clinicalgenomics/python3.12-venv:1.0
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm
 
 LABEL about.license="MIT License (MIT)"
 LABEL about.tags="WGS,WES,Rare diseases,VCF,variants,phenotype,OMIM,HPO,variants"
 LABEL about.home="https://github.com/Clinical-Genomics/patientMatcher"
 
-# Set up virtual environment
+# Create virtual environment
 RUN python3 -m venv /home/worker/venv
 ENV PATH="/home/worker/venv/bin:$PATH"
-
-# Install uv into the virtual environment
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh -s -- --yes --root /home/worker/venv
 
 # Create a non-root user
 RUN groupadd --gid 1000 worker && useradd -g worker --uid 1000 --create-home worker
 
-# Set working directory and copy only project metadata first for caching
+# Set working directory and copy project metadata for caching
 WORKDIR /home/worker/app
 COPY pyproject.toml uv.lock ./
 
-# Use full path to uv to avoid PATH issues during build
-RUN /home/worker/venv/bin/uv pip install --system --no-deps
+# Install dependencies with uv from the preinstalled binary
+RUN python3 -m venv /home/worker/venv \
+ && . /home/worker/venv/bin/activate \
+ && uv sync --frozen --no-install-project --no-editable
 
-# Copy the rest of the source code
+# Copy rest of source code
 COPY . .
 
-# Ensure logs are unbuffered
+# Ensure logs reach console immediately
 ENV PYTHONUNBUFFERED=1
 
 # Switch to non-root user
 USER worker
 
-# Start the application — example with JSON-array form to avoid warnings
+# Start the app
 ENTRYPOINT ["pmatcher"]

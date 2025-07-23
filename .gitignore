@@ -16,6 +16,7 @@ lib
 lib64
 dist/
 .idea/
+.venv
 
 # Mac OSX
 .DS_Store
