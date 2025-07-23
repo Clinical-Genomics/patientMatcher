@@ -8,6 +8,7 @@
 - Updated `hp.obo.txt` and `phenotype.hpoa` resource files
 - Removed `requirements.txt` and `requirements-dev.txt` files
 - Fixed Dockerfiles to install software via uv
+- Suppressed pymongo debug logs
 ### Fixed
 - Removed deprecated pkg_resources
 

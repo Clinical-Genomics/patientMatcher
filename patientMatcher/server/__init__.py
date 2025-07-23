@@ -7,11 +7,16 @@ from pathlib import Path
 import coloredlogs
 from flask import Flask
 from flask_mail import Mail
+from pymongo import MongoClient
+from pymongo.errors import (
+    ConnectionFailure,
+    OperationFailure,
+    ServerSelectionTimeoutError,
+)
+
 from patientMatcher.resources import path_to_hpo_terms, path_to_phenotype_annotations
 from patientMatcher.utils.notify import TlsSMTPHandler, admins_email_format
 from patientMatcher.utils.update import update_resources
-from pymongo import MongoClient
-from pymongo.errors import ConnectionFailure, OperationFailure, ServerSelectionTimeoutError
 
 from . import extensions, views
 
@@ -72,6 +77,12 @@ def create_app():
 
     current_log_level = LOG.getEffectiveLevel()
     coloredlogs.install(level="DEBUG" if app.debug else current_log_level)
+
+    # 🔇 Suppress PyMongo debug logs
+    logging.getLogger("pymongo").setLevel(logging.WARNING)
+    logging.getLogger("pymongo.topology").setLevel(logging.WARNING)
+    logging.getLogger("pymongo.pool").setLevel(logging.WARNING)
+    logging.getLogger("pymongo.server").setLevel(logging.WARNING)
 
     mongo_client = MongoClient(app.config["DB_URI"], serverSelectionTimeoutMS=30000)
     try:
