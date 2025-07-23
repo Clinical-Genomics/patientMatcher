@@ -8,6 +8,9 @@ LABEL about.home="https://github.com/Clinical-Genomics/patientMatcher"
 RUN python3 -m venv /home/worker/venv
 ENV PATH="/home/worker/venv/bin:$PATH"
 
+# Install uv into the virtual environment
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh -s -- --yes --root /home/worker/venv
+
 # Create a non-root user to run commands
 RUN groupadd --gid 1000 worker && useradd -g worker --uid 1000 --create-home worker
 
@@ -17,7 +20,9 @@ COPY . /home/worker/app
 # make sure all messages always reach console
 ENV PYTHONUNBUFFERED=1
 
-RUN pip install --no-cache-dir -e .
+# Install the project in editable mode (NOTE: uv does not support editable installs as of now)
+# So we fallback to standard install
+RUN uv pip install --no-deps --no-cache-dir .
 
 # Run commands as non-root user
 USER worker
