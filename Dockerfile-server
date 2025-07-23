@@ -11,10 +11,10 @@ ENV PATH="/home/worker/venv/bin:$PATH"
 # Install uv inside the virtual environment
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh -s -- --yes --root /home/worker/venv
 
-# Copy pyproject and lock file and install dependencies with uv
+# Copy pyproject and lock file and install dependencies with uv (use full path to uv)
 WORKDIR /app
 COPY pyproject.toml uv.lock ./
-RUN uv pip install --system --no-deps
+RUN /home/worker/venv/bin/uv pip install --system --no-deps
 
 
 #########
@@ -44,9 +44,9 @@ ENV PYTHONUNBUFFERED=1
 ENV VIRTUAL_ENV=/home/worker/venv
 ENV PATH="/home/worker/venv/bin:$PATH"
 
-# Install uv and gunicorn in runtime (in case gunicorn isn't already in pyproject.toml)
+# Install uv and gunicorn in runtime (use full path for uv)
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh -s -- --yes --root /home/worker/venv \
- && uv pip install --no-cache-dir gunicorn
+ && /home/worker/venv/bin/uv pip install --no-cache-dir gunicorn
 
 # Gunicorn config
 ENV GUNICORN_WORKERS=1
@@ -66,4 +66,5 @@ CMD gunicorn \
     --error-logfile - \
     --log-level="debug" \
     patientMatcher.server.auto:app
+
 
