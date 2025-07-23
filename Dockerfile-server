@@ -4,13 +4,18 @@
 
 FROM clinicalgenomics/python3.12-venv:1.0 AS builder
 
-# Install and run commands from virtual environment
+# Create and activate virtual environment
 RUN python3 -m venv /home/worker/venv
 ENV PATH="/home/worker/venv/bin:$PATH"
 
-# install requirements
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Install uv inside the virtual environment
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh -s -- --yes --root /home/worker/venv
+
+# Copy pyproject and lock file and install dependencies with uv
+WORKDIR /app
+COPY pyproject.toml uv.lock ./
+RUN uv pip install --system --no-deps
+
 
 #########
 # FINAL #
@@ -18,24 +23,32 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 FROM clinicalgenomics/python3.12-venv:1.0 AS deployer
 
+# Create non-root user
 RUN groupadd --gid 1000 worker && useradd -g worker --uid 1000 --create-home worker
+
+# Copy the virtualenv from the builder stage
 COPY --chown=worker:worker --from=builder /home/worker/venv /home/worker/venv
 
+# Set up application
 RUN mkdir /home/worker/app
 WORKDIR /home/worker/app
 COPY . .
 
+# Switch to non-root user
 USER worker
 
-# make sure all messages always reach console
+# Ensure logs reach console
 ENV PYTHONUNBUFFERED=1
 
-# activate virtual environment
+# Activate the virtualenv
 ENV VIRTUAL_ENV=/home/worker/venv
 ENV PATH="/home/worker/venv/bin:$PATH"
 
-RUN pip install --no-cache-dir gunicorn
+# Install uv and gunicorn in runtime (in case gunicorn isn't already in pyproject.toml)
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh -s -- --yes --root /home/worker/venv \
+ && uv pip install --no-cache-dir gunicorn
 
+# Gunicorn config
 ENV GUNICORN_WORKERS=1
 ENV GUNICORN_THREADS=1
 ENV GUNICORN_BIND="0.0.0.0:8000"
@@ -53,3 +66,4 @@ CMD gunicorn \
     --error-logfile - \
     --log-level="debug" \
     patientMatcher.server.auto:app
+
