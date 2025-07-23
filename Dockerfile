@@ -18,8 +18,8 @@ RUN groupadd --gid 1000 worker && useradd -g worker --uid 1000 --create-home wor
 WORKDIR /home/worker/app
 COPY pyproject.toml uv.lock ./
 
-# Install dependencies from lockfile (no editable mode)
-RUN uv pip install --system --no-deps
+# Use full path to uv to avoid PATH issues during build
+RUN /home/worker/venv/bin/uv pip install --system --no-deps
 
 # Copy the rest of the source code
 COPY . .
@@ -30,5 +30,5 @@ ENV PYTHONUNBUFFERED=1
 # Switch to non-root user
 USER worker
 
-# Start the application
-ENTRYPOINT
+# Start the application — example with JSON-array form to avoid warnings
+ENTRYPOINT ["pmatcher"]
