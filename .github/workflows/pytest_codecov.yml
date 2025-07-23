@@ -61,9 +61,10 @@ jobs:
           path: ${{ env.pythonLocation }}
           key: ${{ env.pythonLocation }}-${{ hashFiles('setup.py') }}-${{ hashFiles('requirements-dev.txt') }}
 
-      - name: Install deps
+      - name: Install dependencies using uv
         run: |
-          pip install --upgrade --upgrade-strategy eager -r requirements-dev.txt -e .
+          curl -LsSf https://astral.sh/uv/install.sh | sh -s -- --yes
+          uv install --frozen --no-editable
 
       - name: Run pytest
         run: uv run pytest --cov --test-group-count 3 --test-group=${{ matrix.group }} --test-group-random-seed=12345
