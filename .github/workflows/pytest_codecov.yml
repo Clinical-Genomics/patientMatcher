@@ -1,11 +1,12 @@
 name: Run tests and push coverage to Codecov
+
 on:
   push:
     branches:
-    - main
+      - main
   pull_request:
     branches:
-    - main
+      - main
 
 jobs:
   setup:
@@ -18,13 +19,13 @@ jobs:
         with:
           python-version: 3.9
 
-      - name: Install uv
+      - name: Install uv CLI
         uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
           cache-dependency-glob: "uv.lock"
 
-      - name: Install the project
+      - name: Install dependencies
         run: uv sync --all-extras --dev
 
   test:
@@ -40,38 +41,39 @@ jobs:
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.12.0
         with:
-         mongodb-version: ${{ matrix.mongodb-version }}
+          mongodb-version: ${{ matrix.mongodb-version }}
 
       - uses: actions/checkout@v4
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v3
-        with:
-          enable-cache: true
-          cache-dependency-glob: "uv.lock"
 
       - name: Set up Python 3.9
         uses: actions/setup-python@v5
         with:
           python-version: 3.9
 
-        # Cache package installation step to speed up the following step
-      - uses: actions/cache@v4
+      - name: Install uv CLI
+        uses: astral-sh/setup-uv@v6
         with:
-          path: ${{ env.pythonLocation }}
-          key: ${{ env.pythonLocation }}-${{ hashFiles('setup.py') }}-${{ hashFiles('requirements-dev.txt') }}
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
 
-      - name: Install deps
-        run: |
-          pip install --upgrade --upgrade-strategy eager -r requirements-dev.txt -e .
+      - name: Cache uv virtualenv and .venv
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/uv
+            .venv
+          key: uv-${{ runner.os }}-${{ hashFiles('pyproject.toml', 'uv.lock') }}
 
-      - name: Run pytest
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
+
+      - name: Run tests
         run: uv run pytest --cov --test-group-count 3 --test-group=${{ matrix.group }} --test-group-random-seed=12345
 
-      - name: Upload coverage
+      - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
         with:
-          name: coverage${{ matrix.group }}
+          name: coverage-${{ matrix.group }}
           path: .coverage
           include-hidden-files: true
 
@@ -80,22 +82,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up Python 3.9
         uses: actions/setup-python@v5
         with:
           python-version: 3.9
-      - name: Install deps
+
+      - name: Install coverage
         run: |
           python -m pip install --upgrade pip
           pip install coverage
-      - name: Download all artifacts
-        # Download and combine coverage1, coverage2, etc.
+
+      - name: Download coverage artifacts
         uses: actions/download-artifact@v4
-      - name: Run coverage
+        with:
+          path: ./coverage-data
+
+      - name: Combine and report coverage
         run: |
-          coverage combine coverage*/.coverage*
+          coverage combine coverage-data/coverage-*/.coverage
           coverage report
           coverage xml
-      - uses: codecov/codecov-action@v5
+
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v5
+
 
 
