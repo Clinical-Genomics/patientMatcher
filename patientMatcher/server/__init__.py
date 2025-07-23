@@ -7,11 +7,16 @@ from pathlib import Path
 import coloredlogs
 from flask import Flask
 from flask_mail import Mail
+from pymongo import MongoClient
+from pymongo.errors import (
+    ConnectionFailure,
+    OperationFailure,
+    ServerSelectionTimeoutError,
+)
+
 from patientMatcher.resources import path_to_hpo_terms, path_to_phenotype_annotations
 from patientMatcher.utils.notify import TlsSMTPHandler, admins_email_format
 from patientMatcher.utils.update import update_resources
-from pymongo import MongoClient
-from pymongo.errors import ConnectionFailure, OperationFailure, ServerSelectionTimeoutError
 
 from . import extensions, views
 
@@ -29,7 +34,9 @@ def available_phenotype_resources():
 
 def configure_email_error_logging(app):
     """Setup logging of error/exceptions to email."""
-    LOG.debug(f"Configuring email error logging to notify server admins:{app.config['ADMINS']}")
+    LOG.debug(
+        f"Configuring email error logging to notify server admins:{app.config['ADMINS']}"
+    )
 
     mail_handler = TlsSMTPHandler(
         mailhost=(app.config["MAIL_SERVER"], app.config["MAIL_PORT"]),
@@ -61,10 +68,16 @@ def create_app():
 
         # check if config file exists under ../instance:
         instance_path = os.path.join(app_root, "patientMatcher", "instance")
-        if not os.path.isfile(os.path.join(instance_path, "config.py")):  # running app from tests
-            instance_path = os.path.join(app_root, "patientMatcher", "patientMatcher", "instance")
+        if not os.path.isfile(
+            os.path.join(instance_path, "config.py")
+        ):  # running app from tests
+            instance_path = os.path.join(
+                app_root, "patientMatcher", "patientMatcher", "instance"
+            )
 
-        app = Flask(__name__, instance_path=instance_path, instance_relative_config=True)
+        app = Flask(
+            __name__, instance_path=instance_path, instance_relative_config=True
+        )
         app.config.from_pyfile("config.py")
 
     if app.config.get("ADMINS"):
@@ -72,6 +85,12 @@ def create_app():
 
     current_log_level = LOG.getEffectiveLevel()
     coloredlogs.install(level="DEBUG" if app.debug else current_log_level)
+
+    # 🔇 Suppress PyMongo debug logs
+    logging.getLogger("pymongo").setLevel(logging.WARNING)
+    logging.getLogger("pymongo.topology").setLevel(logging.WARNING)
+    logging.getLogger("pymongo.pool").setLevel(logging.WARNING)
+    logging.getLogger("pymongo.server").setLevel(logging.WARNING)
 
     mongo_client = MongoClient(app.config["DB_URI"], serverSelectionTimeoutMS=30000)
     try:
