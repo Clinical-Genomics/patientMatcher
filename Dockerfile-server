@@ -1,32 +1,31 @@
 ###########
 # BUILDER #
 ###########
-
-FROM ghcr.io/astral-sh/uv:python3.12-bookworm AS builder
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm AS python-builder
 
 WORKDIR /app
 
-COPY pyproject.toml uv.lock ./
+# Copy the project files needed to configure dependencies build into the image
+COPY --chmod=644 pyproject.toml uv.lock README.md ./
 
-RUN python3 -m venv /home/worker/venv \
- && . /home/worker/venv/bin/activate \
- && uv sync --frozen --no-install-project --no-editable
-
-COPY . .
+RUN uv venv --relocatable
+RUN uv sync --frozen --no-install-project --no-editable
 
 #########
 # FINAL #
 #########
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
 
-FROM ghcr.io/astral-sh/uv:python3.12-bookworm AS deployer
+RUN groupadd --gid 1000 worker && useradd -g worker --uid 1000 --shell /usr/sbin/nologin --create-home worker
 
-RUN groupadd --gid 1000 worker && useradd -g worker --uid 1000 --create-home worker
+ENV PATH="/home/worker/app/.venv/bin:$PATH"
 
-RUN mkdir -p /home/worker/app
 WORKDIR /home/worker/app
 
-COPY --chown=worker:worker --from=builder /home/worker/venv /home/worker/venv
-COPY --chown=worker:worker . .
+COPY --chown=root:root --chmod=755 . /home/worker/app
+COPY --chown=root:root --chmod=755 --from=python-builder /app/.venv /home/worker/app/.venv
+
+RUN uv pip install --no-cache-dir --editable .
 
 ENV PYTHONUNBUFFERED=1
 ENV LANG=C.UTF-8
@@ -35,7 +34,7 @@ ENV PATH="/home/worker/venv/bin:$PATH"
 
 USER worker
 
-CMD ["gunicorn", \
+CMD ["uv, "run", gunicorn", \
      "--workers=1", \
      "--threads=1", \
      "--bind=0.0.0.0:8000", \
