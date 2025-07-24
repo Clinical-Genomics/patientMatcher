@@ -34,4 +34,6 @@ jobs:
          context: ./
          file: ./Dockerfile-server
          push: true
+         provenance: mode=max
+         sbom: true
          tags: "clinicalgenomics/patientmatcher-server-stage:${{steps.branch-name.outputs.current_branch}}, clinicalgenomics/patientmatcher-server-stage:latest"
