@@ -22,30 +22,37 @@ ENV PATH="/home/worker/app/.venv/bin:$PATH"
 
 WORKDIR /home/worker/app
 
+# Copy current app code to app dir
 COPY --chown=root:root --chmod=755 . /home/worker/app
+
+# Copy virtual environment from builder
 COPY --chown=root:root --chmod=755 --from=python-builder /app/.venv /home/worker/app/.venv
 
-RUN uv pip install --no-cache-dir --editable .
-
-ENV PYTHONUNBUFFERED=1
-ENV LANG=C.UTF-8
-ENV VIRTUAL_ENV=/home/worker/venv
-ENV PATH="/home/worker/venv/bin:$PATH"
+RUN uv pip install --no-cache-dir --editable . gunicorn
 
 USER worker
 
-CMD ["uv, "run", gunicorn", \
-     "--workers=1", \
-     "--threads=1", \
-     "--bind=0.0.0.0:8000", \
-     "--timeout=400", \
-     "--proxy-protocol", \
-     "--forwarded-allow-ips=10.0.2.100,127.0.0.1", \
-     "--log-syslog", \
-     "--access-logfile=-", \
-     "--error-logfile=-", \
-     "--log-level=debug", \
-     "patientMatcher.server.auto:app"]
+ENV PYTHONUNBUFFERED=1
+ENV LANG=C.UTF-8
+ENV GUNICORN_WORKERS=1
+ENV GUNICORN_THREADS=1
+ENV GUNICORN_BIND="0.0.0.0:8000"
+ENV GUNICORN_TIMEOUT=400
+ENV GUNICORN_MAXREQUESTS=1200
+
+CMD ["sh", "-c", "/home/worker/app/.venv/bin/gunicorn \
+    --workers=$GUNICORN_WORKERS \
+    --bind=$GUNICORN_BIND \
+    --threads=$GUNICORN_THREADS \
+    --timeout=$GUNICORN_TIMEOUT \
+    --max-requests=$GUNICORN_MAXREQUESTS \
+    --proxy-protocol \
+    --forwarded-allow-ips=10.0.2.100,127.0.0.1 \
+    --log-syslog \
+    --access-logfile=- \
+    --error-logfile=- \
+    --log-level=debug \
+    patientMatcher.server.auto:app"]
 
 
 
