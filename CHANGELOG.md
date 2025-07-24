@@ -1,4 +1,8 @@
-## [4.6] 2025-07-24
+## [4.6.1] - 2025-07-24
+### Fixed
+- Publish to PyPI on release event action
+
+## [4.6] - 2025-07-24
 ### Added
 - Custom issue templates (bug/feature request/other issue) and pull request template
 - Release instructions (RELEASE.md)
