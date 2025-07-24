@@ -17,7 +17,7 @@ RUN uv sync --frozen --no-install-project --no-editable
 FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
 
 LABEL about.license="MIT License (MIT)"
-LABEL about.tags="WGS,WES,Rare diseases,VCF,variants,phenotype,OMIM,HPO,variants"
+LABEL about.tags="WGS,WES,Rare diseases,VCF,variants,phenotype,OMIM,HPO,variants,Matchmaker Exchange"
 LABEL about.home="https://github.com/Clinical-Genomics/patientMatcher"
 
 # Create a non-root user
