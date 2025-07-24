@@ -11,6 +11,7 @@
 - Suppressed pymongo debug logs
 ### Fixed
 - Removed deprecated pkg_resources
+- Install missing unicorn lib on Dockerfile-server
 
 ## [4.5.1] - 2024-09-04
 ### Fixed
