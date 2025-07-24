@@ -1,4 +1,4 @@
-## [unreleased]
+## [4.6] 2025-07-24
 ### Added
 - Custom issue templates (bug/feature request/other issue) and pull request template
 - Release instructions (RELEASE.md)
@@ -10,6 +10,7 @@
 - Removed `requirements.txt` and `requirements-dev.txt` files
 - Fixed Dockerfiles to install software via uv
 - Suppressed pymongo debug logs
+- Updated several libraries on the toml file
 ### Fixed
 - Removed deprecated pkg_resources
 - Install missing unicorn lib on Dockerfile-server
