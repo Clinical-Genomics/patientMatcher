@@ -31,7 +31,7 @@ jobs:
         push: true
         provenance: mode=max
         sbom: true
-        tags: "latest,${{ github.event.release.tag_name }}"
+        tags: "clinicalgenomics/patientmatcher-server:latest, clinicalgenomics/patientmatcher-server:${{ github.event.release.tag_name }}"
 
     - name: Publish server image (Dockerfile-server) to Registry
       uses: docker/build-push-action@v6
@@ -41,5 +41,5 @@ jobs:
         push: true
         provenance: mode=max
         sbom: true
-        tags: "latest,${{ github.event.release.tag_name }}"
+        tags: "clinicalgenomics/patientmatcher:latest, clinicalgenomics/patientmatcher:${{ github.event.release.tag_name }}"
 
