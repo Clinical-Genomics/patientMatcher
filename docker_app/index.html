@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Docker-based application - PatientMatcher documentation</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Docker-based application";
+        var mkdocs_page_input_path = "docker_app.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> PatientMatcher documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Docker-based application</a>
+    <ul class="current">
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../conda_inst/">Installing the application on a conda environment</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../data_types/">Data types</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../cli/">Command line interface</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../phenotype_resources/">Phenotype resource files</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../endpoints/">Server endpoints</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../algorithm/">Matching algrorithm</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../matching_emails/">Matching notifications</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../error_emails/">Server error notifications</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">PatientMatcher documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Docker-based application</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h2 id="running-the-application-using-docker-compose">Running the application using Docker-compose</h2>
+<p>An example containing a demo setup for the app is included in the docker-compose file. Note that this file is not intended for use in production and is only provided to illustrate how the backend and frontend of the app could be connected to a MongoDB instance stored on an external image. Start the docker-compose demo using this command:</p>
+<pre><code>docker-compose up -d
+</code></pre>
+<p>The command will create 3 containers:
+- mongodb: starting a mongodb server with support for user authentication (--auth option)
+- patientmatcher_cli: the a command-line app, which will connect to the server and populates it with demo data
+- patientmatcher_web: a web server running on localhost and port 8000.</p>
+<p>The server will be running and accepting requests sent from outside the containers (another terminal or a web browser). Read further down to find out about requests and commands.</p>
+<p>To test server responses try to invoke the <code>metrics</code> endpoint with the following command:</p>
+<pre><code>curl localhost:8000/metrics
+</code></pre>
+<p>To stop the containers (and the server), run:</p>
+<pre><code>docker-compose down
+</code></pre>
+<p>Make sure that there are no mongo containers running before before running the command again.
+Commands:</p>
+<pre><code>docker ps -a
+docker rm &lt;id of the eventual containers' id&gt;
+</code></pre>
+<p><a name="dockerfiles"></a></p>
+<h2 id="dockerfile-and-dockerfile-server">Dockerfile and Dockerfile-server</h2>
+<p>You might have noticed that the docker-compose - based demo described above is using two different containers for the same application.</p>
+<h3 id="dockerfile">Dockerfile</h3>
+<p>Provides a generic image for the application, that can be used for launching contaiers to run command line commands (such as add demo data to the database, create a node, etc) or run a development app.</p>
+<ul>
+<li><strong>Given an instance of MongoDB running on localhost, default port 27017</strong></li>
+</ul>
+<h4 id="example-on-how-to-run-the-standard-image-to-populate-the-database-with-demo-data">Example on how to run the standard image to populate the database with demo data</h4>
+<ul>
+<li>Build the image: <code>docker build -t pmatcher-image .</code></li>
+<li>Launch a container with the instructions to populate database with demo data: <code>docker run --rm (--env MONGODB_HOST=host.docker.internal)(--net host) pmatcher-image add demodata</code></li>
+</ul>
+<p><strong>--env MONGODB_HOST=host.docker.internal</strong> --&gt; required to be able to access the database on the local Mac OS machine</p>
+<p><strong>--net host</strong> --&gt; required to be able to access the database on a local Linux machine</p>
+<h3 id="dockerfile-server">Dockerfile-server</h3>
+<p>Is an image based on the previous one, but contains additional software (gunicorn) and parameters to run patientMatcher in a production environment.</p>
+<ul>
+<li><strong>Given an instance of MongoDB populated with data, running on localhost, default port 27017</strong></li>
+</ul>
+<h4 id="example-on-how-to-launch-a-production-server">Example on how to launch a production server</h4>
+<ul>
+<li>Build the image: <code>docker build -t server-img -f Dockerfile-server .</code></li>
+<li>Launch a the image containing a server running on localhost, port 8000:
+<code>docker run --name server -p 8000:8000 --expose 8000 (--env MONGODB_HOST=host.docker.internal)(--net host) server-img</code></li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href=".." class="btn btn-neutral float-left" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../conda_inst/" class="btn btn-neutral float-right" title="Installing the application on a conda environment">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href=".." style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../conda_inst/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
