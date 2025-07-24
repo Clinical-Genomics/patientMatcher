@@ -2,6 +2,7 @@
 ### Added
 - Custom issue templates (bug/feature request/other issue) and pull request template
 - Release instructions (RELEASE.md)
+- Supply chain attestation to Docker files
 ### Changed
 - Install software via uv instead, which supports a pyproject.toml file
 - Switched from python 3.8 to python 3.12 on Dockerfile and Dockerfile-server files
