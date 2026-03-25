@@ -1,6 +1,6 @@
 ## [unpublished]
 ### Added
-- `email` and `additionalContacts` in API reference json schema ()
+- `email` and `additionalContacts` in API reference json schema (#380)
 ### Changed
 - Updated versions of external actions and MongoDB in GitHub workflows (#374)
 ### Fixed
