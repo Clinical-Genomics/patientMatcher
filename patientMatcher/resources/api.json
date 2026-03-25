@@ -51,6 +51,27 @@
             "href": {
               "type": "string",
               "format": "uri"
+            },
+            "email": {
+              "type": "string",
+              "format": "email"
+            },
+            "additionalContacts": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "institution": { "type": "string" },
+                  "href": { "type": "string", "format": "uri" },
+                  "email": { "type": "string", "format": "email" },
+                  "roles": {
+                    "type": "array",
+                    "items": { "type": "string" } // "clinician", "researcher", "patient", ..
+                  }
+                },
+                "required": ["name", "href"]
+              }
             }
           },
           "required": [
