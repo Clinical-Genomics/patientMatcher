@@ -17,4 +17,4 @@ jobs:
           pip install black==26.3.1
       - name: run black
         run: |
-          black --target-version py312 . --check --line-length 100 --target-version
+          black . --check --line-length 100 --target-version py312
