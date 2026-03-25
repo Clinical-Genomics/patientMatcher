@@ -12,6 +12,7 @@ LOG = logging.getLogger(__name__)
 
 ROOT = "HP:0000001"
 
+
 ### Code required by the HPO class ###
 def get_ancestors(root, acc=None):
     if acc is None:
