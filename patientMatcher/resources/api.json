@@ -67,7 +67,7 @@
                   "email": { "type": "string", "format": "email" },
                   "roles": {
                     "type": "array",
-                    "items": { "type": "string" } // "clinician", "researcher", "patient", ..
+                    "items": { "type": "string" }
                   }
                 },
                 "required": ["name", "href"]
