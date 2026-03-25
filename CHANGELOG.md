@@ -1,3 +1,6 @@
+## [unpublished]
+- Fixed typo on conda installation docs []
+
 ## [4.6.1] - 2025-07-24
 ### Fixed
 - Publish to PyPI on release event action

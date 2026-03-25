@@ -27,7 +27,7 @@ git clone https://github.com/Clinical-Genomics/patientMatcher.git
 Change directory to the cloned folder and from there install the software using the following command:
 ```bash
 pip install uv
-pip uv sync --all-extras --dev
+uv sync --all-extras --dev
 ```
 
 To customize the server configuration you'll need to edit the **config.py** file under the /instance folder. &nbsp;
