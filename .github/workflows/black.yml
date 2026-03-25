@@ -7,14 +7,14 @@ jobs:
     runs-on: ubuntu-latest
     name: black
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: 3.8
+          python-version: 3.12
       - name: install black
         run: |
-          pip install black==22.3.0
+          pip install black==26.3.1
       - name: run black
         run: |
           black . --check --line-length 100

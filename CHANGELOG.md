@@ -1,4 +1,6 @@
 ## [unpublished]
+### Changed
+- Updated versions of external actions and MongoDB in GitHub workflows [#374]
 ### Fixed
 - Fixed typo on conda installation docs [#373]
 
