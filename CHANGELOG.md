@@ -1,4 +1,5 @@
 ## [unpublished]
+### Fixed
 - Fixed typo on conda installation docs [#373]
 
 ## [4.6.1] - 2025-07-24
