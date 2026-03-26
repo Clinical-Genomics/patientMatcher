@@ -50,10 +50,7 @@ def patients(database, ids=None, match_query=None):
     if ids:  # if only specified patients should be returned
         query["_id"] = {"$in": ids}
     elif match_query:
-        LOG.info("Return patients matching query {}".format(match_query))
         query = match_query
-    else:
-        LOG.info("Return all patients in database")
 
     results = database["patients"].find(query)
     return results
