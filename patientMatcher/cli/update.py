@@ -20,28 +20,22 @@ def update():
 
 @update.command()
 @with_appcontext
-@click.option(
-    "--href", type=click.STRING, required=False, help="Contact's href"
-)
-@click.option(
-    "--email", type=click.STRING, required=False, help="Contact's email"
-)
+@click.option("--href", type=click.STRING, required=False, help="Contact's href")
+@click.option("--email", type=click.STRING, required=False, help="Contact's email")
 @click.option("--new-href", type=click.STRING, required=False, help="New href")
 @click.option("--new-email", type=click.STRING, required=False, help="New email")
 @click.option("--new-name", type=click.STRING, required=False, help="New name")
-@click.option(
-    "--new-institution", type=click.STRING, required=False, help="New institution"
-)
+@click.option("--new-institution", type=click.STRING, required=False, help="New institution")
 def contact(href, email, new_href, new_email, new_name, new_institution):
     """Update contact person for a group of patients."""
 
     if bool(href) == bool(email):
-        raise click.UsageError(
-            "You must provide EITHER --href or --email"
-        )
+        raise click.UsageError("You must provide EITHER --href or --email")
 
     if not any([new_href, new_email, new_name, new_institution]):
-        click.echo(f"Provide at least a field you wish to update: --new-href / --new-email / --new-name / --new-institution")
+        click.echo(
+            f"Provide at least a field you wish to update: --new-href / --new-email / --new-name / --new-institution"
+        )
         return
 
     if href:
@@ -82,8 +76,8 @@ def contact(href, email, new_href, new_email, new_name, new_institution):
         set_options["contact.institution"] = new_institution
 
     if click.confirm(
-            f"{len(list(matching_patients))} patients will be updated with contact info:{set_options}. Confirm?",
-            abort=True,
+        f"{len(list(matching_patients))} patients will be updated with contact info:{set_options}. Confirm?",
+        abort=True,
     ):
         result = database.patients.update_many(query, {"$set": set_options})
         click.echo(f"Contact information was updated for {result.modified_count} patients.")

@@ -74,9 +74,7 @@ def test_update_contact_success(mock_app, gpx4_patients, monkeypatch):
     assert result.exit_code == 0
     assert "Contact information was updated" in result.output
 
-    updated_patient = list(
-        patients_collection.find({CONTACT_HREF: NEW_HREF})
-    )
+    updated_patient = list(patients_collection.find({CONTACT_HREF: NEW_HREF}))
     assert len(updated_patient) > 0
     assert updated_patient[0]["contact"]["href"] == NEW_HREF
     assert updated_patient[0]["contact"]["email"] == NEW_EMAIL
@@ -163,9 +161,7 @@ def test_update_contact_no_href_match(mock_app, gpx4_patients):
     assert f"No patients found with query" in result.output
 
     # AND no patient contact should be updated
-    updated_patient = patients_collection.find_one(
-        {CONTACT_HREF: f"mailto:{new_href}"}
-    )
+    updated_patient = patients_collection.find_one({CONTACT_HREF: f"mailto:{new_href}"})
     assert updated_patient is None
 
 
@@ -211,7 +207,5 @@ def test_update_contact_multiple_href_match(mock_app, gpx4_patients):
     assert "returning more than one patients' contact" in result.output
 
     # AND no patient should be updated
-    updated_patient = patients_collection.find_one(
-        {CONTACT_HREF: f"mailto:{new_href}"}
-    )
+    updated_patient = patients_collection.find_one({CONTACT_HREF: f"mailto:{new_href}"})
     assert updated_patient is None
