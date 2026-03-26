@@ -69,9 +69,9 @@ def test_update_contact_success(mock_app, gpx4_patients, monkeypatch):
             "--new-institution",
             TEST_INST,
             "--new-role",
-            "clinician",
+            TEST_ROLES[0],
             "--new-role",
-            "researcher",
+            TEST_ROLES[1],
         ],
     )
 
