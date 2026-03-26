@@ -44,7 +44,9 @@ def contact(href, email, new_href, new_email, new_name, new_institution, new_rol
         return
 
     # Build query
-    query = {HREF_FIELD: {"$regex": href}} if href else {"contact.email": email}
+    query = {"contact.email": email}
+    if href:
+        query = {HREF_FIELD: {"$regex": href}}
 
     database = current_app.db
     matching_patients = patients(database=database, match_query=query)
@@ -65,7 +67,7 @@ def contact(href, email, new_href, new_email, new_name, new_institution, new_rol
     if new_href:
         if EMAIL_REGEX.match(new_href) and not new_href.startswith("mailto:"):
             new_href = f"mailto:{new_href}"
-        if not href_validate(new_href):
+        elif not href_validate(new_href):
             LOG.error(
                 "Provided href does not have a valid schema. Provide either a URL (http://.., https://..) or an email address (mailto:..)"
             )
