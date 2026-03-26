@@ -27,7 +27,8 @@ def update():
 @click.option("--new-email", type=click.STRING, required=False, help="New email")
 @click.option("--new-name", type=click.STRING, required=False, help="New name")
 @click.option("--new-institution", type=click.STRING, required=False, help="New institution")
-def contact(href, email, new_href, new_email, new_name, new_institution):
+@click.option("--new-role", multiple=True, help="New role(s)")
+def contact(href, email, new_href, new_email, new_name, new_institution, new_role):
     """Update contact person for a group of patients."""
 
     # Validate exactly one identifier
@@ -35,7 +36,7 @@ def contact(href, email, new_href, new_email, new_name, new_institution):
         raise click.UsageError("You must provide EITHER --href or --email")
 
     # Validate at least one field to update
-    if not any([new_href, new_email, new_name, new_institution]):
+    if not any([new_href, new_email, new_name, new_institution, new_role]):
         click.echo(
             "Provide at least a field you wish to update: "
             "--new-href / --new-email / --new-name / --new-institution"
@@ -76,6 +77,8 @@ def contact(href, email, new_href, new_email, new_name, new_institution):
         set_options["contact.name"] = new_name
     if new_institution:
         set_options["contact.institution"] = new_institution
+    if new_role:
+        set_options["contact.roles"] = list(new_role)
 
     # Confirm and update
     patient_count = len(list(matching_patients))
