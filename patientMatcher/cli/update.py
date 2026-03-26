@@ -78,8 +78,10 @@ def contact(href, email, new_href, new_email, new_name, new_institution):
 
     # Confirm and update
     patient_count = matching_patients.count_documents(query)
-    if click.confirm(f"{patient_count} patients will be updated with contact info: {set_options}. Confirm?",
-                     abort=True):
+    if click.confirm(
+        f"{patient_count} patients will be updated with contact info: {set_options}. Confirm?",
+        abort=True,
+    ):
         result = database.patients.update_many(query, {"$set": set_options})
         click.echo(f"Contact information was updated for {result.modified_count} patients.")
 
