@@ -2,6 +2,7 @@
 import json
 
 import responses
+
 from patientMatcher.__version__ import __version__
 from patientMatcher.match.handler import patient_matches
 from patientMatcher.parse.patient import mme_patient

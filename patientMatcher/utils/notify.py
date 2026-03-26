@@ -4,6 +4,7 @@ import logging
 from logging.handlers import SMTPHandler
 
 from flask_mail import Message
+
 from patientMatcher.__version__ import __version__
 
 LOG = logging.getLogger(__name__)

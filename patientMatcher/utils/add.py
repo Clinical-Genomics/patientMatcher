@@ -5,9 +5,10 @@ import logging
 import sys
 
 import enlighten
+from pymongo import MongoClient
+
 from patientMatcher.match.handler import external_matcher
 from patientMatcher.parse.patient import mme_patient
-from pymongo import MongoClient
 
 LOG = logging.getLogger(__name__)
 

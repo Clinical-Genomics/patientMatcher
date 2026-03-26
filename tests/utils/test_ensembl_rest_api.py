@@ -1,8 +1,9 @@
 # -*- coding: UTF-8 -*-
 import pytest
 import responses
-from patientMatcher.utils import ensembl_rest_client as ensembl_api
 from requests.exceptions import MissingSchema
+
+from patientMatcher.utils import ensembl_rest_client as ensembl_api
 
 
 @responses.activate

@@ -4,6 +4,7 @@ import logging
 
 import click
 from flask.cli import current_app, with_appcontext
+
 from patientMatcher.parse.patient import EMAIL_REGEX, href_validate
 from patientMatcher.utils.patient import patients
 from patientMatcher.utils.update import update_resources

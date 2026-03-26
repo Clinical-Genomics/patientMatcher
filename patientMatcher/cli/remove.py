@@ -3,6 +3,7 @@
 
 import click
 from flask.cli import current_app, with_appcontext
+
 from patientMatcher.utils.delete import delete_by_query
 
 

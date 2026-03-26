@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import responses
+
 from patientMatcher.utils.ensembl_rest_client import requests
 from patientMatcher.utils.gene import ensembl_to_symbol, entrez_to_symbol, symbol_to_ensembl
 

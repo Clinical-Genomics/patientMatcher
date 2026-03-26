@@ -5,10 +5,11 @@ import json
 import logging
 
 import requests
+from werkzeug.datastructures import Headers
+
 from patientMatcher.match.genotype_matcher import match as genomatch
 from patientMatcher.match.phenotype_matcher import match as phenomatch
 from patientMatcher.parse.patient import json_patient
-from werkzeug.datastructures import Headers
 
 LOG = logging.getLogger(__name__)
 
