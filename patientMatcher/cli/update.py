@@ -10,6 +10,7 @@ from patientMatcher.utils.patient import patients
 from patientMatcher.utils.update import update_resources
 
 LOG = logging.getLogger(__name__)
+HREF_FIELD = "contact.href"
 
 
 @click.group()
@@ -39,11 +40,11 @@ def contact(href, email, new_href, new_email, new_name, new_institution):
         )
         return
 
-    query = {"contact.href": {"$regex": href}} if href else {"contact.email": email}
+    query = {HREF_FIELD: {"$regex": href}} if href else {"contact.email": email}
 
     database = current_app.db
     matching_patients = patients(database=database, match_query=query)
-    matching_contacts = list(matching_patients.distinct("contact.href"))
+    matching_contacts = list(matching_patients.distinct(HREF_FIELD))
 
     # Handle zero or multiple matches
     if not matching_contacts:
@@ -66,7 +67,7 @@ def contact(href, email, new_href, new_email, new_name, new_institution):
                 "Provided href does not have a valid schema. Provide either a URL (http://.., https://..) or an email address (mailto:..)"
             )
             return
-        set_options["contact.href"] = new_href
+        set_options[HREF_FIELD] = new_href
 
     for field, value in [
         ("contact.email", new_email),
