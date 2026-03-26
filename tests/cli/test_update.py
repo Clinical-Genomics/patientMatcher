@@ -158,7 +158,7 @@ def test_update_contact_no_href_match(mock_app, gpx4_patients):
 
     # THEN the CLI should succeed but print a message about no patients found
     assert result.exit_code == 0
-    assert f"No patients found with query" in result.output
+    assert "No patients found with query" in result.output
 
     # AND no patient contact should be updated
     updated_patient = patients_collection.find_one({CONTACT_HREF: f"mailto:{new_href}"})
