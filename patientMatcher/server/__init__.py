@@ -8,11 +8,7 @@ import coloredlogs
 from flask import Flask
 from flask_mail import Mail
 from pymongo import MongoClient
-from pymongo.errors import (
-    ConnectionFailure,
-    OperationFailure,
-    ServerSelectionTimeoutError,
-)
+from pymongo.errors import ConnectionFailure, OperationFailure, ServerSelectionTimeoutError
 
 from patientMatcher.resources import path_to_hpo_terms, path_to_phenotype_annotations
 from patientMatcher.utils.notify import TlsSMTPHandler, admins_email_format

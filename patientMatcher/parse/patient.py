@@ -7,6 +7,7 @@ from pkgutil import get_data
 from urllib.parse import urlparse
 
 from jsonschema import FormatChecker, RefResolver, validate
+
 from patientMatcher.utils.gene import ensembl_to_symbol, entrez_to_symbol, symbol_to_ensembl
 from patientMatcher.utils.variant import liftover
 

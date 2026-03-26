@@ -4,11 +4,13 @@ import logging
 
 import click
 from flask.cli import current_app, with_appcontext
+
 from patientMatcher.parse.patient import EMAIL_REGEX, href_validate
 from patientMatcher.utils.patient import patients
 from patientMatcher.utils.update import update_resources
 
 LOG = logging.getLogger(__name__)
+HREF_FIELD = "contact.href"
 
 
 @click.group()
@@ -19,54 +21,69 @@ def update():
 
 @update.command()
 @with_appcontext
-@click.option(
-    "-o", "--old-href", type=click.STRING, nargs=1, required=True, help="Old contact href"
-)
-@click.option("-h", "--href", type=click.STRING, nargs=1, required=True, help="New contact href")
-@click.option("-n", "--name", type=click.STRING, nargs=1, required=True, help="New contact name")
-@click.option(
-    "--institution", type=click.STRING, nargs=1, required=False, help="New contact institution"
-)
-def contact(old_href, href, name, institution):
-    """Update contact person for a group of patients"""
+@click.option("--href", type=click.STRING, required=False, help="Contact's href")
+@click.option("--email", type=click.STRING, required=False, help="Contact's email")
+@click.option("--new-href", type=click.STRING, required=False, help="New href")
+@click.option("--new-email", type=click.STRING, required=False, help="New email")
+@click.option("--new-name", type=click.STRING, required=False, help="New name")
+@click.option("--new-institution", type=click.STRING, required=False, help="New institution")
+def contact(href, email, new_href, new_email, new_name, new_institution):
+    """Update contact person for a group of patients."""
 
-    # If new contact is a simple email, add "mailto" schema
-    if bool(EMAIL_REGEX.match(href)) is True and "mailto:" not in href:
-        href = ":".join(["mailto", href])
+    # Validate exactly one identifier
+    if bool(href) == bool(email):
+        raise click.UsageError("You must provide EITHER --href or --email")
 
-    if href_validate(href) is False:
-        LOG.error(
-            "Provided href does not have a valid schema. Provide either a URL (http://.., https://..) or an email address (mailto:..)"
+    # Validate at least one field to update
+    if not any([new_href, new_email, new_name, new_institution]):
+        click.echo(
+            "Provide at least a field you wish to update: "
+            "--new-href / --new-email / --new-name / --new-institution"
         )
         return
+
+    # Build query
+    query = {HREF_FIELD: {"$regex": href}} if href else {"contact.email": email}
 
     database = current_app.db
-    query = {"contact.href": {"$regex": old_href}}
+    matching_patients = patients(database=database, match_query=query)
+    matching_contacts = list(matching_patients.distinct(HREF_FIELD))
 
-    # Retrieving all patients matching the given old_href
-    old_contact_patients = patients(database=database, match_query=query)
-    # Retriving unique contacts for the above patients
-    match_contacts = list(old_contact_patients.distinct("contact.href"))
-
-    if len(match_contacts) == 0:
-        click.echo(f"No patients found with contact URI '{old_href}'")
+    if not matching_contacts:
+        click.echo(f"No patients found with query '{query}'")
         return
-    if len(match_contacts) > 1:
+    if len(matching_contacts) > 1:
         click.echo(
-            f"Your search for contact url '{old_href}' is returning more than one patients' contact: {match_contacts}.\nPlease restrict your search by typing a different href."
+            f"Your search for contact query '{query}' is returning more than one patients' contact.\n"
+            "Please restrict your search by typing a different href/email."
         )
         return
-    # Search is returning only one contact, it's OK to use it for updating patients
-    matches = list(old_contact_patients)
-    new_contact = dict(href=href, name=name)
-    if institution:
-        new_contact["institution"] = institution
 
+    # Build update dict
+    set_options = {}
+    if new_href:
+        if EMAIL_REGEX.match(new_href) and not new_href.startswith("mailto:"):
+            new_href = f"mailto:{new_href}"
+        if not href_validate(new_href):
+            LOG.error(
+                "Provided href does not have a valid schema. Provide either a URL (http://.., https://..) or an email address (mailto:..)"
+            )
+            return
+        set_options[HREF_FIELD] = new_href
+    if new_email:
+        set_options["contact.email"] = new_email
+    if new_name:
+        set_options["contact.name"] = new_name
+    if new_institution:
+        set_options["contact.institution"] = new_institution
+
+    # Confirm and update
+    patient_count = len(list(matching_patients))
     if click.confirm(
-        f"{len(matches)} patients with the old contact href '{matches[0]['contact']['href']}' will be updated with contact info:{new_contact}. Confirm?",
+        f"{patient_count} patients will be updated with contact info: {set_options}. Confirm?",
         abort=True,
     ):
-        result = database.patients.update_many(query, {"$set": {"contact": new_contact}})
+        result = database.patients.update_many(query, {"$set": set_options})
         click.echo(f"Contact information was updated for {result.modified_count} patients.")
 
 

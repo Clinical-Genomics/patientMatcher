@@ -3,6 +3,7 @@
 - `email` and `additionalContacts` in API reference json schema (#380)
 ### Changed
 - Updated versions of external actions and MongoDB in GitHub workflows (#374)
+- Allow updating contact's email and href separately using the command line (#381)
 ### Fixed
 - Fixed typo on conda installation docs (#373)
 

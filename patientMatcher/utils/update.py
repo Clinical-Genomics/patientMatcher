@@ -3,6 +3,7 @@ import logging
 
 import requests
 from clint.textui import progress
+
 from patientMatcher.constants import PHENOTYPE_TERMS
 
 LOG = logging.getLogger(__name__)

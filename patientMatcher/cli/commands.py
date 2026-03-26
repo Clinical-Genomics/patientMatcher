@@ -6,6 +6,7 @@ import click
 from flask import Flask, current_app
 from flask.cli import FlaskGroup, routes_command, run_command, with_appcontext
 from flask_mail import Message
+
 from patientMatcher import __version__
 from patientMatcher.server import create_app
 

@@ -4,6 +4,7 @@ import json
 import mongomock
 import pytest
 import responses
+
 from patientMatcher.resources import path_to_benchmark_patients
 from patientMatcher.server import create_app
 

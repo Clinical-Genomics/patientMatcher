@@ -4,6 +4,7 @@ import datetime
 
 import click
 from flask.cli import current_app, with_appcontext
+
 from patientMatcher.resources import path_to_benchmark_patients
 from patientMatcher.utils.add import add_node, load_demo_patients
 from patientMatcher.utils.delete import drop_all_collections

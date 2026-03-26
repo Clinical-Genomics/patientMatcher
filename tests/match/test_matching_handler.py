@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import requests
 import responses
+
 from patientMatcher.match.handler import external_matcher, internal_matcher
 from patientMatcher.parse.patient import mme_patient
 from patientMatcher.utils.add import backend_add_patient

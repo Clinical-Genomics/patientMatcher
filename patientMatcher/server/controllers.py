@@ -3,6 +3,7 @@ import logging
 
 from flask import current_app, jsonify
 from jsonschema import ValidationError
+
 from patientMatcher.__version__ import __version__
 from patientMatcher.auth.auth import authorize
 from patientMatcher.constants import STATUS_CODES
