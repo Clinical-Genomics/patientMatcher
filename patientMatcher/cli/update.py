@@ -34,51 +34,52 @@ def contact(href, email, new_href, new_email, new_name, new_institution):
 
     if not any([new_href, new_email, new_name, new_institution]):
         click.echo(
-            f"Provide at least a field you wish to update: --new-href / --new-email / --new-name / --new-institution"
+            "Provide at least a field you wish to update: "
+            "--new-href / --new-email / --new-name / --new-institution"
         )
         return
 
-    if href:
-        query = {"contact.href": {"$regex": href}}
-    elif email:
-        query = {"contact.email": email}
+    query = {"contact.href": {"$regex": href}} if href else {"contact.email": email}
 
     database = current_app.db
     matching_patients = patients(database=database, match_query=query)
     matching_contacts = list(matching_patients.distinct("contact.href"))
 
-    if len(matching_contacts) == 0:
+    # Handle zero or multiple matches
+    if not matching_contacts:
         click.echo(f"No patients found with query '{query}'")
         return
     if len(matching_contacts) > 1:
         click.echo(
-            f"Your search for contact query '{query}' is returning more than one patients' contact.\nPlease restrict your search by typing a different href/email."
+            f"Your search for contact query '{query}' is returning more than one patients' contact.\n"
+            "Please restrict your search by typing a different href/email."
         )
         return
 
     set_options = {}
-    if new_href:
-        if bool(EMAIL_REGEX.match(new_href)) is True and "mailto:" not in new_href:
-            new_href = ":".join(["mailto", new_href])
 
-        if href_validate(new_href) is False:
+    if new_href:
+        if EMAIL_REGEX.match(new_href) and not new_href.startswith("mailto:"):
+            new_href = f"mailto:{new_href}"
+        if not href_validate(new_href):
             LOG.error(
                 "Provided href does not have a valid schema. Provide either a URL (http://.., https://..) or an email address (mailto:..)"
             )
             return
         set_options["contact.href"] = new_href
 
-    if new_email:
-        set_options["contact.email"] = new_email
-    if new_name:
-        set_options["contact.name"] = new_name
-    if new_institution:
-        set_options["contact.institution"] = new_institution
+    for field, value in [
+        ("contact.email", new_email),
+        ("contact.name", new_name),
+        ("contact.institution", new_institution),
+    ]:
+        if value:
+            set_options[field] = value
 
-    if click.confirm(
-        f"{len(list(matching_patients))} patients will be updated with contact info:{set_options}. Confirm?",
-        abort=True,
-    ):
+    # Confirm and update
+    patient_count = matching_patients.count_documents(query)
+    if click.confirm(f"{patient_count} patients will be updated with contact info: {set_options}. Confirm?",
+                     abort=True):
         result = database.patients.update_many(query, {"$set": set_options})
         click.echo(f"Contact information was updated for {result.modified_count} patients.")
 
