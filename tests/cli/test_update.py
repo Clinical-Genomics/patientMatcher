@@ -4,7 +4,7 @@ from patientMatcher.cli.commands import cli
 from patientMatcher.constants import PHENOTYPE_TERMS
 
 CONTACT_HREF = "contact.href"
-NEW_HREF = "http://test.com"
+NEW_HREF = "https://test.com"
 NEW_EMAIL = "new.email@mail.com"
 NEW_NAME = "New Name"
 TEST_INST = "Test Institution"
