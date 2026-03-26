@@ -30,9 +30,11 @@ def update():
 def contact(href, email, new_href, new_email, new_name, new_institution):
     """Update contact person for a group of patients."""
 
+    # Validate exactly one identifier
     if bool(href) == bool(email):
         raise click.UsageError("You must provide EITHER --href or --email")
 
+    # Validate at least one field to update
     if not any([new_href, new_email, new_name, new_institution]):
         click.echo(
             "Provide at least a field you wish to update: "
@@ -40,13 +42,13 @@ def contact(href, email, new_href, new_email, new_name, new_institution):
         )
         return
 
-    query = {HREF_FIELD: {"$regex": href}} if href else {"contact.email": email}
+    # Build query
+    query = {"contact.href": {"$regex": href}} if href else {"contact.email": email}
 
     database = current_app.db
     matching_patients = patients(database=database, match_query=query)
-    matching_contacts = list(matching_patients.distinct(HREF_FIELD))
+    matching_contacts = list(matching_patients.distinct("contact.href"))
 
-    # Handle zero or multiple matches
     if not matching_contacts:
         click.echo(f"No patients found with query '{query}'")
         return
@@ -57,8 +59,8 @@ def contact(href, email, new_href, new_email, new_name, new_institution):
         )
         return
 
+    # Build update dict
     set_options = {}
-
     if new_href:
         if EMAIL_REGEX.match(new_href) and not new_href.startswith("mailto:"):
             new_href = f"mailto:{new_href}"
@@ -67,18 +69,16 @@ def contact(href, email, new_href, new_email, new_name, new_institution):
                 "Provided href does not have a valid schema. Provide either a URL (http://.., https://..) or an email address (mailto:..)"
             )
             return
-        set_options[HREF_FIELD] = new_href
-
-    for field, value in [
-        ("contact.email", new_email),
-        ("contact.name", new_name),
-        ("contact.institution", new_institution),
-    ]:
-        if value:
-            set_options[field] = value
+        set_options["contact.href"] = new_href
+    if new_email:
+        set_options["contact.email"] = new_email
+    if new_name:
+        set_options["contact.name"] = new_name
+    if new_institution:
+        set_options["contact.institution"] = new_institution
 
     # Confirm and update
-    patient_count = matching_patients.count_documents(query)
+    patient_count = len(list(matching_patients))
     if click.confirm(
         f"{patient_count} patients will be updated with contact info: {set_options}. Confirm?",
         abort=True,
