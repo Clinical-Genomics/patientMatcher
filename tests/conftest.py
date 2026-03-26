@@ -43,8 +43,9 @@ PATIENT_CONTACT = {
     "email": "user@mail.com",
     "institution": "Test institution",
     "name": "Test User",
-    "roles": ["clinician", "researcher"]
+    "roles": ["clinician", "researcher"],
 }
+
 
 @pytest.fixture
 def mock_symbol_2_ensembl():
