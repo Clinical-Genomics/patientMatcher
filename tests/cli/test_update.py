@@ -8,6 +8,7 @@ NEW_HREF = "https://test.com"
 NEW_EMAIL = "new.email@mail.com"
 NEW_NAME = "New Name"
 TEST_INST = "Test Institution"
+TEST_ROLES = ["clinician", "researcher"]
 
 
 @responses.activate
@@ -67,6 +68,10 @@ def test_update_contact_success(mock_app, gpx4_patients, monkeypatch):
             NEW_NAME,
             "--new-institution",
             TEST_INST,
+            "--new-role",
+            TEST_ROLES[0],
+            "--new-role",
+            TEST_ROLES[1],
         ],
     )
 
@@ -80,6 +85,7 @@ def test_update_contact_success(mock_app, gpx4_patients, monkeypatch):
     assert updated_patient[0]["contact"]["email"] == NEW_EMAIL
     assert updated_patient[0]["contact"]["name"] == NEW_NAME
     assert updated_patient[0]["contact"]["institution"] == TEST_INST
+    assert updated_patient[0]["contact"]["roles"] == TEST_ROLES
 
 
 def test_update_contact_validation(mock_app, gpx4_patients):

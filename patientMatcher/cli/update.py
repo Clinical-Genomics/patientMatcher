@@ -27,7 +27,8 @@ def update():
 @click.option("--new-email", type=click.STRING, required=False, help="New email")
 @click.option("--new-name", type=click.STRING, required=False, help="New name")
 @click.option("--new-institution", type=click.STRING, required=False, help="New institution")
-def contact(href, email, new_href, new_email, new_name, new_institution):
+@click.option("--new-role", multiple=True, help="New role(s)")
+def contact(href, email, new_href, new_email, new_name, new_institution, new_role):
     """Update contact person for a group of patients."""
 
     # Validate exactly one identifier
@@ -35,7 +36,7 @@ def contact(href, email, new_href, new_email, new_name, new_institution):
         raise click.UsageError("You must provide EITHER --href or --email")
 
     # Validate at least one field to update
-    if not any([new_href, new_email, new_name, new_institution]):
+    if not any([new_href, new_email, new_name, new_institution, new_role]):
         click.echo(
             "Provide at least a field you wish to update: "
             "--new-href / --new-email / --new-name / --new-institution"
@@ -43,7 +44,9 @@ def contact(href, email, new_href, new_email, new_name, new_institution):
         return
 
     # Build query
-    query = {HREF_FIELD: {"$regex": href}} if href else {"contact.email": email}
+    query = {"contact.email": email}
+    if href:
+        query = {HREF_FIELD: {"$regex": href}}
 
     database = current_app.db
     matching_patients = patients(database=database, match_query=query)
@@ -64,7 +67,7 @@ def contact(href, email, new_href, new_email, new_name, new_institution):
     if new_href:
         if EMAIL_REGEX.match(new_href) and not new_href.startswith("mailto:"):
             new_href = f"mailto:{new_href}"
-        if not href_validate(new_href):
+        elif not href_validate(new_href):
             LOG.error(
                 "Provided href does not have a valid schema. Provide either a URL (http://.., https://..) or an email address (mailto:..)"
             )
@@ -76,6 +79,8 @@ def contact(href, email, new_href, new_email, new_name, new_institution):
         set_options["contact.name"] = new_name
     if new_institution:
         set_options["contact.institution"] = new_institution
+    if new_role:
+        set_options["contact.roles"] = list(new_role)
 
     # Confirm and update
     patient_count = len(list(matching_patients))

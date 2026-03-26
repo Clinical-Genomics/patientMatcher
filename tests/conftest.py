@@ -38,6 +38,14 @@ HGNC_SYMBOLS_2_ENSEMBL_IDS = {
     "SGOL1": "ENSG00000129810",
 }
 
+PATIENT_CONTACT = {
+    "href": "https://someurl.com",
+    "email": "user@mail.com",
+    "institution": "Test institution",
+    "name": "Test User",
+    "roles": ["clinician", "researcher"],
+}
+
 
 @pytest.fixture
 def mock_symbol_2_ensembl():
@@ -126,11 +134,8 @@ def test_node():
 def entrez_gene_patient():
     """Returns a test patient with an entrez gene ID"""
     patient = {
-        "contact": {
-            "href": "mailto:someuser@mail.com",
-            "institution": "Test institution",
-            "name": "Test user",
-        },
+        "contact": PATIENT_CONTACT,
+        "additionalContacts": [PATIENT_CONTACT],
         "disorders": [],
         "features": [
             {"id": "HP:0001263", "label": "Global developmental delay", "observed": "yes"},
