@@ -1,6 +1,6 @@
 ## [unpublished]
 ### Added
-- `email`, `additionalContacts` and `roles` in API reference json schema (#380 and )
+- `email`, `additionalContacts` and `roles` in API reference json schema (#380 and #384)
 - Allow assigning contact `roles` using the cli (#383)
 ### Changed
 - Updated versions of external actions and MongoDB in GitHub workflows (#374)
