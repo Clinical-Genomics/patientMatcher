@@ -66,6 +66,9 @@ def mme_patient(json_patient, convert_to_ensembl=False):
         "inheritanceMode": json_patient.get("inheritanceMode"),
     }
 
+    if json_patient.get("additionalContacts"):
+        mme_patient["additionalContacts"] = json_patient["additionalContacts"]
+
     # remove keys with empty values from mme_patient object
     mme_patient = {k: v for k, v in mme_patient.items() if v is not None}
 

@@ -92,93 +92,92 @@ def test_add_patient_malformed_data(mock_app, test_client, gpx4_patients, test_n
     assert response.status_code == 422
 
 
-@responses.activate
-def test_add_patient(
-    mock_app, test_client, gpx4_patients, test_node, database, mocked_ensemble_responses
-):
-    """Test adding a patient by sending a POST request to the add endpoint with valid data"""
-
-    patient_data = gpx4_patients[1]
-
-    # Given a node with authorized token
+def _setup(mock_app, test_client, test_node, database):
+    # common setup used in all tests
     ok_token = test_client["auth_token"]
 
     add_node(mongo_db=mock_app.db, obj=test_client, is_client=True)
-    add_node(
-        mongo_db=mock_app.db, obj=test_node, is_client=False
-    )  # add a test node, to perform external matching
+    add_node(mongo_db=mock_app.db, obj=test_node, is_client=False)
 
-    # a matches collection without documents
     assert database["matches"].find_one() is None
-
-    # and an empty patients collection
     assert database["patients"].find_one() is None
 
-    patient_obj = {"patient": patient_data}  # this is a valid patient object
-    # WHEN the patient is added using the add enpoint
+    return ok_token
+
+
+@responses.activate
+def test_add_patient_from_demo_data(
+    mock_app, test_client, gpx4_patients, test_node, database, mocked_ensemble_responses
+):
+    patient_data = gpx4_patients[1]
+    ok_token = _setup(mock_app, test_client, test_node, database)
+
     response = mock_app.test_client().post(
-        ADD_PATIENT_ENDPOINT, data=json.dumps(patient_obj), headers=auth_headers(ok_token)
+        ADD_PATIENT_ENDPOINT,
+        data=json.dumps({"patient": patient_data}),
+        headers=auth_headers(ok_token),
     )
     assert response.status_code == 200
 
-    # make sure that the POST request to add the patient triggers the matching request to an external node
     assert database["matches"].find_one()
-
-    # There should be one patient in database now
     assert database["patients"].find_one()
 
-    # the patient in database has label "Patient number 1"
     result = database["patients"].find_one({"label": "350_2-test"})
-    # make sure patient's gene was converted to ensembl
-    assert result["genomicFeatures"][0]["gene"]["id"].startswith("ENSG")
-    # and that non-standard but informative _geneName field was added to genomic feature
-    assert result["genomicFeatures"][0]["gene"]["_geneName"] == "GPX4"
+    gene = result["genomicFeatures"][0]["gene"]
+
+    assert gene["id"].startswith("ENSG")
+    assert gene["_geneName"] == "GPX4"
+
+
+@responses.activate
+def test_add_one_patient_with_additional_contacts(
+    mock_app, test_client, entrez_gene_patient, test_node, database, mocked_ensemble_responses
+):
+    patient_data = entrez_gene_patient
+    ok_token = _setup(mock_app, test_client, test_node, database)
+
+    response = mock_app.test_client().post(
+        ADD_PATIENT_ENDPOINT,
+        data=json.dumps({"patient": patient_data}),
+        headers=auth_headers(ok_token),
+    )
+    assert response.status_code == 200
+
+    assert database["matches"].find_one()
+
+    result = database["patients"].find_one()
+    assert result["additionalContacts"]
 
 
 def test_update_patient(mock_app, test_client, gpx4_patients, test_node, database):
-    """Test updating a patient by sending a POST request to the add endpoint with valid data"""
-
     patient_data = gpx4_patients[1]
-    # Modify patient's contact href with a simple email
     patient_data["contact"]["href"] = "somebody@test.se"
 
-    # Given a node with authorized token
-    ok_token = test_client["auth_token"]
+    ok_token = _setup(mock_app, test_client, test_node, database)
 
-    add_node(mongo_db=mock_app.db, obj=test_client, is_client=True)
-    add_node(
-        mongo_db=mock_app.db, obj=test_node, is_client=False
-    )  # add a test node, to perform external matching
-
-    # a matches collection without documents
-    assert database["matches"].find_one() is None
-
-    # and an empty patients collection
-    assert database["patients"].find_one() is None
-
-    # GIVEN a patient added using the add enpoint
-    patient_obj = {"patient": patient_data}  # this is a valid patient object
+    # initial add
     response = mock_app.test_client().post(
-        ADD_PATIENT_ENDPOINT, data=json.dumps(patient_obj), headers=auth_headers(ok_token)
+        ADD_PATIENT_ENDPOINT,
+        data=json.dumps({"patient": patient_data}),
+        headers=auth_headers(ok_token),
     )
     assert response.status_code == 200
 
-    # WHEN the patient is updated using the same add endpoint
+    # update
     patient_data["label"] = "modified patient label"
-    patient_obj = {"patient": patient_data}  # this
     response = mock_app.test_client().post(
-        ADD_PATIENT_ENDPOINT, data=json.dumps(patient_obj), headers=auth_headers(ok_token)
+        ADD_PATIENT_ENDPOINT,
+        data=json.dumps({"patient": patient_data}),
+        headers=auth_headers(ok_token),
     )
     assert response.status_code == 200
 
-    # Then there should still be one patient in the database
     updated_patient = database["patients"].find_one()
-    # With an updated and valid email address
+
     assert updated_patient["contact"]["href"] == "mailto:somebody@test.se"
 
-    # And the update has triggered an additional external patient matching
-    results = database["matches"].find()
-    assert len(list(results)) == 2
+    results = list(database["matches"].find())
+    assert len(results) == 2
 
 
 def test_metrics(mock_app, database, test_client, demo_data_path, match_objs):
