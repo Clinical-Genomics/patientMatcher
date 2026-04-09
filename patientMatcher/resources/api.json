@@ -15,18 +15,13 @@
           "pattern": "^HP:\\d{7}$"
         },
         "observed": {
-          "enum": [
-            "yes",
-            "no"
-          ]
+          "enum": ["yes", "no"]
         },
         "ageOfOnset": {
           "$ref": "#/definitions/ageOfOnset"
         }
       },
-      "required": [
-        "id"
-      ]
+      "required": ["id"]
     },
     "patient": {
       "type": "object",
@@ -56,28 +51,43 @@
               "type": "string",
               "format": "email"
             },
-            "additionalContacts": {
+            "roles": {
               "type": "array",
               "items": {
-                "type": "object",
-                "properties": {
-                  "name": { "type": "string" },
-                  "institution": { "type": "string" },
-                  "href": { "type": "string", "format": "uri" },
-                  "email": { "type": "string", "format": "email" },
-                  "roles": {
-                    "type": "array",
-                    "items": { "type": "string" }
-                  }
-                },
-                "required": ["name", "href"]
+                "type": "string"
               }
             }
           },
-          "required": [
-            "name",
-            "href"
-          ]
+          "required": ["name", "href"]
+        },
+        "additionalContacts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "institution": {
+                "type": "string"
+              },
+              "href": {
+                "type": "string",
+                "format": "uri"
+              },
+              "email": {
+                "type": "string",
+                "format": "email"
+              },
+              "roles": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": ["name", "href"]
+          }
         },
         "species": {
           "type": "string",
@@ -109,9 +119,7 @@
                 "pattern": "^(MIM:|Orphanet:)\\d{1,6}$"
               }
             },
-            "required": [
-              "id"
-            ]
+            "required": ["id"]
           }
         },
         "features": {
@@ -132,9 +140,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "id"
-                ]
+                "required": ["id"]
               },
               "variant": {
                 "type": "object",
@@ -179,24 +185,17 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "id"
-                ]
+                "required": ["id"]
               }
             },
-            "required": [
-              "gene"
-            ]
+            "required": ["gene"]
           }
         },
         "test": {
           "type": "boolean"
         }
       },
-      "required": [
-        "id",
-        "contact"
-      ],
+      "required": ["id", "contact"],
       "not": {
         "properties": {
           "features": {
@@ -216,9 +215,7 @@
           "$ref": "#/definitions/patient"
         }
       },
-      "required": [
-        "patient"
-      ]
+      "required": ["patient"]
     },
 
     "response": {
