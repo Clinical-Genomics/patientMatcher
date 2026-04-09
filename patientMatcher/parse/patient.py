@@ -58,6 +58,7 @@ def mme_patient(json_patient, convert_to_ensembl=False):
         "label": json_patient.get("label"),
         "sex": json_patient.get("sex"),
         "contact": json_patient["contact"],
+        "additionalContacts": json_patient["additionalContacts"],
         "features": json_patient.get("features"),
         "genomicFeatures": json_patient.get("genomicFeatures"),
         "disorders": json_patient.get("disorders"),
