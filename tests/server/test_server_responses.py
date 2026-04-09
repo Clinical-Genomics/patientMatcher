@@ -91,6 +91,7 @@ def test_add_patient_malformed_data(mock_app, test_client, gpx4_patients, test_n
     # and check that the server returns an error 422 (unprocessable entity)
     assert response.status_code == 422
 
+
 def _setup(mock_app, test_client, test_node, database):
     # common setup used in all tests
     ok_token = test_client["auth_token"]
