@@ -193,7 +193,7 @@ def test_update_patient(mock_app, test_client, gpx4_patients, test_node, databas
     # and an empty patients collection
     assert database["patients"].find_one() is None
 
-    # GIVEN a patient added using the add enpoint
+    # GIVEN a patient added using the add endpoint
     patient_obj = {"patient": patient_data}  # this is a valid patient object
     response = mock_app.test_client().post(
         ADD_PATIENT_ENDPOINT, data=json.dumps(patient_obj), headers=auth_headers(ok_token)
