@@ -2,13 +2,13 @@
 ### Added
 - `email`, `additionalContacts` and `roles` in API reference json schema (#380 and #384)
 - Allow assigning contact `roles` using the cli (#383)
-- A test to make sure 
 ### Changed
 - Updated versions of external actions and MongoDB in GitHub workflows (#374)
 - Allow updating contact's email and href separately using the command line (#381)
 - Conftest file to reflect a patient's contact with email, roles and additionalContacts (#383)
 ### Fixed
 - Fixed typo on conda installation docs (#373)
+- Parsing and saving `additionalContacts` field when a patient is saved using the endpoint ()
 
 ## [4.6.1] - 2025-07-24
 ### Fixed
