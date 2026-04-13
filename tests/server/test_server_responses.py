@@ -28,6 +28,7 @@ def _setup(mock_app, test_client, test_node, database):
 
     return ok_token
 
+
 def _setup_patients(database, gpx4_patients):
     """Insert demo patients into DB"""
     assert len(gpx4_patients) == 2
@@ -39,11 +40,14 @@ def _setup_patients(database, gpx4_patients):
     return inserted_ids
     return inserted_ids
 
+
 def _assert_valid_match_structure(match):
     for res in match["results"]:
         for pat in res["patients"]:
             assert pat["patient"]["contact"]
             assert pat["score"]["patient"] > 0
+
+
 def test_heartbeat(mock_app, database, test_client):
     """Test sending a GET request to see if app has a heartbeat"""
 
@@ -443,9 +447,7 @@ def test_match_ensembl_patient(
     match = database["matches"].find_one()
     _assert_valid_match_structure(match)
 
-    assert (
-        match["data"]["patient"]["genomicFeatures"][0]["gene"]["_geneName"] == "GPX4"
-    )
+    assert match["data"]["patient"]["genomicFeatures"][0]["gene"]["_geneName"] == "GPX4"
 
 
 @responses.activate
