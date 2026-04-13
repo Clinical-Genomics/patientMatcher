@@ -415,7 +415,7 @@ def test_match_hgnc_symbol_patient(
     assert validate_response({"results": "fakey_results"}) == 422
     assert database["matches"].find_one() is None
 
-    data = _run_match_request(mock_app, MATCH_ENDPOINT, query_patient, ok_token)
+    _run_match_request(mock_app, MATCH_ENDPOINT, query_patient, ok_token)
 
     match = database["matches"].find_one()
     _assert_valid_match_structure(match)
@@ -434,7 +434,7 @@ def test_match_ensembl_patient(
 
     assert database["matches"].find_one() is None
 
-    data = _run_match_request(mock_app, MATCH_ENDPOINT, query_patient, ok_token)
+    _run_match_request(mock_app, MATCH_ENDPOINT, query_patient, ok_token)
 
     match = database["matches"].find_one()
     _assert_valid_match_structure(match)
