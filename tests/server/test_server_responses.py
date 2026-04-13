@@ -38,7 +38,25 @@ def _setup_patients(database, gpx4_patients):
         inserted_ids.append(backend_add_patient(database, mme_pat))
     assert len(inserted_ids) == 2
     return inserted_ids
-    return inserted_ids
+
+
+def _run_match_request(mock_app, endpoint, query_patient, ok_token):
+    response = mock_app.test_client().post(
+        endpoint,
+        data=json.dumps(query_patient),
+        headers=auth_headers(ok_token),
+    )
+
+    assert response.status_code == 200
+    data = json.loads(response.data)
+
+    assert isinstance(data["results"], list)
+    assert len(data["results"]) == 2
+    assert "patient" in data["results"][0]
+    assert "score" in data["results"][0]
+    assert "contact" in data["results"][0]["patient"]
+
+    return data
 
 
 def _assert_valid_match_structure(match):
@@ -397,20 +415,7 @@ def test_match_hgnc_symbol_patient(
     assert validate_response({"results": "fakey_results"}) == 422
     assert database["matches"].find_one() is None
 
-    response = mock_app.test_client().post(
-        MATCH_ENDPOINT,
-        data=json.dumps(query_patient),
-        headers=auth_headers(ok_token),
-    )
-
-    assert response.status_code == 200
-    data = json.loads(response.data)
-
-    assert isinstance(data["results"], list)
-    assert len(data["results"]) == 2
-    assert "patient" in data["results"][0]
-    assert "score" in data["results"][0]
-    assert "contact" in data["results"][0]["patient"]
+    data = _run_match_request(mock_app, MATCH_ENDPOINT, query_patient, ok_token)
 
     match = database["matches"].find_one()
     _assert_valid_match_structure(match)
@@ -429,20 +434,7 @@ def test_match_ensembl_patient(
 
     assert database["matches"].find_one() is None
 
-    response = mock_app.test_client().post(
-        MATCH_ENDPOINT,
-        data=json.dumps(query_patient),
-        headers=auth_headers(ok_token),
-    )
-
-    assert response.status_code == 200
-    data = json.loads(response.data)
-
-    assert isinstance(data["results"], list)
-    assert len(data["results"]) == 2
-    assert "patient" in data["results"][0]
-    assert "score" in data["results"][0]
-    assert "contact" in data["results"][0]["patient"]
+    data = _run_match_request(mock_app, MATCH_ENDPOINT, query_patient, ok_token)
 
     match = database["matches"].find_one()
     _assert_valid_match_structure(match)
