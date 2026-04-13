@@ -15,6 +15,7 @@ MATCH_ENDPOINT = "/match"
 MATCH_EXTERNAL_ENDPOINT = "/match/external/"
 CONTENT_TYPE = "application/vnd.ga4gh.matchmaker.v1.0+json"
 
+
 def _setup(mock_app, test_client, test_node, database):
     # common setup used in all tests
     ok_token = test_client["auth_token"]
@@ -26,6 +27,7 @@ def _setup(mock_app, test_client, test_node, database):
     assert database["patients"].find_one() is None
 
     return ok_token
+
 
 def test_heartbeat(mock_app, database, test_client):
     """Test sending a GET request to see if app has a heartbeat"""
@@ -264,8 +266,7 @@ def test_delete_patient(mock_app, database, gpx4_patients, test_client, test_nod
 
     data = json.loads(response.data)
     assert (
-        data["message"]
-        == "ERROR. Could not delete a patient with ID not_a_valid_ID from database"
+        data["message"] == "ERROR. Could not delete a patient with ID not_a_valid_ID from database"
     )
 
     # ensure no matches initially
@@ -317,8 +318,7 @@ def test_patient_matches(mock_app, database, match_objs, test_client, test_node)
 
     data = json.loads(response.data)
     assert (
-        data["message"]
-        == "Could not find any matches in database for patient ID unknown_patient"
+        data["message"] == "Could not find any matches in database for patient ID unknown_patient"
     )
 
     # authorized request with valid patient
