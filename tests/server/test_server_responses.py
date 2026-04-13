@@ -28,7 +28,22 @@ def _setup(mock_app, test_client, test_node, database):
 
     return ok_token
 
+def _setup_patients(database, gpx4_patients):
+    """Insert demo patients into DB"""
+    assert len(gpx4_patients) == 2
+    inserted_ids = []
+    for pat in gpx4_patients:
+        mme_pat = mme_patient(pat, True)
+        inserted_ids.append(backend_add_patient(database, mme_pat))
+    assert len(inserted_ids) == 2
+    return inserted_ids
+    return inserted_ids
 
+def _assert_valid_match_structure(match):
+    for res in match["results"]:
+        for pat in res["patients"]:
+            assert pat["patient"]["contact"]
+            assert pat["score"]["patient"] > 0
 def test_heartbeat(mock_app, database, test_client):
     """Test sending a GET request to see if app has a heartbeat"""
 
@@ -368,70 +383,45 @@ def test_patient_matches(mock_app, database, match_objs, test_client, test_node)
 def test_match_hgnc_symbol_patient(
     mock_app, gpx4_patients, test_client, test_node, database, mocked_ensemble_responses
 ):
-    """Testing matching patient with gene symbol against patientMatcher database (internal matching)"""
-
-    # Setup authorized client and node
     ok_token = _setup(mock_app, test_client, test_node, database)
 
     query_patient = {"patient": gpx4_patients[0]}
     assert query_patient["patient"]["genomicFeatures"][0]["gene"]["id"] == "GPX4"
 
-    # Load 2 test patients into mock database
-    assert len(gpx4_patients) == 2
-    inserted_ids = []
-    for pat in gpx4_patients:
-        mme_pat = mme_patient(pat, True)
-        inserted_ids.append(backend_add_patient(database, mme_pat))
-    assert len(inserted_ids) == 2
+    _setup_patients(database, gpx4_patients)
 
-    # Validate API response validator
-    malformed_match_results = {"results": "fakey_results"}
-    assert validate_response(malformed_match_results) == 422
-
-    # Ensure no matches exist initially
+    assert validate_response({"results": "fakey_results"}) == 422
     assert database["matches"].find_one() is None
 
-    # Send match request
     response = mock_app.test_client().post(
         MATCH_ENDPOINT,
         data=json.dumps(query_patient),
         headers=auth_headers(ok_token),
     )
-    assert response.status_code == 200
 
+    assert response.status_code == 200
     data = json.loads(response.data)
+
     assert isinstance(data["results"], list)
     assert len(data["results"]) == 2
     assert "patient" in data["results"][0]
     assert "score" in data["results"][0]
     assert "contact" in data["results"][0]["patient"]
 
-    # Verify DB match object
     match = database["matches"].find_one()
-    for res in match["results"]:
-        for pat in res["patients"]:
-            assert pat["patient"]["contact"]
-            assert pat["score"]["patient"] > 0
+    _assert_valid_match_structure(match)
 
 
 @responses.activate
 def test_match_ensembl_patient(
     mock_app, test_client, gpx4_patients, test_node, database, mocked_ensemble_responses
 ):
-    """Test matching patient with Ensembl gene against patientMatcher database (internal matching)"""
-
-    # Setup authorized client + node
     ok_token = _setup(mock_app, test_client, test_node, database)
 
     query_patient = {"patient": mme_patient(gpx4_patients[0], True)}
     assert query_patient["patient"]["genomicFeatures"][0]["gene"]["id"].startswith("ENSG")
 
-    assert len(gpx4_patients) == 2
-    inserted_ids = []
-    for pat in gpx4_patients:
-        mme_pat = mme_patient(pat, True)
-        inserted_ids.append(backend_add_patient(database, mme_pat))
-    assert len(inserted_ids) == 2
+    _setup_patients(database, gpx4_patients)
 
     assert database["matches"].find_one() is None
 
@@ -440,9 +430,10 @@ def test_match_ensembl_patient(
         data=json.dumps(query_patient),
         headers=auth_headers(ok_token),
     )
-    assert response.status_code == 200
 
+    assert response.status_code == 200
     data = json.loads(response.data)
+
     assert isinstance(data["results"], list)
     assert len(data["results"]) == 2
     assert "patient" in data["results"][0]
@@ -450,12 +441,11 @@ def test_match_ensembl_patient(
     assert "contact" in data["results"][0]["patient"]
 
     match = database["matches"].find_one()
-    for res in match["results"]:
-        for pat in res["patients"]:
-            assert pat["patient"]["contact"]
-            assert pat["score"]["patient"] > 0
+    _assert_valid_match_structure(match)
 
-    assert match["data"]["patient"]["genomicFeatures"][0]["gene"]["_geneName"] == "GPX4"
+    assert (
+        match["data"]["patient"]["genomicFeatures"][0]["gene"]["_geneName"] == "GPX4"
+    )
 
 
 @responses.activate
