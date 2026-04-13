@@ -6,6 +6,7 @@
 - Updated versions of external actions and MongoDB in GitHub workflows (#374)
 - Allow updating contact's email and href separately using the command line (#381)
 - Conftest file to reflect a patient's contact with email, roles and additionalContacts (#383)
+- Refactored endpoints tests to avoid duplicated code (#388)
 ### Fixed
 - Fixed typo on conda installation docs (#373)
 - Parsing and saving `additionalContacts` field when a patient is saved using the endpoint (#386)
